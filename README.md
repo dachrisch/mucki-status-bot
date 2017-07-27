@@ -4,21 +4,12 @@ Telegram-Bot analysing the inbox tracking sheet and gives status information if 
 
 ## Usage
 
-$ python bot.py <token>
+$ python bot.py \<token\>
 
 ## Commands
 
-/start
-just a hello
-
-/team
-list team members
-
-/howami
-reply own welfare status
-
-/howis <name>
-reply status of team member
-
-/howarewe
-reply status of team
+/start          - just a hello
+/team           - list team members
+/howami         - reply own welfare status
+/howis <name>   - reply status of team member
+/howarewe       - reply status of team
