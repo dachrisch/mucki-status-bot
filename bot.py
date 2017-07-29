@@ -5,8 +5,9 @@ import sys
 
 # https://github.com/eternnoir/pyTelegramBotAPI
 import telebot
+import time
 from cachetools.func import ttl_cache
-from requests import ReadTimeout
+from requests import RequestException
 
 from sheets import SheetConnector
 
@@ -48,7 +49,8 @@ def main():
         try:
             bot.polling()
             break
-        except ReadTimeout:
+        except RequestException:
+            time.sleep(1000)
             continue
 
 
