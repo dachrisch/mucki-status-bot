@@ -6,6 +6,7 @@ import sys
 # https://github.com/eternnoir/pyTelegramBotAPI
 import telebot
 from cachetools.func import ttl_cache
+from requests import ReadTimeout
 
 from sheets import SheetConnector
 
@@ -43,7 +44,12 @@ bot = startup_bot(sys.argv)
 
 def main():
     log.info('started %s. polling...' % __name__)
-    bot.polling()
+    while True:
+        try:
+            bot.polling()
+            break
+        except ReadTimeout:
+            continue
 
 
 @bot.message_handler(commands=['start', ])
