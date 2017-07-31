@@ -49,9 +49,10 @@ def main():
         try:
             bot.polling()
             break
-        except RequestException:
-            time.sleep(1000)
-            continue
+        except RequestException, e:
+            log.warn('restarting after RequestException: %s', e.message)
+            bot.stop_polling()
+            time.sleep(5)
 
 
 @bot.message_handler(commands=['start', ])
