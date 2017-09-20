@@ -73,16 +73,19 @@ def print_help(message):
 
 @bot.message_handler(commands=['howami'])
 def howami(message):
+    _thinking(message)
     _safe_welfare_lookup(message, message.from_user.first_name)
 
 
 @bot.message_handler(commands=['howarewe'])
 def howarewe(message):
+    _thinking(message)
     bot.reply_to(message, '\n'.join([_get_welfare_status_for(name) for name in _retrieve_team_status().keys()]))
 
 
 @bot.message_handler(commands=['howis'])
 def howis(message):
+    _thinking(message)
     try:
         command, name = message.text.split(' ')
         _safe_welfare_lookup(message, name)
@@ -92,7 +95,12 @@ def howis(message):
 
 @bot.message_handler(commands=['team'])
 def team(message):
+    _thinking(message)
     bot.reply_to(message, '\n'.join(_retrieve_team_status().keys()))
+
+
+def _thinking(message):
+    bot.send_chat_action(message.chat.id, 'typing')
 
 
 def _safe_welfare_lookup(message, name):
