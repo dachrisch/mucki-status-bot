@@ -1,13 +1,16 @@
 # coding=UTF-8
-
+import functools
 import logging
-import sys
-
 # https://github.com/eternnoir/pyTelegramBotAPI
-import telebot
+import re
+import sys
+import threading
 import time
+
+import schedule
 from cachetools.func import ttl_cache
 from requests import RequestException
+from telebot import TeleBot, types
 
 from sheets import SheetConnector
 
@@ -34,7 +37,7 @@ def startup_bot(arguments):
     log = logging.getLogger(__name__)
     log.info('starting %s' % __name__)
     try:
-        return telebot.TeleBot(arguments[1])
+        return TeleBot(arguments[1])
     except:
         log.error('usage: python %s <TOKEN>', arguments[0])
         sys.exit(255)
@@ -45,6 +48,11 @@ bot = startup_bot(sys.argv)
 
 def main():
     log.info('started %s. polling...' % __name__)
+    start_scheduler()
+    start_telegram_poll()
+
+
+def start_telegram_poll():
     while True:
         try:
             bot.polling()
@@ -53,6 +61,52 @@ def main():
             log.warn('restarting after RequestException: %s', e.message)
             bot.stop_polling()
             time.sleep(5)
+
+
+def _run_pending():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+def start_scheduler():
+    th = threading.Thread(target=_run_pending)
+    th.daemon = True
+    th.start()
+
+
+def _schedule_from_reply(reply_message):
+    try:
+        parsed_time = _parse_time(reply_message)
+        _schedule_message_reply(parsed_time, reply_message)
+    except ValueError, ve:
+        bot.send_message(reply_message.chat.id, 'time not in format [HH:MM]')
+        log.error(ve)
+
+
+def _parse_time(reply_message):
+    if re.search('\d:\d', reply_message.text):
+        parsed_time = time.strptime(reply_message.text, '%H:%M')
+    elif re.search('\d{3,4}', reply_message.text):
+        parsed_time = time.strptime(reply_message.text, '%H%M')
+    elif re.search('\d{2}', reply_message.text):
+        parsed_time = time.strptime(reply_message.text, '%H')
+    return parsed_time
+
+
+def _schedule_message_reply(parsed_time, reply_message):
+    schedule.clear()
+    scheduled_time = '%02d:%02d' % (parsed_time.tm_hour, parsed_time.tm_min)
+    scheduled_message = bot.send_message(reply_message.chat.id,
+                                         'scheduling bot for [%s] every day' % scheduled_time)
+    schedule.every().day.at(scheduled_time).do(functools.partial(howarewe, scheduled_message))
+
+
+@bot.message_handler(commands=['schedule'])
+def schedule_command(message):
+    reply_to_message = bot.send_message(message.chat.id, 'Schedule for which time [HH:MM]: ',
+                                        reply_markup=types.ForceReply())
+    bot.register_for_reply(reply_to_message, _schedule_from_reply)
 
 
 @bot.message_handler(commands=['start', ])
@@ -67,7 +121,8 @@ def print_help(message):
                                       '/howami - get status of current user\n'
                                       '/howis <name> - get status of specific user\n'
                                       '/howarewe - get status of team\n'
-                                      '/team - get members of team'
+                                      '/team - get members of team\n'
+                                      '/schedule - schedule a /howarewe command every day at specified time'
                      )
 
 
