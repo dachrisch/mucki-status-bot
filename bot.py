@@ -15,7 +15,7 @@ from telebot import TeleBot, types
 from sheets import SheetConnector
 
 MUCKI_TRACKER_SHEET_ID = '1x5TECCvP3sF3cmMJiD5frkjkmGOVt2pWgNe2eB2zZtI'
-MUCKI_TRACKER_TEAM_STATUS_RANGE = 'status!A2:B5'
+MUCKI_TRACKER_TEAM_STATUS_RANGE = 'status!A2:F5'
 log = None
 
 
@@ -166,7 +166,7 @@ def _safe_welfare_lookup(message, name):
 
 
 def _get_welfare_status_for(name):
-    return 'welfare status of %s is %s' % (name, _retrieve_team_status()[name])
+    return '%s is %s' % (name, _retrieve_team_status()[name])
 
 
 @ttl_cache()
@@ -174,8 +174,8 @@ def _retrieve_team_status():
     log.info('loading welfare status')
     team_name_status = SheetConnector(MUCKI_TRACKER_SHEET_ID).values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE)
     team_name_status_dict = {}
-    for user, status in team_name_status:
-        team_name_status_dict[user] = status
+    for user, status, actual, median, trend, rating in team_name_status:
+        team_name_status_dict[user] = '%s (%s, %s)' % (status, actual, median)
     log.info('done loading welfare status.')
     return team_name_status_dict
 
