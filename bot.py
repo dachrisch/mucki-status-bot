@@ -56,6 +56,7 @@ def start_telegram_poll():
     while True:
         try:
             bot.polling()
+            log.info('finished polling')
             break
         except RequestException, e:
             log.warn('restarting after RequestException: %s', e.message)
@@ -65,8 +66,17 @@ def start_telegram_poll():
 
 def _run_pending():
     while True:
-        schedule.run_pending()
-        time.sleep(1)
+        try:
+            if schedule.jobs:
+                log.debug('next run in [%d] seconds' % schedule.idle_seconds())
+                if schedule.idle_seconds() < 5:
+                    globals()['READ_TIMEOUT'] = 3
+                    bot.get_me()
+                schedule.run_pending()
+            time.sleep(1)
+        except RequestException, e:
+            log.warn('RequestException during scheduled task: %s', e.message)
+            time.sleep(5)
 
 
 def start_scheduler():
@@ -91,6 +101,8 @@ def _parse_time(reply_message):
         parsed_time = time.strptime(reply_message.text, '%H%M')
     elif re.search('\d{2}', reply_message.text):
         parsed_time = time.strptime(reply_message.text, '%H')
+    else:
+        raise Exception('could not parse time from: %s' % reply_message.text)
     return parsed_time
 
 
