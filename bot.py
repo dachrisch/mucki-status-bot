@@ -187,7 +187,7 @@ def _retrieve_team_status():
     team_name_status = SheetConnector(MUCKI_TRACKER_SHEET_ID).values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE)
     team_name_status_dict = {}
     for user, status, actual, median, trend, rating in team_name_status:
-        team_name_status_dict[user] = '%s (%s, %s)' % (status, actual, median)
+        team_name_status_dict[user] = '%s (%s%s, %s)' % (status, actual, rating, median)
     log.info('done loading welfare status.')
     return team_name_status_dict
 
