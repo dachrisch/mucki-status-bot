@@ -1,17 +1,13 @@
 # coding=UTF-8
-import functools
 # https://github.com/eternnoir/pyTelegramBotAPI
-import re
 import sys
-import threading
 import time
 
-import schedule
 from requests import RequestException
-from telebot import TeleBot, types
+from telebot import TeleBot
 
 from my_logging import checked_load_logging_config, basic_logger_config, get_logger
-from sheet import retrieve_team_status, get_welfare_status_for, retrieve_request_status, get_pretty_request_status
+from sheet import retrieve_team_status, get_welfare_status_for, get_pretty_request_status
 
 log = None
 
@@ -50,6 +46,7 @@ def start_telegram_poll():
             bot.stop_polling()
             time.sleep(5)
 
+
 @bot.message_handler(commands=['start', ])
 def start(message):
     bot.reply_to(message, 'Hello %s!' % message.from_user.first_name)
@@ -73,13 +70,5 @@ def howarewe(message):
 
 def _thinking(message):
     bot.send_chat_action(message.chat.id, 'typing')
-
-
-def _safe_welfare_lookup(message, name):
-    try:
-        bot.reply_to(message, get_welfare_status_for(name))
-    except KeyError:
-        bot.reply_to(message, 'welfare status for %s not found' % name)
-
 
 main()
