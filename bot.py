@@ -7,7 +7,7 @@ from requests import RequestException
 from telebot import TeleBot
 
 from my_logging import checked_load_logging_config, basic_logger_config, get_logger
-from sheet import retrieve_team_status, get_welfare_status_for, get_pretty_request_status
+from sheet import retrieve_team_status, get_welfare_status_for
 
 log = None
 
@@ -63,12 +63,11 @@ def print_help(message):
 @bot.message_handler(commands=['howarewe'])
 def howarewe(message):
     _thinking(message)
-    bot.reply_to(message, '%s\n\n%s' % (
-        '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]),
-        get_pretty_request_status()))
+    bot.reply_to(message, '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]))
 
 
 def _thinking(message):
     bot.send_chat_action(message.chat.id, 'typing')
+
 
 main()

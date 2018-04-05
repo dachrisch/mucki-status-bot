@@ -25,23 +25,3 @@ def retrieve_team_status():
 
 def get_welfare_status_for(name):
     return '%s is %s' % (name, retrieve_team_status()[name])
-
-
-@ttl_cache()
-def retrieve_request_status():
-    log.info('loading request status')
-    request_status = SheetConnector(PIPEDRIVE_TRACKER_SHEET_ID).values_for_range(PIPEDRIVE_TRACKER_RANGE)
-    assert len(request_status) == 2
-    request_status_dict = {'expected deals': int(request_status[0][0]), 'actual deals': int(request_status[1][0])}
-    log.info('done loading request status.')
-    return request_status_dict
-
-
-def get_pretty_request_status():
-    request_status_dict = retrieve_request_status()
-    if request_status_dict['actual deals'] >= request_status_dict['expected deals']:
-        return 'deals are OK (%d>=%d)' % (
-            request_status_dict['actual deals'], request_status_dict['expected deals'])
-    else:
-        return 'deals are zu wenig (%d<%d)' % (
-            request_status_dict['actual deals'], request_status_dict['expected deals'])
