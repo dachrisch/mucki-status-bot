@@ -6,9 +6,6 @@ from sheets import SheetConnector
 MUCKI_TRACKER_SHEET_ID = '1x5TECCvP3sF3cmMJiD5frkjkmGOVt2pWgNe2eB2zZtI'
 MUCKI_TRACKER_TEAM_STATUS_RANGE = 'status!A2:F5'
 
-PIPEDRIVE_TRACKER_SHEET_ID = '1pdiUyvbSKEwcx7jowtcV6Z48Uyu5dtthtchy9GFVX7I'
-PIPEDRIVE_TRACKER_RANGE = 'CU!B2:B3'
-
 log = get_logger(__name__)
 
 
