@@ -67,6 +67,7 @@ def howarewe(message):
 
 
 def _thinking(message):
+    bot.send_message(message.chat.id, 'calculating welfare status of team...')
     bot.send_chat_action(message.chat.id, 'typing')
 
 
