@@ -63,7 +63,7 @@ def print_help(message):
 @bot.message_handler(commands=['howarewe'])
 def howarewe(message):
     _thinking(message)
-    bot.reply_to(message, '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]))
+    bot.send_message(message.chat.id, '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]))
 
 
 def _thinking(message):
