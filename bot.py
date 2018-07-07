@@ -12,7 +12,6 @@ from sheet import retrieve_team_status, get_welfare_status_for
 log = None
 
 
-
 def startup_bot(arguments):
     global log
     checked_load_logging_config("~/.python/logging.conf")
