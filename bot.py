@@ -10,7 +10,7 @@ from my_logging import checked_load_logging_config, basic_logger_config, get_log
 from sheet import retrieve_team_status, get_welfare_status_for
 
 log = None
-
+asfjbasf="fskdjgnf"
 
 
 def startup_bot(arguments):
