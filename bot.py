@@ -27,10 +27,9 @@ def startup_bot(arguments):
         sys.exit(255)
 
 
-bot = startup_bot(sys.argv)
-
-
 def main():
+    global bot
+    bot = startup_bot(sys.argv)
     start_telegram_poll()
 
 
@@ -63,7 +62,8 @@ def print_help(message):
 @bot.message_handler(commands=['howarewe'])
 def howarewe(message):
     _thinking(message)
-    bot.send_message(message.chat.id, '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]))
+    bot.send_message(message.chat.id,
+                     '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]))
 
 
 def _thinking(message):
@@ -71,4 +71,5 @@ def _thinking(message):
     bot.send_chat_action(message.chat.id, 'typing')
 
 
-main()
+if __name__ == '__main__':
+    main()
