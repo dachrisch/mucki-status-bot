@@ -27,9 +27,10 @@ def startup_bot(arguments):
         sys.exit(255)
 
 
+bot = startup_bot(sys.argv)
+
+
 def main():
-    global bot
-    bot = startup_bot(sys.argv)
     start_telegram_poll()
 
 
