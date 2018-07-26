@@ -10,6 +10,7 @@ from my_logging import checked_load_logging_config, basic_logger_config, get_log
 from sheet import retrieve_team_status, get_welfare_status_for
 
 log = None
+highlights = {}
 
 
 def startup_bot(arguments):
@@ -65,6 +66,19 @@ def howarewe(message):
     _thinking(message)
     bot.send_message(message.chat.id,
                      '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]))
+
+
+@bot.message_handler(regexp='#highlight')
+def collect_highlight(message):
+    highlights[message.from_user.first_name] = str(message.text)
+    bot.send_message(message.chat.id, 'collecting highlight for %s: [%s]' % (
+        message.from_user.first_name, highlights[message.from_user.first_name]))
+
+
+@bot.message_handler(commands=['show_highlights'])
+def show_highlights(message):
+    bot.send_message(message.chat.id, 'the following highlights are available: %s' % '\n'.join(
+        '%s: %s' % (key, val) for (key, val) in highlights.iteritems()))
 
 
 def _thinking(message):
