@@ -2,7 +2,7 @@
 
 import yampy
 
-MEINE_WOCHE_GROUP_ID = 207628
+from config import MEINE_WOCHE_GROUP_ID
 
 
 class YammerConnector(object):

@@ -1,10 +1,8 @@
 from cachetools.func import ttl_cache
 
+from config import MUCKI_TRACKER_SHEET_ID, MUCKI_TRACKER_TEAM_STATUS_RANGE
 from my_logging import get_logger
 from sheets import SheetConnector
-
-MUCKI_TRACKER_SHEET_ID = '1x5TECCvP3sF3cmMJiD5frkjkmGOVt2pWgNe2eB2zZtI'
-MUCKI_TRACKER_TEAM_STATUS_RANGE = 'status!A2:F8'
 
 log = get_logger(__name__)
 

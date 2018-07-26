@@ -3,9 +3,8 @@ import sys
 
 from telebot import TeleBot
 
+from config import MUC_TELEGRAM_GROUP_ID
 from sheet import get_welfare_status_for, retrieve_team_status
-
-MUC_TELEGRAM_GROUP_ID = '-7330502'
 
 
 def trigger_howarewe(bot_id):
