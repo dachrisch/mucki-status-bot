@@ -6,11 +6,12 @@ import time
 from requests import RequestException
 from telebot import TeleBot, types
 
+from highlights import Highlights
 from my_logging import checked_load_logging_config, basic_logger_config, get_logger
 from sheet import retrieve_team_status, get_welfare_status_for
 
 log = None
-highlights = {}
+highlights = Highlights()
 
 
 def startup_bot(arguments):
@@ -70,16 +71,15 @@ def howarewe(message):
 
 @bot.message_handler(regexp='#highlight')
 def collect_highlight(message):
-    highlights[message.from_user.first_name] = str(message.text)
-    bot.send_message(message.chat.id, 'collecting highlight for %s: [%s]' % (
-        message.from_user.first_name, highlights[message.from_user.first_name]))
+    user = message.from_user.first_name
+    highlights.add(user, str(message.text))
+    bot.send_message(message.chat.id, 'collecting highlight for %s: [%s]' % (user, highlights.get(user)))
 
 
 @bot.message_handler(commands=['show_highlights'])
 def show_highlights(message):
-    if highlights:
-        bot.send_message(message.chat.id, 'the following highlights are available: %s' % '\n'.join(
-            '%s: %s' % (key, val) for (key, val) in highlights.iteritems()))
+    if highlights.is_not_empty():
+        bot.send_message(message.chat.id, 'the following highlights are available: %s' % highlights.message_string())
     else:
         bot.send_message(message.chat.id, 'no highlights available')
 
@@ -87,20 +87,23 @@ def show_highlights(message):
 @bot.message_handler(commands=['send_highlights'])
 def send_highlights(message):
     show_highlights(message)
-    markup = types.ReplyKeyboardMarkup(row_width=2, one_time_keyboard=True)
-    itembtn1 = types.KeyboardButton('yes')
-    itembtn2 = types.KeyboardButton('no')
-    markup.add(itembtn1, itembtn2)
-    bot.send_message(message.chat.id, 'really send?', reply_markup=markup)
-    bot.register_next_step_handler(message, handle_send_reply)
+    if highlights.is_not_empty():
+        markup = types.ReplyKeyboardMarkup(row_width=2, one_time_keyboard=True)
+        itembtn1 = types.KeyboardButton('yes')
+        itembtn2 = types.KeyboardButton('no')
+        markup.add(itembtn1, itembtn2)
+        bot.send_message(message.chat.id, 'really send?', reply_markup=markup)
+        bot.register_next_step_handler(message, handle_send_reply)
 
 
 def handle_send_reply(message):
     if 'yes' == message.text:
-        bot.send_message(message.chat.id, 'sending highlights...')
+        message_url = highlights.send_to_yammer()
+        bot.send_message(message.chat.id, 'highlights posted to yammer: [%s]' % message_url)
         highlights.clear()
     else:
         bot.send_message(message.chat.id, 'ok, not sending highlights.')
+
 
 def _thinking(message):
     bot.send_message(message.chat.id, 'calculating welfare status of team...')
