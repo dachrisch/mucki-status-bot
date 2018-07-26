@@ -10,10 +10,18 @@ class Highlights(object):
         self.__yc = YammerConnector()
 
     def add(self, username, highlight):
-        self.__highlights[username] = highlight.replace('#highlight', '').strip()
+        text = highlight.replace('#highlight', '').strip()
+        if text:
+            self.__highlights[username] = text
+            return True
+        else:
+            return False
 
     def get(self, username):
-        return self.__highlights[username]
+        if self.__highlights.has_key(username):
+            return self.__highlights[username]
+        else:
+            return None
 
     def is_not_empty(self):
         return not not self.__highlights

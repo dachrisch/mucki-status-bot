@@ -57,8 +57,12 @@ def start(message):
 
 @bot.message_handler(commands=['start', 'help'])
 def print_help(message):
-    bot.send_message(message.chat.id, 'available commands:\n'
-                                      '/howarewe - get status of team\n'
+    bot.send_message(message.chat.id,
+                     "I'm the bot of the *Südsterne* team.\n"
+                     'I listen for #highlight messages and otherwise offer the following commands:\n'
+                     '/howarewe - get status of team\n'
+                     '/show_highlights - displays the currently available highlights\n'
+                     '/send_highlights - sends highlights to yammer with current week tag\n'
                      )
 
 
@@ -72,8 +76,8 @@ def howarewe(message):
 @bot.message_handler(regexp='#highlight')
 def collect_highlight(message):
     user = message.from_user.first_name
-    highlights.add(user, str(message.text))
-    bot.send_message(message.chat.id, 'collecting highlight for %s: [%s]' % (user, highlights.get(user)))
+    if highlights.add(user, str(message.text)):
+        bot.send_message(message.chat.id, 'collecting highlight for %s: [%s]' % (user, highlights.get(user)))
 
 
 @bot.message_handler(commands=['show_highlights'])
