@@ -1,4 +1,4 @@
 runtime: python27
 env: flex
 entrypoint: gcloud_startup.sh
-
+threadsafe: false
