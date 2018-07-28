@@ -1,4 +1,8 @@
 # coding=UTF-8
+import os
+import sys
+import traceback
+
 from flask import Flask, render_template, request
 from concurrent.futures import ThreadPoolExecutor
 from sheet import retrieve_team_status
@@ -13,7 +17,10 @@ class BotLogger(object):
         self.__stream = None
 
     def dump(self):
-        return self.__stream
+        if self.__stream:
+            return self.__stream.read()
+        else:
+            return ''
 
     def listen(self, stream):
         self.__stream = stream
@@ -42,10 +49,12 @@ def telegram():
 
 
 def run_bot(token):
-    import subprocess
 
-    p = subprocess.Popen('TELEBOT_TOKEN=%s python2 bot.py' % token)
-    bot_log.listen(p.communicate())
+    try:
+        p = os.popen('TELEBOT_TOKEN=%s python bot.py' % token)
+        bot_log.listen(p)
+    except:
+        traceback.print_exc(file=sys.stdout)
 
 
 if __name__ == '__main__':
