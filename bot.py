@@ -1,5 +1,6 @@
 # coding=UTF-8
 # https://github.com/eternnoir/pyTelegramBotAPI
+import os
 import sys
 import time
 
@@ -14,22 +15,21 @@ log = None
 highlights = Highlights()
 
 
-def startup_bot(arguments):
+def startup_bot(token):
     global log
     checked_load_logging_config("~/.python/logging.conf")
 
     basic_logger_config()
 
     log = get_logger(__name__)
-    log.info('starting %s' % __name__)
-    try:
-        return TeleBot(arguments[1])
-    except:
-        log.error('usage: python %s <TOKEN>', arguments[0])
+    if not token:
+        log.error('usage: python %s <TOKEN>' % os.path.basename(__file__))
         sys.exit(255)
+    log.info('starting %s' % __name__)
+    return TeleBot(token)
 
 
-bot = startup_bot(sys.argv)
+bot = startup_bot(os.getenv('TELEBOT_TOKEN'))
 
 
 def main():
