@@ -35,16 +35,9 @@ def main():
 
 
 def start_telegram_poll():
-    while True:
-        try:
-            log.info('started %s. polling...' % __name__)
-            bot.polling()
-            log.info('finished polling')
-            break
-        except RequestException, e:
-            log.warn('restarting after RequestException: %s', e.message)
-            bot.stop_polling()
-            time.sleep(5)
+    log.info('started %s. polling...' % __name__)
+    bot.polling()
+    log.info('finished polling')
 
 
 @bot.message_handler(commands=['start', ])
