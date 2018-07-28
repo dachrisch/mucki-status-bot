@@ -6,10 +6,12 @@ from os import path
 
 def checked_load_logging_config(config_path):
     expanded_config_path = path.expanduser(config_path)
-    if not path.exists(expanded_config_path):
-        raise Exception(
+    if path.exists(expanded_config_path):
+        logging.config.fileConfig(expanded_config_path)
+    else:
+        print(
             "failed to locate a logging configuration at [%s]. please check the location" % expanded_config_path)
-    logging.config.fileConfig(expanded_config_path)
+        basic_logger_config()
 
 
 def basic_logger_config():
