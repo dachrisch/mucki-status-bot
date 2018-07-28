@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>Muckibot - Team Status</title>
+</head>
+<body>
+<h1>Current Team Status</h1>
+<table>
+{% for key, value in status.iteritems() %}
+   <tr>
+        <th> {{ key }} </th>
+        <td> {{ value }} </td>
+   </tr>
+{% endfor %}
+</table>
+</body>
+</html>
