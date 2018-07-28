@@ -6,15 +6,20 @@ from sheet import retrieve_team_status
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route('/')
 def hello():
     return render_template('index.html')
 
 
-@app.route("/status")
+@app.route('/status')
 def status():
     return render_template('status.html',
                            status=retrieve_team_status())
+
+
+@app.route('/telegram')
+def telegram():
+    return render_template('telegram')
 
 
 if __name__ == '__main__':
