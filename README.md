@@ -6,14 +6,16 @@ Telegram-Bot analysing the inbox tracking sheet and gives status information of 
 
 $ python bot.py \<token\>
 
+## Functions
+
+listens for #highlight messages
+
 ## Commands
 
 /start          - just a hello
 
-/team           - list team members
-
-/howami         - reply own welfare status
-
-/howis <name>   - reply status of team member
-
 /howarewe       - reply status of team
+
+/show_highlights - displays the currently available highlights
+
+/send highlights - sends highlights to yammer with current week tag
