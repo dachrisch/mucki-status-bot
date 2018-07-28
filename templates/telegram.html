@@ -3,8 +3,14 @@
     <title>Muckibot - Telegram Bot</title>
 </head>
 <body>
+<textarea name="log">{{ log }}</textarea>
 <h1>Choose from the following commands</h1>
 <p>Start Bot</p>
+<form role="form" method='POST' action='/telegram'>
+    <input type="text" name="token"/>
+    <button type="submit">Start</button>
+</form>
+
 <p>Stop Bot</p>
 </body>
 </html>
