@@ -1,6 +1,6 @@
 runtime: python
 env: flex
-entrypoint: python bot.py
+entrypoint: gcloud_startup.sh
 
 
 runtime_config:
