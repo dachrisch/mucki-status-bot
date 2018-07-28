@@ -19,8 +19,6 @@ def startup_bot(token):
     global log
     checked_load_logging_config("~/.python/logging.conf")
 
-    basic_logger_config()
-
     log = get_logger(__name__)
     if not token:
         log.error('usage: TELEBOT_TOKE=<token> python %s' % os.path.basename(__file__))
