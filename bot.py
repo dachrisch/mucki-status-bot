@@ -23,7 +23,7 @@ def startup_bot(token):
 
     log = get_logger(__name__)
     if not token:
-        log.error('usage: python %s <TOKEN>' % os.path.basename(__file__))
+        log.error('usage: TELEBOT_TOKE=<token> python %s' % os.path.basename(__file__))
         sys.exit(255)
     log.info('starting %s' % __name__)
     return TeleBot(token)
