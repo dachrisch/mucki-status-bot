@@ -3,3 +3,4 @@ pyTelegramBotAPI
 cachetools
 schedule
 yampy
+oauth2client
