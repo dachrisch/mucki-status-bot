@@ -13,3 +13,6 @@ class YammerConnector(object):
     def post_meine_woche(self, message, tags=()):
         message = self.__yammer.messages.create(message, group_id=MEINE_WOCHE_GROUP_ID, topics=tags)
         return message['messages'][0]['web_url']
+
+    def alive(self):
+        self.__yammer.messages.all()

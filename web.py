@@ -1,14 +1,12 @@
 # coding=UTF-8
-import os
-import sys
-import traceback
 from multiprocessing import Process
 
-from flask import Flask, render_template, request, url_for, redirect
 from concurrent.futures import ThreadPoolExecutor
+from flask import Flask, render_template, request, url_for, redirect
 
 from sheet import retrieve_team_status
 from sheets import SheetConnector
+from yammer import YammerConnector
 
 executor = ThreadPoolExecutor(1)
 
@@ -65,6 +63,26 @@ def kill():
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
     return "Shutting down..."
+
+
+@app.route('/alive')
+def alive():
+    try:
+        retrieve_team_status()
+    except Exception, e:
+        return 'error during Sheet connection: [%s]' % e.message, 503
+
+    try:
+        SheetConnector.get_credentials()
+    except Exception, e:
+        return 'error during Credentials: [%s]' % e.message, 503
+
+    try:
+        YammerConnector().alive()
+    except Exception, e:
+        return 'error during Yammer connection: [%s]' % e.message, 503
+
+    return 'OK'
 
 
 def start_server():
