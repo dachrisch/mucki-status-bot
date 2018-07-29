@@ -64,8 +64,11 @@ def print_help(message):
 @bot.message_handler(commands=['howarewe'])
 def howarewe(message):
     _thinking(message)
-    bot.send_message(message.chat.id,
-                     '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]))
+    try:
+        bot.send_message(message.chat.id,
+                         '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]))
+    except Exception, e:
+        bot.send_message(message.chat.id, 'failed to obtain status: [%s]' % e.message)
 
 
 @bot.message_handler(regexp='#highlight')
@@ -97,8 +100,12 @@ def send_highlights(message):
 
 def handle_send_reply(message):
     if 'yes' == message.text:
-        message_url = highlights.send_to_yammer()
-        bot.send_message(message.chat.id, 'highlights posted to yammer: [%s]' % message_url)
+        try:
+            message_url = highlights.send_to_yammer()
+            bot.send_message(message.chat.id, 'highlights posted to yammer: [%s]' % message_url)
+        except Exception, e:
+            bot.send_message(message.chat.id, 'failed to post to yammer: [%s]' % e.message)
+
         highlights.clear()
     else:
         bot.send_message(message.chat.id, 'ok, not sending highlights.')
