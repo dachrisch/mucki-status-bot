@@ -8,3 +8,4 @@ APPLICATION_NAME = 'Muckibot'
 CLIENT_SECRET_FILE = 'client_secret.json'
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
 CONFIG_PATH = "~/.python/logging.conf"
+ACCESS_TOKEN = 'YAMMER_TOKEN'
