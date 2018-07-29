@@ -6,6 +6,7 @@ import traceback
 from flask import Flask, render_template, request
 from concurrent.futures import ThreadPoolExecutor
 from sheet import retrieve_team_status
+from sheets import SheetConnector
 
 executor = ThreadPoolExecutor(1)
 
@@ -48,8 +49,15 @@ def telegram():
     return render_template('telegram.html', log=bot_log.dump())
 
 
-def run_bot(token):
+@app.route('/sheets/authenticate')
+def authenticate_sheets():
+    if SheetConnector.get_credentials().invalid:
+        return "Not Authenticated"
+    else:
+        return "Authenticated"
 
+
+def run_bot(token):
     try:
         p = os.popen('TELEBOT_TOKEN=%s python bot.py' % token)
         bot_log.listen(p)

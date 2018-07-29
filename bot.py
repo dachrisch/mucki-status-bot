@@ -2,13 +2,11 @@
 # https://github.com/eternnoir/pyTelegramBotAPI
 import os
 import sys
-import time
 
-from requests import RequestException
 from telebot import TeleBot, types
 
 from highlights import Highlights
-from my_logging import checked_load_logging_config, basic_logger_config, get_logger
+from my_logging import checked_load_logging_config, get_logger
 from sheet import retrieve_team_status, get_welfare_status_for
 
 log = None
