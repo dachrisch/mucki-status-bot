@@ -7,11 +7,8 @@ import os
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
+from config import APPLICATION_NAME, CLIENT_SECRET_FILE, SCOPES
 from my_logging import get_logger
-
-SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
-CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Muckibot'
 
 
 class SheetConnector(object):

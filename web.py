@@ -2,6 +2,7 @@
 import os
 import sys
 import traceback
+from multiprocessing import Process
 
 from flask import Flask, render_template, request, url_for, redirect
 from concurrent.futures import ThreadPoolExecutor
@@ -12,6 +13,7 @@ from sheets import SheetConnector
 executor = ThreadPoolExecutor(1)
 
 app = Flask(__name__)
+server = None
 
 
 class BotLogger(object):
@@ -80,6 +82,15 @@ def unhandled_exception(e):
     return render_template('500.html', error=str(e)), 500
 
 
+@app.route('/kill')
+def kill():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+    return "Shutting down..."
+
+
 def run_bot(token):
     try:
         p = os.popen('TELEBOT_TOKEN=%s python bot.py' % token)
@@ -88,5 +99,16 @@ def run_bot(token):
         traceback.print_exc(file=sys.stdout)
 
 
+def web():
+    global server
+    server = Process(target=app.run, kwargs={'host': '0.0.0.0', 'port': 8080})
+    server.start()
+
+
+def kill():
+    server.terminate()
+    server.join()
+
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    web()
