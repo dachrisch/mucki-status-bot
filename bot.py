@@ -10,7 +10,7 @@ from config import WITH_WEB, TELEBOT_TOKEN, CONFIG_PATH
 from highlights import Highlights
 from my_logging import checked_load_logging_config, get_logger
 from sheet import retrieve_team_status, get_welfare_status_for
-from web import web, kill
+from web import start_server, kill_server
 
 log = None
 highlights = Highlights()
@@ -33,9 +33,9 @@ bot = startup_bot(os.getenv(TELEBOT_TOKEN))
 
 def main():
     if os.getenv(WITH_WEB):
-        web()
+        start_server()
     start_telegram_poll()
-    kill()
+    kill_server()
 
 
 def start_telegram_poll():

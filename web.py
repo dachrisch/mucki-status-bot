@@ -15,22 +15,6 @@ executor = ThreadPoolExecutor(1)
 app = Flask(__name__)
 server = None
 
-
-class BotLogger(object):
-    def __init__(self):
-        self.__stream = None
-
-    def dump(self):
-        if self.__stream:
-            return self.__stream.read()
-        else:
-            return ''
-
-    def listen(self, stream):
-        self.__stream = stream
-
-
-bot_log = BotLogger()
 flow = None
 
 
@@ -43,14 +27,6 @@ def hello():
 def status():
     return render_template('status.html',
                            status=retrieve_team_status())
-
-
-@app.route('/telegram', methods=['GET', 'POST'])
-def telegram():
-    if request.method == "POST":
-        token = request.form['token']
-        executor.submit(run_bot, token)
-    return render_template('telegram.html', log=bot_log.dump())
 
 
 @app.route('/sheets/authenticate', methods=['GET', 'POST'])
@@ -91,24 +67,16 @@ def kill():
     return "Shutting down..."
 
 
-def run_bot(token):
-    try:
-        p = os.popen('TELEBOT_TOKEN=%s python bot.py' % token)
-        bot_log.listen(p)
-    except:
-        traceback.print_exc(file=sys.stdout)
-
-
-def web():
+def start_server():
     global server
     server = Process(target=app.run, kwargs={'host': '0.0.0.0', 'port': 8080})
     server.start()
 
 
-def kill():
+def kill_server():
     server.terminate()
     server.join()
 
 
 if __name__ == '__main__':
-    web()
+    start_server()
