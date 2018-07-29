@@ -3,8 +3,9 @@ import os
 import sys
 import traceback
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect
 from concurrent.futures import ThreadPoolExecutor
+
 from sheet import retrieve_team_status
 from sheets import SheetConnector
 
@@ -28,6 +29,7 @@ class BotLogger(object):
 
 
 bot_log = BotLogger()
+flow = None
 
 
 @app.route('/')
@@ -49,12 +51,27 @@ def telegram():
     return render_template('telegram.html', log=bot_log.dump())
 
 
-@app.route('/sheets/authenticate')
+@app.route('/sheets/authenticate', methods=['GET', 'POST'])
 def authenticate_sheets():
-    if SheetConnector.get_credentials().invalid:
-        return "Not Authenticated"
+    if request.method == "POST":
+        global flow
+        flow = SheetConnector.flow(request.form['client_id'], request.form['client_secret'],
+                                   url_for('callback', _external=True))
+        return redirect(flow.step1_get_authorize_url())
     else:
-        return "Authenticated"
+        return render_template('oauth.html')
+
+
+@app.route('/sheets/callback')
+def callback():
+    code = request.args.get('code')
+    global flow
+    credentials = flow.step2_exchange(code)
+    SheetConnector.store(credentials)
+    if SheetConnector.get_credentials().invalid:
+        return "Failed"
+    else:
+        return "OK"
 
 
 def run_bot(token):
@@ -66,4 +83,4 @@ def run_bot(token):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='localhost', port=8080)
