@@ -74,6 +74,12 @@ def callback():
         return "OK"
 
 
+@app.errorhandler(Exception)
+def unhandled_exception(e):
+    app.logger.error('Unhandled Exception: %s', e)
+    return render_template('500.html', error=str(e)), 500
+
+
 def run_bot(token):
     try:
         p = os.popen('TELEBOT_TOKEN=%s python bot.py' % token)
