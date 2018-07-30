@@ -1,8 +1,9 @@
 # coding=UTF-8
+import os
 from multiprocessing import Process
 
 from concurrent.futures import ThreadPoolExecutor
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, send_from_directory
 
 from sheet import retrieve_team_status
 from sheets import SheetConnector
@@ -83,6 +84,12 @@ def alive():
         return 'error during Yammer connection: [%s]' % e.message, 503
 
     return 'OK'
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 def start_server():
