@@ -3,7 +3,6 @@
 import os
 import sys
 
-from concurrent.futures import ThreadPoolExecutor
 from telebot import TeleBot, types
 
 from config import WITH_WEB, TELEBOT_TOKEN, CONFIG_PATH
@@ -40,7 +39,10 @@ def main():
 
 def start_telegram_poll():
     log.info('started %s. polling...' % __name__)
-    bot.polling()
+    try:
+        bot.polling()
+    except Exception, e:
+        log.exception(e)
     log.info('finished polling')
 
 
