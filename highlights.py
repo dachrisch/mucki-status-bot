@@ -10,7 +10,7 @@ class Highlights(object):
         self.__yc = YammerConnector()
 
     def add(self, username, highlight):
-        text = highlight.replace('#highlight', '').strip()
+        text = highlight.replace('#highlights ', '').strip()
         if text:
             self.__highlights[username] = text
             return True

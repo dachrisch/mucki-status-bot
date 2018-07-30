@@ -31,18 +31,18 @@ bot = startup_bot(os.getenv(TELEBOT_TOKEN))
 
 
 def main():
-    if os.getenv(WITH_WEB):
-        start_server()
-    start_telegram_poll()
-    kill_server()
+    try:
+        if os.getenv(WITH_WEB):
+            start_server()
+        start_telegram_poll()
+    finally:
+        if os.getenv(WITH_WEB):
+            kill_server()
 
 
 def start_telegram_poll():
     log.info('started %s. polling...' % __name__)
-    try:
-        bot.polling()
-    except Exception, e:
-        log.exception(e)
+    bot.polling()
     log.info('finished polling')
 
 
@@ -73,10 +73,10 @@ def howarewe(message):
         bot.send_message(message.chat.id, 'failed to obtain status: [%s]' % e.message)
 
 
-@bot.message_handler(regexp='#highlight')
+@bot.message_handler(regexp='#highlights .*')
 def collect_highlight(message):
     user = message.from_user.first_name
-    if highlights.add(user, str(message.text)):
+    if highlights.add(user, unicode(message.text)):
         bot.send_message(message.chat.id, 'collecting highlight for %s: [%s]' % (user, highlights.get(user)))
 
 
