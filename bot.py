@@ -6,7 +6,7 @@ import sys
 from telebot import TeleBot, types
 
 from config import WITH_WEB, TELEBOT_TOKEN, CONFIG_PATH
-from highlights import Highlights
+from highlights import Highlights, HIGHLIGHTS_PATTERN
 from my_logging import checked_load_logging_config, get_logger
 from sheet import retrieve_team_status, get_welfare_status_for
 from web import start_server, kill_server
@@ -73,7 +73,7 @@ def howarewe(message):
         bot.send_message(message.chat.id, 'failed to obtain status: [%s]' % e.message)
 
 
-@bot.message_handler(regexp='#highlights .*')
+@bot.message_handler(regexp=HIGHLIGHTS_PATTERN)
 def collect_highlight(message):
     user = message.from_user.first_name
     if highlights.add(user, unicode(message.text)):

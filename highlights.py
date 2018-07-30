@@ -1,7 +1,10 @@
 # coding=UTF-8
+import re
 from datetime import datetime
 
 from yammer import YammerConnector
+
+HIGHLIGHTS_PATTERN = '#highlights[ :]+'
 
 
 class Highlights(object):
@@ -10,7 +13,7 @@ class Highlights(object):
         self.__yc = YammerConnector()
 
     def add(self, username, highlight):
-        text = highlight.replace('#highlights ', '').strip()
+        text = re.sub(HIGHLIGHTS_PATTERN, '', highlight).strip()
         if text:
             self.__highlights[username] = text
             return True
