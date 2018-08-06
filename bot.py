@@ -83,7 +83,7 @@ def collect_highlight(message):
 @bot.message_handler(commands=['show_highlights'])
 def show_highlights(message):
     if highlights.is_not_empty():
-        bot.send_message(message.chat.id, 'the following highlights are available: %s' % highlights.message_string())
+        bot.send_message(message.chat.id, 'the following highlights are available:\n%s' % highlights.message_string())
     else:
         bot.send_message(message.chat.id, 'no highlights available')
 
