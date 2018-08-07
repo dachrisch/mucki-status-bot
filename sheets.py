@@ -29,8 +29,8 @@ class SymlinkAwareStorage(Storage):
 
         return credentials
 
-    def locked_put(self):
-        # not supported
+    def locked_put(self, credentials):
+        get_logger(__name__).warn('ignoring credentials update: %s' % credentials)
         pass
 
 
