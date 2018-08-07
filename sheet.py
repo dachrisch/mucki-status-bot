@@ -8,7 +8,7 @@ log = get_logger(__name__)
 
 
 @ttl_cache()
-def retrieve_team_status():
+def per_user_status_details():
     log.info('loading welfare status')
     team_name_status = SheetConnector(MUCKI_TRACKER_SHEET_ID).values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE)
     team_name_status_dict = {}
@@ -19,4 +19,4 @@ def retrieve_team_status():
 
 
 def get_welfare_status_for(name):
-    return '%s is %s' % (name, retrieve_team_status()[name])
+    return '%s is %s' % (name, per_user_status_details()[name])

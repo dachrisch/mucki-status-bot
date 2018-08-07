@@ -8,7 +8,7 @@ from telebot import TeleBot, types
 from config import WITH_WEB, TELEBOT_TOKEN, CONFIG_PATH
 from highlights import Highlights, HIGHLIGHTS_PATTERN
 from my_logging import checked_load_logging_config, get_logger
-from sheet import retrieve_team_status, get_welfare_status_for
+from sheet import per_user_status_details, get_welfare_status_for
 from web import start_server, kill_server
 
 log = None
@@ -68,7 +68,7 @@ def howarewe(message):
     _thinking(message)
     try:
         bot.send_message(message.chat.id,
-                         '\n'.join([get_welfare_status_for(name) for name in retrieve_team_status().keys()]))
+                         '\n'.join([get_welfare_status_for(name) for name in per_user_status_details().keys()]))
     except Exception, e:
         bot.send_message(message.chat.id, 'failed to obtain status: [%s]' % e.message)
 

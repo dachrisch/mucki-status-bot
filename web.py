@@ -5,7 +5,7 @@ from multiprocessing import Process
 from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, render_template, request, url_for, redirect, send_from_directory
 
-from sheet import retrieve_team_status
+from sheet import per_user_status_details
 from sheets import SheetConnector
 from yammer import YammerConnector
 
@@ -25,7 +25,7 @@ def hello():
 @app.route('/status')
 def status():
     return render_template('status.html',
-                           status=retrieve_team_status())
+                           status=per_user_status_details())
 
 
 @app.route('/sheets/authenticate', methods=['GET', 'POST'])
@@ -69,7 +69,7 @@ def kill():
 @app.route('/alive')
 def alive():
     try:
-        retrieve_team_status()
+        per_user_status_details()
     except Exception, e:
         return 'error during Sheet connection: [%s]' % e.message, 503
 
