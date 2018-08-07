@@ -6,3 +6,4 @@ yampy
 oauth2client
 flask
 futures
+safygiphy
