@@ -29,6 +29,10 @@ class SymlinkAwareStorage(Storage):
 
         return credentials
 
+    def locked_put(self):
+        # not supported
+        pass
+
 
 class SheetConnector(object):
     def __init__(self, sheet_id):
