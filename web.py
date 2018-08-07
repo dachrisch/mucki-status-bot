@@ -2,14 +2,15 @@
 import os
 from multiprocessing import Process
 
-from concurrent.futures import ThreadPoolExecutor
-from flask import Flask, render_template, request, url_for, redirect, send_from_directory
+from flask import Flask, render_template, request, send_from_directory
 
-from sheet import per_user_status_details
+from config import CONFIG_PATH
+from gif import random_gif_url
+from my_logging import checked_load_logging_config
+from sheet import per_user_status_details, per_user_status_code
 from sheets import SheetConnector
+from status import team_rating_to_shoutout
 from yammer import YammerConnector
-
-executor = ThreadPoolExecutor(1)
 
 app = Flask(__name__)
 server = None
@@ -21,44 +22,13 @@ flow = None
 def hello():
     return render_template('index.html')
 
-@app.route('/google')
-def google():
-    home_dir = os.path.expanduser('~')
-    credential_dir = os.path.join(home_dir, '.credentials')
-    credentials_filename = os.path.join(credential_dir, 'sheets.googleapis.com-python-quickstart.json')
-    f = open(credentials_filename, 'rb')
-    content = f.read()
-    f.close()
-    return content
-
 
 @app.route('/status')
 def status():
+    shout = team_rating_to_shoutout(per_user_status_code())
     return render_template('status.html',
-                           status=per_user_status_details())
-
-
-@app.route('/sheets/authenticate', methods=['GET', 'POST'])
-def authenticate_sheets():
-    if request.method == "POST":
-        global flow
-        flow = SheetConnector.flow(request.form['client_id'], request.form['client_secret'],
-                                   url_for('callback', _external=True))
-        return redirect(flow.step1_get_authorize_url())
-    else:
-        return render_template('oauth.html')
-
-
-@app.route('/sheets/callback')
-def callback():
-    code = request.args.get('code')
-    global flow
-    credentials = flow.step2_exchange(code)
-    SheetConnector.store(credentials)
-    if SheetConnector.get_credentials().invalid:
-        return "Failed"
-    else:
-        return "OK"
+                           status=per_user_status_details(), shout=shout,
+                           gif=random_gif_url(shout))
 
 
 @app.errorhandler(Exception)
@@ -80,17 +50,17 @@ def kill():
 def alive():
     try:
         per_user_status_details()
-    except Exception, e:
+    except Exception as e:
         return 'error during Sheet connection: [%s]' % e.message, 503
 
     try:
         SheetConnector.get_credentials()
-    except Exception, e:
+    except Exception as e:
         return 'error during Credentials: [%s]' % e.message, 503
 
     try:
         YammerConnector().alive()
-    except Exception, e:
+    except Exception as e:
         return 'error during Yammer connection: [%s]' % e.message, 503
 
     return 'OK'
@@ -114,4 +84,5 @@ def kill_server():
 
 
 if __name__ == '__main__':
+    checked_load_logging_config(CONFIG_PATH)
     start_server()
