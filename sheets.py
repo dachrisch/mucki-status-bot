@@ -1,9 +1,9 @@
-from oauth2client.client import OAuth2WebServerFlow
-from oauth2client.file import Storage
+import os
+
 from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
-import os
+from oauth2client.file import Storage
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
@@ -12,14 +12,21 @@ from my_logging import get_logger
 
 
 class _SymlinkAwareStorage(Storage):
+    def __init__(self, *args, **kwargs):
+        Storage.__init__(self, *args, **kwargs)
+        self.__credentials = self.__read_from_file()
+
     def locked_get(self):
+        return self.__credentials
+
+    def __read_from_file(self):
         credentials = None
         try:
             f = open(self._filename, 'rb')
             content = f.read()
             f.close()
         except IOError:
-            return credentials
+            pass
 
         try:
             credentials = client.Credentials.new_from_json(content)
@@ -30,8 +37,8 @@ class _SymlinkAwareStorage(Storage):
         return credentials
 
     def locked_put(self, credentials):
-        get_logger(__name__).warn('ignoring credentials update: %s' % credentials)
-        pass
+        get_logger(__name__).warn(
+            'ignoring credentials update for [%(user_agent)s] which expired %(token_expiry)s' % credentials.__dict__)
 
 
 class SheetConnector(object):
