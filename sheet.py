@@ -18,6 +18,7 @@ def per_user_status_details():
     return team_name_status_dict
 
 
+@ttl_cache()
 def per_user_status_code():
     log.info('loading per user status code')
     team_name_status = SheetConnector(MUCKI_TRACKER_SHEET_ID).values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE)

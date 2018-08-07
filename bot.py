@@ -6,9 +6,11 @@ import sys
 from telebot import TeleBot, types
 
 from config import WITH_WEB, TELEBOT_TOKEN, CONFIG_PATH
+from gif import random_gif_url
 from highlights import Highlights, HIGHLIGHTS_PATTERN
 from my_logging import checked_load_logging_config, get_logger
-from sheet import per_user_status_details, get_welfare_status_for
+from sheet import per_user_status_details, get_welfare_status_for, per_user_status_code
+from status import team_rating_to_shoutout
 from web import start_server, kill_server
 
 log = None
@@ -65,12 +67,26 @@ def print_help(message):
 
 @bot.message_handler(commands=['howarewe'])
 def howarewe(message):
-    _thinking(message)
+
     try:
-        bot.send_message(message.chat.id,
-                         '\n'.join([get_welfare_status_for(name) for name in per_user_status_details().keys()]))
-    except Exception, e:
+        _send_status(message)
+        _send_shoutout(message)
+    except Exception as e:
         bot.send_message(message.chat.id, 'failed to obtain status: [%s]' % e.message)
+
+
+def _send_shoutout(message):
+    _thinking(message)
+    shoutout = team_rating_to_shoutout(per_user_status_code())
+    bot.send_message(message.chat.id, '####### !%s! ########' % shoutout.upper())
+    bot.send_sticker(message.chat.id, random_gif_url(shoutout))
+
+
+def _send_status(message):
+    bot.send_message(message.chat.id, 'calculating welfare status of team...')
+    _thinking(message)
+    bot.send_message(message.chat.id,
+                     '\n'.join([get_welfare_status_for(name) for name in per_user_status_details().keys()]))
 
 
 @bot.message_handler(regexp=HIGHLIGHTS_PATTERN)
@@ -105,7 +121,7 @@ def handle_send_reply(message):
         try:
             message_url = highlights.send_to_yammer()
             bot.send_message(message.chat.id, 'highlights posted to yammer: [%s]' % message_url)
-        except Exception, e:
+        except Exception as e:
             bot.send_message(message.chat.id, 'failed to post to yammer: [%s]' % e.message)
 
         highlights.clear()
@@ -114,7 +130,6 @@ def handle_send_reply(message):
 
 
 def _thinking(message):
-    bot.send_message(message.chat.id, 'calculating welfare status of team...')
     bot.send_chat_action(message.chat.id, 'typing')
 
 
