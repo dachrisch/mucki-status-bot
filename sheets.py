@@ -11,6 +11,25 @@ from config import APPLICATION_NAME, CLIENT_SECRET_FILE, SCOPES
 from my_logging import get_logger
 
 
+class SymlinkAwareStorage(Storage):
+    def locked_get(self):
+        credentials = None
+        try:
+            f = open(self._filename, 'rb')
+            content = f.read()
+            f.close()
+        except IOError:
+            return credentials
+
+        try:
+            credentials = client.Credentials.new_from_json(content)
+            credentials.set_store(self)
+        except ValueError:
+            pass
+
+        return credentials
+
+
 class SheetConnector(object):
     def __init__(self, sheet_id):
         self.__sheet_id = sheet_id
@@ -42,7 +61,7 @@ class SheetConnector(object):
         if not os.path.exists(credential_dir):
             os.makedirs(credential_dir)
         credential_path = os.path.join(credential_dir, 'sheets.googleapis.com-python-quickstart.json')
-        store = Storage(credential_path)
+        store = SymlinkAwareStorage(credential_path)
         return store
 
     @classmethod
