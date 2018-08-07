@@ -65,22 +65,6 @@ class SheetConnector(object):
         return store
 
     @classmethod
-    def _client_id(cls):
-        return os.environ.get('CLIENT_ID')
-
-    @classmethod
-    def _client_secret(cls):
-        return os.environ.get('CLIENT_SECRET')
-
-    @classmethod
-    def flow(cls, client_id, client_secret, redirect_uri):
-        return OAuth2WebServerFlow(client_id, client_secret, SCOPES, redirect_uri)
-
-    @classmethod
-    def flow_from_env(cls, redirect_uri):
-        return OAuth2WebServerFlow(cls._client_id(), cls._client_secret(), SCOPES, redirect_uri)
-
-    @classmethod
     def _flow_from_client_secret(cls):
         return client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
 
