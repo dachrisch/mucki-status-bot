@@ -21,6 +21,16 @@ flow = None
 def hello():
     return render_template('index.html')
 
+@app.route('/google')
+def google():
+    home_dir = os.path.expanduser('~')
+    credential_dir = os.path.join(home_dir, '.credentials')
+    credentials_filename = os.path.join(credential_dir, 'sheets.googleapis.com-python-quickstart.json')
+    f = open(credentials_filename, 'rb')
+    content = f.read()
+    f.close()
+    return content
+
 
 @app.route('/status')
 def status():
