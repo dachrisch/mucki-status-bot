@@ -5,5 +5,4 @@ schedule
 yampy3
 oauth2client
 flask
-futures
 safygiphy
