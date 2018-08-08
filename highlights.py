@@ -4,7 +4,8 @@ from datetime import datetime
 
 from yammer import YammerConnector
 
-HIGHLIGHTS_PATTERN = '#highlights[ :]+'
+HIGHLIGHTS = '#highlights'
+HIGHLIGHTS_PATTERN = '(?:([^#]*) )?' + HIGHLIGHTS + '(?:[ :]*([^#]*))?'
 
 
 class Highlights(object):
@@ -13,9 +14,9 @@ class Highlights(object):
         self.__yc = YammerConnector()
 
     def add(self, username, highlight):
-        text = re.sub(HIGHLIGHTS_PATTERN, '', highlight).strip()
-        if text:
-            self.__highlights[username] = text
+        m = re.match(HIGHLIGHTS_PATTERN, highlight)
+        if m:
+            self.__highlights[username] = highlight.replace(HIGHLIGHTS, '').strip()
             return True
         else:
             return False
