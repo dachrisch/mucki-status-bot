@@ -1,9 +1,11 @@
 # coding=UTF-8
 import os
 import sys
+
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
-from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
+from telegram.ext import (Updater, CommandHandler, RegexHandler,
                           ConversationHandler, Handler)
+
 from config import WITH_WEB, BOT_TOKEN, CONFIG_PATH
 from gif import random_gif_url
 from highlights import Highlights, HIGHLIGHTS_PATTERN
@@ -90,7 +92,8 @@ def ask_for_consent(bot, update):
     show_highlights(bot, update)
     reply_keyboard = [['yes', 'no']]
     if highlights.is_not_empty():
-        _send_and_log(bot, update, 'really send?', reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
+        _send_and_log(bot, update, 'really send?',
+                      reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
         return 1
     else:
         return ConversationHandler.END
@@ -134,6 +137,7 @@ def _register_commands(updater):
 
 def _send_and_log(bot, update, message, is_debug=False, reply_markup=None):
     global log
+    log = get_logger(__name__)
     bot.send_message(UpdateRetriever(update).chat_id, message, reply_markup=reply_markup)
     if is_debug:
         log.debug(message)
@@ -162,9 +166,9 @@ def _thinking(bot, update):
     bot.send_chat_action(UpdateRetriever(update).chat_id, 'typing')
 
 
-def error(bot, update, error):
+def error(bot, update, _error):
     """Log Errors caused by Updates."""
-    log.warning('Update "%s" caused error "%s"', update, error)
+    log.warning('Update "%s" caused error "%s"', update, _error)
 
 
 if __name__ == '__main__':
