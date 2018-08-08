@@ -1,3 +1,4 @@
+# coding=utf-8
 import logging
 from logging import config
 import sys
@@ -13,7 +14,7 @@ def checked_load_logging_config(config_path):
         print(
             "failed to locate a logging configuration at [%s]. please check the location" % expanded_config_path)
         basic_logger_config()
-        get_logger(__name__).warn('using default config')
+        get_logger(__name__).warning('using default config')
 
 
 def basic_logger_config():

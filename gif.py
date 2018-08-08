@@ -7,7 +7,7 @@ from random import randint
 def search_gif(query, limit=25, offset=0):
     gif = Giphy().search(q=query, limit=limit, offset=offset)
     assert gif['meta']['status'] == 200, gif['meta']
-    assert gif['pagination']['total_count'] > 0, r
+    assert gif['pagination']['total_count'] > 0, gif
     return gif
 
 

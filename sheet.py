@@ -1,3 +1,4 @@
+# coding=utf-8
 from cachetools.func import ttl_cache
 
 from config import MUCKI_TRACKER_SHEET_ID, MUCKI_TRACKER_TEAM_STATUS_RANGE

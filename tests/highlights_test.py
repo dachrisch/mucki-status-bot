@@ -2,10 +2,9 @@
 import re
 import unittest
 
-from telegram import Bot, Update
-from telegram.ext import RegexHandler, Updater
+from telegram import Update
+from telegram.ext import RegexHandler
 
-from bot import collect_highlight
 from highlights import Highlights, HIGHLIGHTS_PATTERN
 
 HASH_AND_COLON = '#highlights: test'
@@ -34,7 +33,7 @@ class TestHighlights(unittest.TestCase):
         match = re.match(HIGHLIGHTS_PATTERN, BACK_HASH)
         self.assertTrue(bool(match))
 
-    def test_regex_back(self):
+    def test_regex_hash_colon(self):
         match = re.match(HIGHLIGHTS_PATTERN, HASH_AND_COLON)
         self.assertTrue(bool(match))
 
@@ -45,22 +44,22 @@ class TestHighlights(unittest.TestCase):
     def test_hash_front(self):
         highlights = Highlights()
         self.assertTrue(highlights.add('Chris', FRONT_HASH))
-        self.assertEquals('test', highlights.get('Chris'))
+        self.assertEqual('test', highlights.get('Chris'))
 
     def test_hash_back(self):
         highlights = Highlights()
         self.assertTrue(highlights.add('Chris', BACK_HASH))
-        self.assertEquals('test', highlights.get('Chris'))
+        self.assertEqual('test', highlights.get('Chris'))
 
     def test_hash_multiple(self):
         highlights = Highlights()
         self.assertTrue(highlights.add('Chris', BOTH_HASH))
-        self.assertEquals('test', highlights.get('Chris'))
+        self.assertEqual('test', highlights.get('Chris'))
 
-    def test_hash_front(self):
+    def test_hash_and_colon(self):
         highlights = Highlights()
         self.assertTrue(highlights.add('Chris', HASH_AND_COLON))
-        self.assertEquals('test', highlights.get('Chris'))
+        self.assertEqual('test', highlights.get('Chris'))
 
     def test_handler_regex_front(self):
         rh = RegexHandler(HIGHLIGHTS_PATTERN, None)

@@ -25,15 +25,15 @@ class TestStatus(unittest.TestCase):
 class TestShout(unittest.TestCase):
     def test_all_OK(self):
         status = {'A': 'OK', 'B': 'OK', 'C': 'OK', 'D': 'OK', 'E': 'OK', 'F': 'OK', 'G': 'OK', 'H': 'OK'}
-        self.assertEqual('perfect', team_rating_to_shoutout(status))
+        self.assertEqual('unicorn dance', team_rating_to_shoutout(status))
 
     def test_7_8_OK(self):
         status = {'A': 'OK', 'B': 'OK', 'C': 'OK', 'D': 'OK', 'E': 'OK', 'F': 'OK', 'G': 'OK', 'H': 'Überlast'}
-        self.assertEqual('awesome', team_rating_to_shoutout(status))
+        self.assertEqual('well', team_rating_to_shoutout(status))
 
     def test_6_8_OK(self):
         status = {'A': 'OK', 'B': 'OK', 'C': 'OK', 'D': 'OK', 'E': 'OK', 'F': 'OK', 'G': 'Überlast', 'H': 'Überlast'}
-        self.assertEqual('yeah', team_rating_to_shoutout(status))
+        self.assertEqual('well', team_rating_to_shoutout(status))
 
     def test_5_8_OK(self):
         status = {'A': 'OK', 'B': 'OK', 'C': 'OK', 'D': 'OK', 'E': 'OK', 'F': 'Überlast', 'G': 'Überlast',
@@ -43,27 +43,27 @@ class TestShout(unittest.TestCase):
     def test_4_8_OK(self):
         status = {'A': 'OK', 'B': 'OK', 'C': 'OK', 'D': 'OK', 'E': 'Überlast', 'F': 'Überlast', 'G': 'Überlast',
                   'H': 'Überlast'}
-        self.assertEqual('meeehhhh', team_rating_to_shoutout(status))
+        self.assertEqual('crying', team_rating_to_shoutout(status))
 
     def test_3_8_OK(self):
         status = {'A': 'OK', 'B': 'OK', 'C': 'OK', 'D': 'Überlast', 'E': 'Überlast', 'F': 'Überlast', 'G': 'Überlast',
                   'H': 'Überlast'}
-        self.assertEqual('oh oh', team_rating_to_shoutout(status))
+        self.assertEqual('crying', team_rating_to_shoutout(status))
 
     def test_2_8_OK(self):
         status = {'A': 'OK', 'B': 'OK', 'C': 'Überlast', 'D': 'Überlast', 'E': 'Überlast', 'F': 'Überlast',
                   'G': 'Überlast', 'H': 'Überlast'}
-        self.assertEqual('damn', team_rating_to_shoutout(status))
+        self.assertEqual('crying', team_rating_to_shoutout(status))
 
     def test_1_8_OK(self):
         status = {'A': 'OK', 'B': 'Überlast', 'C': 'Überlast', 'D': 'Überlast', 'E': 'Überlast', 'F': 'Überlast',
                   'G': 'Überlast', 'H': 'Überlast'}
-        self.assertEqual('panic', team_rating_to_shoutout(status))
+        self.assertEqual('crying', team_rating_to_shoutout(status))
 
     def test_0_8_OK(self):
         status = {'A': 'Überlast', 'B': 'Überlast', 'C': 'Überlast', 'D': 'Überlast', 'E': 'Überlast', 'F': 'Überlast',
                   'G': 'Überlast', 'H': 'Überlast'}
-        self.assertEqual('freakout', team_rating_to_shoutout(status))
+        self.assertEqual('panic scared', team_rating_to_shoutout(status))
 
 
 if __name__ == '__main__':

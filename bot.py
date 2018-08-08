@@ -72,12 +72,12 @@ def howarewe(bot, update):
         _send_status(bot, update)
         _send_shoutout(bot, update)
     except Exception as e:
-        _send_and_log(bot, update, 'failed to obtain status: [%s]' % e.message)
+        _send_and_log(bot, update, 'failed to obtain status: [%s]' % e)
 
 
 def collect_highlight(bot, update):
     user = UpdateRetriever(update).user
-    if highlights.add(user, unicode(update.message.text)):
+    if highlights.add(user, str(update.message.text)):
         _send_and_log(bot, update, 'collecting highlight for %s: [%s]' % (user, highlights.get(user)))
 
 
@@ -106,7 +106,7 @@ def send_highlights(bot, update):
             _send_and_log(bot, update, 'highlights posted to yammer: [%s]' % message_url,
                           reply_markup=ReplyKeyboardRemove())
         except Exception as e:
-            _send_and_log(bot, update, 'failed to post to yammer: [%s]' % e.message, reply_markup=ReplyKeyboardRemove())
+            _send_and_log(bot, update, 'failed to post to yammer: [%s]' % e, reply_markup=ReplyKeyboardRemove())
 
         highlights.clear()
     else:

@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 
 from apiclient import discovery
@@ -20,19 +21,11 @@ class _SymlinkAwareStorage(Storage):
         return self.__credentials
 
     def __read_from_file(self):
-        credentials = None
-        try:
-            f = open(self._filename, 'rb')
-            content = f.read()
-            f.close()
-        except IOError:
-            pass
-
-        try:
-            credentials = client.Credentials.new_from_json(content)
-            credentials.set_store(self)
-        except ValueError:
-            pass
+        f = open(self._filename, 'rb')
+        content = f.read()
+        f.close()
+        credentials = client.Credentials.new_from_json(content)
+        credentials.set_store(self)
 
         return credentials
 

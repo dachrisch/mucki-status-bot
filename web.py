@@ -51,17 +51,17 @@ def alive():
     try:
         per_user_status_details()
     except Exception as e:
-        return 'error during Sheet connection: [%s]' % e.message, 503
+        return 'error during Sheet connection: [%s]' % e, 503
 
     try:
         SheetConnector.get_credentials()
     except Exception as e:
-        return 'error during Credentials: [%s]' % e.message, 503
+        return 'error during Credentials: [%s]' % e, 503
 
     try:
         YammerConnector().alive()
     except Exception as e:
-        return 'error during Yammer connection: [%s]' % e.message, 503
+        return 'error during Yammer connection: [%s]' % e, 503
 
     return 'OK'
 

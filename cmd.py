@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import print_function
 
 from my_logging import checked_load_logging_config, get_logger

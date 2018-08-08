@@ -2,7 +2,7 @@ google-api-python-client
 python-telegram-bot
 cachetools
 schedule
-yampy
+yampy3
 oauth2client
 flask
 futures

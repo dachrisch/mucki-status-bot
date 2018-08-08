@@ -22,7 +22,7 @@ class Highlights(object):
             return False
 
     def get(self, username):
-        if self.__highlights.has_key(username):
+        if username in self.__highlights:
             return self.__highlights[username]
         else:
             return None
@@ -34,11 +34,12 @@ class Highlights(object):
         self.__highlights.clear()
 
     def message_string(self):
-        return '\n'.join('%s: %s' % (key, val) for (key, val) in self.__highlights.iteritems())
+        return '\n'.join('%s: %s' % (key, val) for (key, val) in self.__highlights.items())
 
     def send_to_yammer(self):
-        return self.__yc.post_meine_woche(u'Die Südsterne in %s:\n%s' % (current_calendar_week(), self.message_string()),
-                                          ('südsterne', current_calendar_week()))
+        return self.__yc.post_meine_woche(
+            u'Die Südsterne in %s:\n%s' % (current_calendar_week(), self.message_string()),
+            ('südsterne', current_calendar_week()))
 
 
 def current_calendar_week():
