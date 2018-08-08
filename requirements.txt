@@ -1,5 +1,5 @@
 google-api-python-client
-pyTelegramBotAPI
+python-telegram-bot
 cachetools
 schedule
 yampy

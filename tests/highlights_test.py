@@ -8,6 +8,8 @@ from telegram.ext import RegexHandler, Updater
 from bot import collect_highlight
 from highlights import Highlights, HIGHLIGHTS_PATTERN
 
+HASH_AND_COLON = '#highlights: test'
+
 BOTH_HASH = '#highlights test #highlights'
 
 BACK_HASH = 'test #highlights'
@@ -32,6 +34,10 @@ class TestHighlights(unittest.TestCase):
         match = re.match(HIGHLIGHTS_PATTERN, BACK_HASH)
         self.assertTrue(bool(match))
 
+    def test_regex_back(self):
+        match = re.match(HIGHLIGHTS_PATTERN, HASH_AND_COLON)
+        self.assertTrue(bool(match))
+
     def test_simple_text(self):
         highlights = Highlights()
         self.assertFalse(highlights.add('Chris', 'test'))
@@ -49,6 +55,11 @@ class TestHighlights(unittest.TestCase):
     def test_hash_multiple(self):
         highlights = Highlights()
         self.assertTrue(highlights.add('Chris', BOTH_HASH))
+        self.assertEquals('test', highlights.get('Chris'))
+
+    def test_hash_front(self):
+        highlights = Highlights()
+        self.assertTrue(highlights.add('Chris', HASH_AND_COLON))
         self.assertEquals('test', highlights.get('Chris'))
 
     def test_handler_regex_front(self):

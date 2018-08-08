@@ -16,7 +16,7 @@ class Highlights(object):
     def add(self, username, highlight):
         m = re.match(HIGHLIGHTS_PATTERN, highlight)
         if m:
-            self.__highlights[username] = highlight.replace(HIGHLIGHTS, '').strip()
+            self.__highlights[username] = (m.group(1) or m.group(2)).strip()
             return True
         else:
             return False
