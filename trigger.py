@@ -1,4 +1,5 @@
 # coding=UTF-8
+from __future__ import print_function
 import sys
 
 from telebot import TeleBot
@@ -15,6 +16,6 @@ def trigger_howarewe(bot_id):
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        print 'usage: %s <TOKEN>' % sys.argv[0]
+        print('usage: %s <TOKEN>' % sys.argv[0])
         sys.exit(-1)
     trigger_howarewe(sys.argv[1])

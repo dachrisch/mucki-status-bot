@@ -14,11 +14,13 @@ from status import team_rating_to_shoutout
 from web import start_server, kill_server
 
 log = None
+bot = TeleBot(None)
 highlights = Highlights()
 
 
-def startup_bot(token):
+def _startup_bot(token):
     global log
+    global bot
     checked_load_logging_config(CONFIG_PATH)
 
     log = get_logger(__name__)
@@ -26,26 +28,19 @@ def startup_bot(token):
         log.error('usage: TELEBOT_TOKEN=<token> python %s' % os.path.basename(__file__))
         sys.exit(255)
     log.info('starting %s' % __name__)
-    return TeleBot(token)
-
-
-bot = startup_bot(os.getenv(TELEBOT_TOKEN))
+    bot = TeleBot(token)
+    bot.polling()
+    log.info('finished polling')
 
 
 def main():
     try:
         if os.getenv(WITH_WEB):
             start_server()
-        start_telegram_poll()
+        _startup_bot(os.getenv(TELEBOT_TOKEN))
     finally:
         if os.getenv(WITH_WEB):
             kill_server()
-
-
-def start_telegram_poll():
-    log.info('started %s. polling...' % __name__)
-    bot.polling()
-    log.info('finished polling')
 
 
 @bot.message_handler(commands=['start', ])
@@ -67,26 +62,11 @@ def print_help(message):
 
 @bot.message_handler(commands=['howarewe'])
 def howarewe(message):
-
     try:
         _send_status(message)
         _send_shoutout(message)
     except Exception as e:
         bot.send_message(message.chat.id, 'failed to obtain status: [%s]' % e.message)
-
-
-def _send_shoutout(message):
-    _thinking(message)
-    shoutout = team_rating_to_shoutout(per_user_status_code())
-    bot.send_message(message.chat.id, '####### !%s! ########' % shoutout.upper())
-    bot.send_sticker(message.chat.id, random_gif_url(shoutout))
-
-
-def _send_status(message):
-    bot.send_message(message.chat.id, 'calculating welfare status of team...')
-    _thinking(message)
-    bot.send_message(message.chat.id,
-                     '\n'.join([get_welfare_status_for(name) for name in per_user_status_details().keys()]))
 
 
 @bot.message_handler(regexp=HIGHLIGHTS_PATTERN)
@@ -113,10 +93,24 @@ def send_highlights(message):
         itembtn2 = types.KeyboardButton('no')
         markup.add(itembtn1, itembtn2)
         bot.send_message(message.chat.id, 'really send?', reply_markup=markup)
-        bot.register_next_step_handler(message, handle_send_reply)
+        bot.register_next_step_handler(message, _handle_send_reply)
 
 
-def handle_send_reply(message):
+def _send_status(message):
+    bot.send_message(message.chat.id, 'calculating welfare status of team...')
+    _thinking(message)
+    bot.send_message(message.chat.id,
+                     '\n'.join([get_welfare_status_for(name) for name in per_user_status_details().keys()]))
+
+
+def _send_shoutout(message):
+    _thinking(message)
+    shoutout = team_rating_to_shoutout(per_user_status_code())
+    bot.send_message(message.chat.id, '####### !%s! ########' % shoutout.upper())
+    bot.send_sticker(message.chat.id, random_gif_url(shoutout))
+
+
+def _handle_send_reply(message):
     if 'yes' == message.text:
         try:
             message_url = highlights.send_to_yammer()
