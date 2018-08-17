@@ -118,12 +118,17 @@ def cancel(bot, update):
     _send_and_log(bot, update, 'ok, not sending highlights.', reply_markup=ReplyKeyboardRemove())
 
 
+def deals(bot, update):
+    _send_and_log(bot, update, 'Alles rosig!')
+
+
 def _register_commands(updater):
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('howarewe', howarewe))
     dp.add_handler(RegexHandler(HIGHLIGHTS_PATTERN, collect_highlight))
     dp.add_handler(CommandHandler('show_highlights', show_highlights))
+    dp.add_handler(CommandHandler('deals', deals))
     dp.add_error_handler(error)
     dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('send_highlights', ask_for_consent)],
