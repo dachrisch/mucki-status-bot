@@ -6,3 +6,4 @@ yampy3
 oauth2client
 flask
 safygiphy
+requests

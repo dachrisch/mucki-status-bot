@@ -10,3 +10,10 @@ CLIENT_SECRET_FILE = 'client_secret.json'
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
 CONFIG_PATH = "~/.python/logging_debug.conf"
 ACCESS_TOKEN = 'YAMMER_TOKEN'
+PIPEDRIVE_URL = 'https://api.pipedrive.com/v1/'
+PIPEDRIVE_API_TOKEN = '&api_token=7b3e7e35281db042975cce018b4326129a22532e'
+PIPEDRIVE_PIPLINE_ID = str(5)
+PIPEDRIVE_FILTER_ID = str(7)
+PIPEDRIVE_VALUE_STAGES_FILTER = ['Warten auf Durchführung', 'Durchführung']
+PIPEDRIVE_COUNT_STAGES_FILTER = ['PEGGY (Angebot ausmachen)', 'Warten auf Angebotsannahme', 'Warten auf Durchführung']
+
