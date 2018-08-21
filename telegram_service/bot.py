@@ -1,47 +1,17 @@
 # coding=UTF-8
-import os
-import sys
 
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
-from telegram.ext import (Updater, CommandHandler, RegexHandler,
+from telegram.ext import (CommandHandler, RegexHandler,
                           ConversationHandler, Handler)
 
-from config import WITH_WEB, BOT_TOKEN, CONFIG_PATH
-from telegram_service.gif import random_gif_url
-from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
-from my_logging import checked_load_logging_config, get_logger
 from google_service_api.sheet import per_user_status_details, get_welfare_status_for, per_user_status_code
+from my_logging import get_logger
+from telegram_service.gif import random_gif_url
 from telegram_service.status import team_rating_to_shoutout
-from web import start_server, kill_server
+from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
 
 log = None
 highlights = Highlights()
-
-
-def _startup_bot(token):
-    global log
-    checked_load_logging_config(CONFIG_PATH)
-
-    log = get_logger(__name__)
-    if not token:
-        log.error('usage: %s=<token> python %s' % (BOT_TOKEN, os.path.basename(__file__)))
-        sys.exit(255)
-    log.info('starting %s' % __name__)
-    updater = Updater(token)
-    _register_commands(updater)
-    updater.start_polling()
-    updater.idle()
-    log.info('finished polling')
-
-
-def main():
-    try:
-        if os.getenv(WITH_WEB):
-            start_server()
-        _startup_bot(os.getenv(BOT_TOKEN))
-    finally:
-        if os.getenv(WITH_WEB):
-            kill_server()
 
 
 class UpdateRetriever(object):
@@ -122,7 +92,7 @@ def deals(bot, update):
     _send_and_log(bot, update, 'Alles rosig!')
 
 
-def _register_commands(updater):
+def register_commands(updater):
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('howarewe', howarewe))
@@ -174,7 +144,3 @@ def _thinking(bot, update):
 def error(bot, update, _error):
     """Log Errors caused by Updates."""
     log.warning('Update "%s" caused error "%s"', update, _error)
-
-
-if __name__ == '__main__':
-    main()
