@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, send_from_directory
 from config import CONFIG_PATH
 from telegram_service.gif import random_gif_url
 from my_logging import checked_load_logging_config
-from google_service.sheet import per_user_status_details, per_user_status_code
+from google_service_api.sheet import per_user_status_details, per_user_status_code
 from google_service.sheets import SheetConnector
 from telegram_service.status import team_rating_to_shoutout
 from yammer_service.yammer import YammerConnector

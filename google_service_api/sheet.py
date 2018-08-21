@@ -4,14 +4,14 @@ from cachetools.func import ttl_cache
 from config import MUCKI_TRACKER_SHEET_ID, MUCKI_TRACKER_TEAM_STATUS_RANGE
 from my_logging import get_logger
 from google_service.sheets import SheetConnector
-
+from json import loads
 log = get_logger(__name__)
 
 
 @ttl_cache()
 def per_user_status_details():
     log.info('loading per user status details')
-    team_name_status = SheetConnector(MUCKI_TRACKER_SHEET_ID).values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE)
+    team_name_status = loads(SheetConnector(MUCKI_TRACKER_SHEET_ID).values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE))
     team_name_status_dict = {}
     for user, status, actual, median, trend, rating in team_name_status:
         team_name_status_dict[user] = '%s (%s%s, %s)' % (status, actual, rating, median)
@@ -22,7 +22,7 @@ def per_user_status_details():
 @ttl_cache()
 def per_user_status_code():
     log.info('loading per user status code')
-    team_name_status = SheetConnector(MUCKI_TRACKER_SHEET_ID).values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE)
+    team_name_status = loads(SheetConnector(MUCKI_TRACKER_SHEET_ID).values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE))
     team_name_status_dict = {}
     for user, status, actual, median, trend, rating in team_name_status:
         team_name_status_dict[user] = status

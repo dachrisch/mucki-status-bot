@@ -10,7 +10,7 @@ from config import WITH_WEB, BOT_TOKEN, CONFIG_PATH
 from telegram_service.gif import random_gif_url
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
 from my_logging import checked_load_logging_config, get_logger
-from google_service.sheet import per_user_status_details, get_welfare_status_for, per_user_status_code
+from google_service_api.sheet import per_user_status_details, get_welfare_status_for, per_user_status_code
 from telegram_service.status import team_rating_to_shoutout
 from web import start_server, kill_server
 

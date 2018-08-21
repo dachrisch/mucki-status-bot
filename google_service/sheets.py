@@ -10,6 +10,7 @@ from oauth2client.file import Storage
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
 from config import APPLICATION_NAME, CLIENT_SECRET_FILE, SCOPES
 from my_logging import get_logger
+from json import dumps
 
 
 class _SymlinkAwareStorage(Storage):
@@ -73,5 +74,5 @@ class SheetConnector(object):
         return client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
 
     def values_for_range(self, sheet_range):
-        return self.__service.spreadsheets().values().get(spreadsheetId=self.__sheet_id,
-                                                          range=sheet_range).execute().get('values', [])
+        return dumps(self.__service.spreadsheets().values().get(spreadsheetId=self.__sheet_id,
+                                                               range=sheet_range).execute().get('values', []))
