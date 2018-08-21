@@ -4,7 +4,7 @@ import sys
 
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from telegram.ext import (Updater, CommandHandler, RegexHandler,
-                                  ConversationHandler, Handler)
+                          ConversationHandler, Handler)
 
 from config import WITH_WEB, BOT_TOKEN, CONFIG_PATH
 from telegram_service.gif import random_gif_url
