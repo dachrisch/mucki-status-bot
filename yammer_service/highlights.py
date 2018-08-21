@@ -2,7 +2,7 @@
 import re
 from datetime import datetime
 
-from yammer import YammerConnector
+from yammer_service.yammer import YammerConnector
 
 HIGHLIGHTS = '#highlights'
 HIGHLIGHTS_PATTERN = '(?:([^#]*) )?' + HIGHLIGHTS + '(?:[ :]*([^#]*))?'

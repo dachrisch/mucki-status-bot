@@ -2,10 +2,10 @@
 
 import sys
 
-from telegram import Update, Message, Chat
-from telegram.ext import Updater
+from telegram_service import Update, Message, Chat
+from telegram_service.ext import Updater
 
-from bot import howarewe
+from telegram_service.bot import howarewe
 from config import MUC_TELEGRAM_GROUP_ID, CONFIG_PATH
 from my_logging import checked_load_logging_config, get_logger
 

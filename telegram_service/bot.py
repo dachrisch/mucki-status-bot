@@ -4,14 +4,14 @@ import sys
 
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from telegram.ext import (Updater, CommandHandler, RegexHandler,
-                          ConversationHandler, Handler)
+                                  ConversationHandler, Handler)
 
 from config import WITH_WEB, BOT_TOKEN, CONFIG_PATH
-from gif import random_gif_url
-from highlights import Highlights, HIGHLIGHTS_PATTERN
+from telegram_service.gif import random_gif_url
+from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
 from my_logging import checked_load_logging_config, get_logger
-from sheet import per_user_status_details, get_welfare_status_for, per_user_status_code
-from status import team_rating_to_shoutout
+from google_service.sheet import per_user_status_details, get_welfare_status_for, per_user_status_code
+from telegram_service.status import team_rating_to_shoutout
 from web import start_server, kill_server
 
 log = None

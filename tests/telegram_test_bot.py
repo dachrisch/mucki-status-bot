@@ -2,7 +2,7 @@
 from telegram import Bot, Update, Message, Chat
 from telegram.ext import Dispatcher, CommandHandler
 
-import bot
+from telegram_service import bot
 
 
 class TelegramTestBot(Bot):

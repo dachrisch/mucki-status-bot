@@ -1,7 +1,7 @@
 # coding=UTF-8
 import unittest
 
-from status import calculate_team_rating, team_rating_to_shoutout
+from telegram_service.status import calculate_team_rating, team_rating_to_shoutout
 
 
 class TestStatus(unittest.TestCase):

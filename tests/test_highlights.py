@@ -5,7 +5,7 @@ import unittest
 from telegram import Update
 from telegram.ext import RegexHandler
 
-from highlights import Highlights, HIGHLIGHTS_PATTERN
+from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
 
 HASH_AND_COLON = '#highlights: test'
 

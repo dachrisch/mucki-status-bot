@@ -5,12 +5,12 @@ from multiprocessing import Process
 from flask import Flask, render_template, request, send_from_directory
 
 from config import CONFIG_PATH
-from gif import random_gif_url
+from telegram_service.gif import random_gif_url
 from my_logging import checked_load_logging_config
-from sheet import per_user_status_details, per_user_status_code
-from sheets import SheetConnector
-from status import team_rating_to_shoutout
-from yammer import YammerConnector
+from google_service.sheet import per_user_status_details, per_user_status_code
+from google_service.sheets import SheetConnector
+from telegram_service.status import team_rating_to_shoutout
+from yammer_service.yammer import YammerConnector
 
 app = Flask(__name__)
 server = None
