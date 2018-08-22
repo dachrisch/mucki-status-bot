@@ -1,13 +1,14 @@
 import requests
 
-from my_logging import get_logger
-from config import PIPEDRIVE_API_TOKEN, PIPEDRIVE_FILTER_ID, PIPEDRIVE_PIPLINE_ID, PIPEDRIVE_URL, \
+from config import PIPEDRIVE_REQUEST_API_TOKEN, PIPEDRIVE_FILTER_ID, PIPEDRIVE_PIPLINE_ID, PIPEDRIVE_URL, \
     PIPEDRIVE_COUNT_STAGES_FILTER, PIPEDRIVE_VALUE_STAGES_FILTER
+from my_logging import get_logger, checked_load_logging_config
 
-log = get_logger(__name__)
+log = None
 
 
 def ask_pipedrive():
+    global log
     stages = get_stages()
 
     value_sum = 0
@@ -35,14 +36,14 @@ def sum_of_values(deals):
 
 def get_deals(stage_id):
     stage_request = PIPEDRIVE_URL + 'deals?filter_id=' + PIPEDRIVE_FILTER_ID + '&stage_id=' \
-                    + str(stage_id) + '&status=all_not_deleted&start=0' + PIPEDRIVE_API_TOKEN
+                    + str(stage_id) + '&status=all_not_deleted&start=0' + PIPEDRIVE_REQUEST_API_TOKEN
     stage_response = get_response(stage_request)
     deals = stage_response.json()['data']
     return deals
 
 
 def get_stages():
-    stages_request = PIPEDRIVE_URL + 'stages?pipeline_id=' + PIPEDRIVE_PIPLINE_ID + PIPEDRIVE_API_TOKEN
+    stages_request = PIPEDRIVE_URL + 'stages?pipeline_id=' + PIPEDRIVE_PIPLINE_ID + PIPEDRIVE_REQUEST_API_TOKEN
     stages_response = get_response(stages_request)
     stages = stages_response.json()['data']
     return stages
@@ -54,3 +55,9 @@ def get_response(url):
         log.error('Request faild: ' + url)
         log.error(response.json())
     return response
+
+
+if __name__ == '__main__':
+    checked_load_logging_config("~/.python/logging_debug.conf")
+    log = get_logger(__name__)
+    ask_pipedrive()

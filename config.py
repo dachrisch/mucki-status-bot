@@ -1,4 +1,6 @@
 # coding=utf-8
+import os
+
 MUC_TELEGRAM_GROUP_ID = '-260483514'
 MUCKI_TRACKER_SHEET_ID = '1x5TECCvP3sF3cmMJiD5frkjkmGOVt2pWgNe2eB2zZtI'
 MUCKI_TRACKER_TEAM_STATUS_RANGE = 'status!A2:F8'
@@ -11,7 +13,8 @@ SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
 CONFIG_PATH = "~/.python/logging_debug.conf"
 ACCESS_TOKEN = 'YAMMER_TOKEN'
 PIPEDRIVE_URL = 'https://api.pipedrive.com/v1/'
-PIPEDRIVE_API_TOKEN = '&api_token=7b3e7e35281db042975cce018b4326129a22532e'
+PIPEDRIVE_API_TOKEN = 'PIPEDRIVE_API_TOKEN'
+PIPEDRIVE_REQUEST_API_TOKEN = '&api_token=' + os.getenv(PIPEDRIVE_API_TOKEN)
 PIPEDRIVE_PIPLINE_ID = str(5)
 PIPEDRIVE_FILTER_ID = str(7)
 PIPEDRIVE_VALUE_STAGES_FILTER = ['Warten auf Durchführung', 'Durchführung']
