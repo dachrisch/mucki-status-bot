@@ -33,7 +33,7 @@ class TestHighlights(unittest.TestCase):
         highlights.add('Chris', '#highlights one')
         TelegramTestBot().assert_command_responses_with(self, 'show_highlights', 'Chris: one')
 
-    def test_howarewe_unauthorized(self):
+    def test_howarewe_all_ok(self):
         from unittest import mock
         with mock.patch('google_service_api.welfare.WelfareStatus.team_name_status',
                         new_callable=PropertyMock) as team_status_mock:
