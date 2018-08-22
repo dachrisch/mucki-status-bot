@@ -39,6 +39,20 @@ class TelegramTestBot(Bot):
     def _assert_message_test(self, *args, **kwargs):
         self.__test_value = args[1]
 
+    def send_chat_action(self, chat_id, action, timeout=None, **kwargs):
+        self.__test_value = 'chat_action'
+
+    def send_sticker(self,
+                     chat_id,
+                     sticker,
+                     disable_notification=False,
+                     reply_to_message_id=None,
+                     reply_markup=None,
+                     timeout=20,
+                     **kwargs):
+        # self.__test_value = 'sticker'
+        pass
+
 
 class _EncapsulatedTelegramTestBot(object):
     def __init__(self):

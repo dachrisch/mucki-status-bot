@@ -1,10 +1,11 @@
 # coding=utf-8
-
+from config import MUCKI_TRACKER_SHEET_ID
+from google_service.sheets import SheetConnector
+from google_service_api.welfare import WelfareStatus
 from my_logging import checked_load_logging_config, get_logger
-from google_service_api.sheet import per_user_status_details, get_welfare_status_for
 
 checked_load_logging_config("~/.python/logging_debug.conf")
 
 log = get_logger(__name__)
-print('\n'.join([get_welfare_status_for(name) for name in per_user_status_details().keys()]))
+print(WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID)).team_message)
 

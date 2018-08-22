@@ -31,14 +31,13 @@ class _SymlinkAwareStorage(Storage):
         return credentials
 
     def locked_put(self, credentials):
-        get_logger(__name__).warn(
+        get_logger(__name__).warning(
             'ignoring credentials update for [%(user_agent)s] which expired %(token_expiry)s' % credentials.__dict__)
 
 
 class SheetConnector(object):
     def __init__(self, sheet_id):
         self.__sheet_id = sheet_id
-        self.__service = discovery.build('sheets', 'v4', credentials=self.get_credentials())
 
     @classmethod
     def get_credentials(cls):
@@ -74,5 +73,6 @@ class SheetConnector(object):
         return client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
 
     def values_for_range(self, sheet_range):
-        return dumps(self.__service.spreadsheets().values().get(spreadsheetId=self.__sheet_id,
-                                                               range=sheet_range).execute().get('values', []))
+        service = discovery.build('sheets', 'v4', credentials=self.get_credentials())
+        return dumps(service.spreadsheets().values().get(spreadsheetId=self.__sheet_id,
+                                                         range=sheet_range).execute().get('values', []))

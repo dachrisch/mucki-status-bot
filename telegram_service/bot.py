@@ -1,17 +1,18 @@
 # coding=UTF-8
-
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from telegram.ext import (CommandHandler, RegexHandler,
                           ConversationHandler, Handler)
 
-from google_service_api.sheet import per_user_status_details, get_welfare_status_for, per_user_status_code
+from config import MUCKI_TRACKER_SHEET_ID
+from google_service.sheets import SheetConnector
+from google_service_api.welfare import WelfareStatus
 from my_logging import get_logger
 from telegram_service.gif import random_gif_url
-from telegram_service.status import team_rating_to_shoutout
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
 
 log = None
 highlights = Highlights()
+welfare_status = WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID))
 
 
 class UpdateRetriever(object):
@@ -123,16 +124,15 @@ def _send_and_log(bot, update, message, is_debug=False, reply_markup=None):
 def _send_status(bot, update):
     _send_and_log(bot, update, 'calculating welfare status of team...')
     _thinking(bot, update)
-    _send_and_log(bot, update, '\n'.join([get_welfare_status_for(name) for name in per_user_status_details().keys()]),
+    _send_and_log(bot, update, welfare_status.team_message,
                   is_debug=True)
 
 
 def _send_shoutout(bot, update):
     global log
     _thinking(bot, update)
-    shoutout = team_rating_to_shoutout(per_user_status_code())
-    _send_and_log(bot, update, '####### !%s! ########' % shoutout.upper(), is_debug=True)
-    gif_url = random_gif_url(shoutout)
+    _send_and_log(bot, update, '####### !%s! ########' % welfare_status.shoutout.upper(), is_debug=True)
+    gif_url = random_gif_url(welfare_status.shoutout)
     log.debug(gif_url)
     bot.send_sticker(UpdateRetriever(update).chat_id, gif_url)
 

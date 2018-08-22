@@ -4,12 +4,11 @@ from multiprocessing import Process
 
 from flask import Flask, render_template, request, send_from_directory
 
-from config import CONFIG_PATH
+from config import CONFIG_PATH, MUCKI_TRACKER_SHEET_ID
+from google_service_api.welfare import WelfareStatus
 from telegram_service.gif import random_gif_url
 from my_logging import checked_load_logging_config
-from google_service_api.sheet import per_user_status_details, per_user_status_code
 from google_service.sheets import SheetConnector
-from telegram_service.status import team_rating_to_shoutout
 from yammer_service.yammer import YammerConnector
 
 app = Flask(__name__)
@@ -25,9 +24,9 @@ def hello():
 
 @app.route('/status')
 def status():
-    shout = team_rating_to_shoutout(per_user_status_code())
+    shout = WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID)).shoutout
     return render_template('status.html',
-                           status=per_user_status_details(), shout=shout,
+                           status=WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID)).team_name_status, shout=shout,
                            gif=random_gif_url(shout))
 
 
@@ -49,7 +48,7 @@ def kill():
 @app.route('/alive')
 def alive():
     try:
-        per_user_status_details()
+        WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID)).team_name_status
     except Exception as e:
         return 'error during Sheet connection: [%s]' % e, 503
 
