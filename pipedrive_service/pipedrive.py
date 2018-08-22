@@ -1,10 +1,14 @@
+import os
+
 import requests
 
-from config import PIPEDRIVE_REQUEST_API_TOKEN, PIPEDRIVE_FILTER_ID, PIPEDRIVE_PIPLINE_ID, PIPEDRIVE_URL, \
+from config import PIPEDRIVE_API_TOKEN, PIPEDRIVE_FILTER_ID, PIPEDRIVE_PIPLINE_ID, PIPEDRIVE_URL, \
     PIPEDRIVE_COUNT_STAGES_FILTER, PIPEDRIVE_VALUE_STAGES_FILTER
 from my_logging import get_logger, checked_load_logging_config
 
 log = None
+
+PIPEDRIVE_REQUEST_API_TOKEN = '&api_token=' + os.getenv(PIPEDRIVE_API_TOKEN)
 
 
 def ask_pipedrive():

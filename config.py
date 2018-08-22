@@ -14,7 +14,6 @@ CONFIG_PATH = "~/.python/logging_debug.conf"
 ACCESS_TOKEN = 'YAMMER_TOKEN'
 PIPEDRIVE_URL = 'https://api.pipedrive.com/v1/'
 PIPEDRIVE_API_TOKEN = 'PIPEDRIVE_API_TOKEN'
-PIPEDRIVE_REQUEST_API_TOKEN = '&api_token=' + os.getenv(PIPEDRIVE_API_TOKEN)
 PIPEDRIVE_PIPLINE_ID = str(5)
 PIPEDRIVE_FILTER_ID = str(7)
 PIPEDRIVE_VALUE_STAGES_FILTER = ['Warten auf Durchführung', 'Durchführung']
