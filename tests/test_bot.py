@@ -32,5 +32,8 @@ class TestHighlights(unittest.TestCase):
         highlights.add('Chris', '#highlights one')
         TelegramTestBot().assert_command_responses_with(self, 'show_highlights', 'Chris: one')
 
+    def test_howarewe_unauthorized(self):
+        TelegramTestBot().assert_command_responses_with(self, 'howarewe', 'Unauthorized')
+
     def test_deals_messages_all_right(self):
         TelegramTestBot().assert_command_responses_with(self, 'deals', 'Alles rosig!')
