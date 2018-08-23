@@ -6,8 +6,6 @@ from json import loads
 from config import MUCKI_TRACKER_TEAM_STATUS_RANGE
 from my_logging import get_logger
 
-log = get_logger(__name__)
-
 
 class MemberStatus(object):
     def __init__(self, name, status):
@@ -22,12 +20,13 @@ class MemberStatus(object):
 class WelfareStatus(object):
     def __init__(self, sheet_connector):
         self.__connector = sheet_connector
+        self._log = get_logger(__name__)
 
     @property
     def team_name_status(self):
-        log.info('loading team status')
+        self._log.info('loading team status')
         team_status = loads(self.__connector.values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE))
-        log.info('done loading welfare status.')
+        self._log.info('done loading welfare status.')
         return team_status
 
     @property
