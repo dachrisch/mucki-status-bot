@@ -1,7 +1,9 @@
 # coding=utf-8
 import os
+from json import dumps
 
 from apiclient import discovery
+from cachetools import TTLCache
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
@@ -10,7 +12,6 @@ from oauth2client.file import Storage
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
 from config import APPLICATION_NAME, CLIENT_SECRET_FILE, SCOPES
 from my_logging import get_logger
-from json import dumps
 
 
 class _SymlinkAwareStorage(Storage):
@@ -35,8 +36,13 @@ class _SymlinkAwareStorage(Storage):
             'ignoring credentials update for [%(user_agent)s] which expired %(token_expiry)s' % credentials.__dict__)
 
 
-class SheetConnector(object):
+def key(sheet_id, sheet_range):
+    return sheet_id + sheet_range
+
+
+class SheetConnector(TTLCache):
     def __init__(self, sheet_id):
+        super().__init__(maxsize=128, ttl=600)
         self.__sheet_id = sheet_id
 
     @classmethod
@@ -73,6 +79,16 @@ class SheetConnector(object):
         return client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
 
     def values_for_range(self, sheet_range):
-        service = discovery.build('sheets', 'v4', credentials=self.get_credentials(), cache_discovery=False)
-        return dumps(service.spreadsheets().values().get(spreadsheetId=self.__sheet_id,
-                                                         range=sheet_range).execute().get('values', []))
+        values = None
+        try:
+            values = self[key(self.__sheet_id, sheet_range)]
+            get_logger(__name__).debug('using cached values')
+        except KeyError:
+            get_logger(__name__).debug('invocation not cached')
+
+        if not values:
+            service = discovery.build('sheets', 'v4', credentials=self.get_credentials(), cache_discovery=False)
+            values = service.spreadsheets().values().get(spreadsheetId=self.__sheet_id,
+                                                         range=sheet_range).execute().get('values', [])
+            self[key(self.__sheet_id, sheet_range)] = values
+        return dumps(values)
