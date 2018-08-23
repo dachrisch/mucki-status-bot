@@ -25,7 +25,7 @@ class WelfareStatus(object):
 
     @property
     def team_name_status(self):
-        log.info('loading per user status details')
+        log.info('loading team status')
         team_status = loads(self.__connector.values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE))
         log.info('done loading welfare status.')
         return team_status

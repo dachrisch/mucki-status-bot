@@ -1,5 +1,4 @@
 # coding=utf-8
-import os
 
 MUC_TELEGRAM_GROUP_ID = '-260483514'
 MUCKI_TRACKER_SHEET_ID = '1x5TECCvP3sF3cmMJiD5frkjkmGOVt2pWgNe2eB2zZtI'
@@ -10,7 +9,7 @@ BOT_TOKEN = 'BOT_TOKEN'
 APPLICATION_NAME = 'Muckibot'
 CLIENT_SECRET_FILE = 'client_secret.json'
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
-CONFIG_PATH = "~/.python/logging_debug.conf"
+CONFIG_PATH = "~/.python/logging.conf"
 ACCESS_TOKEN = 'YAMMER_TOKEN'
 PIPEDRIVE_URL = 'https://api.pipedrive.com/v1/'
 PIPEDRIVE_API_TOKEN = 'PIPEDRIVE_API_TOKEN'
