@@ -73,6 +73,6 @@ class SheetConnector(object):
         return client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
 
     def values_for_range(self, sheet_range):
-        service = discovery.build('sheets', 'v4', credentials=self.get_credentials())
+        service = discovery.build('sheets', 'v4', credentials=self.get_credentials(), cache_discovery=False)
         return dumps(service.spreadsheets().values().get(spreadsheetId=self.__sheet_id,
                                                          range=sheet_range).execute().get('values', []))
