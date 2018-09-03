@@ -35,7 +35,7 @@ def start(bot, update):
                   '/howarewe - get status of team\n'
                   '/show_highlights - displays the currently available highlights\n'
                   '/send_highlights - sends highlights to yammer with current week tag\n'
-                  '/remote - shows a link to a video chat room for *Südsterne*\n'
+                  '/remote - shows links to a (video-) chat rooms for Südsterne\n'
                   , is_debug=True)
 
 
