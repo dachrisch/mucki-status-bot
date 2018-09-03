@@ -35,6 +35,7 @@ def start(bot, update):
                   '/howarewe - get status of team\n'
                   '/show_highlights - displays the currently available highlights\n'
                   '/send_highlights - sends highlights to yammer with current week tag\n'
+                  '/remote - shows a link to a video chat room for *Südsterne*\n'
                   , is_debug=True)
 
 
@@ -93,6 +94,11 @@ def deals(bot, update):
     _send_and_log(bot, update, 'Alles rosig!')
 
 
+def remote(bot, update):
+    _send_and_log(bot, update, 'https://zoom.us/j/6787719716 (log in with Südsterne '
+                               'account)\nhttps://meet.google.com/upv-baht-nyt')
+
+
 def register_commands(updater):
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
@@ -100,6 +106,7 @@ def register_commands(updater):
     dp.add_handler(RegexHandler(HIGHLIGHTS_PATTERN, collect_highlight))
     dp.add_handler(CommandHandler('show_highlights', show_highlights))
     dp.add_handler(CommandHandler('deals', deals))
+    dp.add_handler(CommandHandler('remote', remote))
     dp.add_error_handler(error)
     dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('send_highlights', ask_for_consent)],

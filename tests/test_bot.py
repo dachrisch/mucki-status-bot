@@ -27,6 +27,9 @@ class TestHighlights(unittest.TestCase):
     def test_no_highlights(self):
         TelegramTestBot().assert_command_responses_with(self, 'show_highlights', 'no highlights available')
 
+    def test_remote_chat_room(self):
+        TelegramTestBot().assert_command_responses_with(self, 'remote', 'https://zoom.us/j/6787719716')
+
     def test_one_highlight(self):
         from telegram_service.bot import highlights
 
