@@ -3,10 +3,11 @@ import os
 import requests
 
 from config import PIPEDRIVE_API_TOKEN, PIPEDRIVE_FILTER_ID, PIPEDRIVE_PIPLINE_ID, PIPEDRIVE_URL, \
-    PIPEDRIVE_COUNT_STAGES_FILTER, PIPEDRIVE_VALUE_STAGES_FILTER
+    PIPEDRIVE_COUNT_STAGES_FILTER, PIPEDRIVE_VALUE_STAGES_FILTER, TEAM_MATES_COUNT, PIPEDRIVE_MIN_DEALS_PER_MATE, \
+    PIPEDRIVE_MIN_EUROS_PER_MATE
 from my_logging import get_logger, checked_load_logging_config
 
-log = None
+log = get_logger(__name__)
 
 PIPEDRIVE_REQUEST_API_TOKEN = '&api_token=' + os.getenv(PIPEDRIVE_API_TOKEN)
 
@@ -22,8 +23,16 @@ def ask_pipedrive():
             value_sum += sum_of_deal_values(stage)
         if stage['name'] in PIPEDRIVE_COUNT_STAGES_FILTER:
             deal_count += len(get_deals(stage['id']))
-    log.info(value_sum)
-    log.info(deal_count)
+
+    return get_interpretation(deal_count, value_sum)
+
+
+def get_interpretation(deal_count, value_sum):
+    data = {'value_sum': value_sum, 'deal_count': deal_count}
+    money = {'enough_money': have_enough_money(value_sum), 'difference': money_difference(value_sum)}
+    deals = {'enough_deals': have_enough_deals(deal_count), 'difference': deals_difference(deal_count)}
+    interpretation = {'money': money, 'deals': deals}
+    return {'data': data, 'interpretation': interpretation}
 
 
 def sum_of_deal_values(stage):
@@ -59,6 +68,22 @@ def get_response(url):
         log.error('Request faild: ' + url)
         log.error(response.json())
     return response
+
+
+def have_enough_money(value_sum):
+    return (value_sum/TEAM_MATES_COUNT) >= PIPEDRIVE_MIN_EUROS_PER_MATE
+
+
+def have_enough_deals(deal_count):
+    return (deal_count/TEAM_MATES_COUNT) >= PIPEDRIVE_MIN_DEALS_PER_MATE
+
+
+def money_difference(value_sum):
+    return value_sum - PIPEDRIVE_MIN_EUROS_PER_MATE * TEAM_MATES_COUNT
+
+
+def deals_difference(deal_count):
+    return deal_count - PIPEDRIVE_MIN_DEALS_PER_MATE * TEAM_MATES_COUNT
 
 
 if __name__ == '__main__':

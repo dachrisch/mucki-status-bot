@@ -9,6 +9,7 @@ from google_service_api.welfare import WelfareStatus
 from my_logging import get_logger
 from telegram_service.gif import random_gif_url
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
+from pipedrive_service.pipedrive import ask_pipedrive
 
 log = None
 highlights = Highlights()
@@ -91,7 +92,7 @@ def cancel(bot, update):
 
 
 def deals(bot, update):
-    _send_and_log(bot, update, 'Alles rosig!')
+    _send_and_log(bot, update, ask_pipedrive())
 
 
 def remote(bot, update):
