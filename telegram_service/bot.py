@@ -96,10 +96,12 @@ def deals(bot, update):
 
 def remote(bot, update):
     _send_and_log(bot, update, 'Google: https://meet.google.com/upv-baht-nyt\n\n'
-                               'Zoom: https://zoom.us/j/6787719716 (log in with Südsterne '
-                               'account)\n\n'
-                               'Talkyoo: +494095063183 PIN: https://itagile.atlassian.net/wiki/spaces/TIS/pages'
-                               '/10486928/Telefonkonferenz > Bezahlter Raum') 
+                               'Zoom: https://zoom.us/j/6787719716 Login: see 1Password '
+                               'https://it-agile.1password.com/vaults/jra7nmadubtdlor2kotz7wnj44/001'
+                               '/webrqidvxnegpiwuzjacfdrnhe)\n\n '
+                               'Talkyoo: +494095063183 PIN: see 1Password '
+                               'https://it-agile.1password.com/vaults/jra7nmadubtdlor2kotz7wnj44/005'
+                               '/m7s5meb5wzdxhkfsdcfs6bcoka\n\n')
 
 
 def register_commands(updater):
