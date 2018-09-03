@@ -52,4 +52,4 @@ class TestHighlights(unittest.TestCase):
             team_status_mock.assert_any_call()
 
     def test_deals_messages_all_right(self):
-        TelegramTestBot().assert_command_responses_with(self, 'deals', 'Alles rosig!')
+        TelegramTestBot().assert_command_responses_with(self, 'deals', 'interpretation')
