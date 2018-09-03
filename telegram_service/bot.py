@@ -95,9 +95,17 @@ def deals(bot, update):
 
 
 def remote(bot, update):
-    _send_and_log(bot, update, 'Google: https://meet.google.com/upv-baht-nyt\n\n'
-                               'Zoom: https://zoom.us/j/6787719716 Login: see 1Password\n\n '
-                               'Talkyoo: +494095063183 PIN: see 1Password\n\n')
+    _send_and_log(bot, update, 'Google\n'
+                               'https://meet.google.com/upv-baht-nyt\n'
+                               '\n'
+                               'Zoom\n'
+                               'https://zoom.us/j/6787719716\n'
+                               'Login: see 1Password\n'
+                               '\n '
+                               'Talkyoo\n'
+                               '+494095063183\n'
+                               'PIN: see 1Password\n'
+                               '\n')
 
 
 def register_commands(updater):
