@@ -105,7 +105,7 @@ def remote(bot, update):
                                'Talkyoo\n'
                                '+494095063183\n'
                                'PIN: see 1Password\n'
-                               '\n')
+                               '\n ')
 
 
 def register_commands(updater):
