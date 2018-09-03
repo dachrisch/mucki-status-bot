@@ -101,7 +101,7 @@ def remote(bot, update):
                                'Zoom\n'
                                'https://zoom.us/j/6787719716\n'
                                'Login: see 1Password\n'
-                               '\n '
+                               '\n'
                                'Talkyoo\n'
                                '+494095063183\n'
                                'PIN: see 1Password\n'
