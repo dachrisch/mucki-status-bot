@@ -89,4 +89,4 @@ def deals_difference(deal_count):
 if __name__ == '__main__':
     checked_load_logging_config("~/.python/logging_debug.conf")
     log = get_logger(__name__)
-    ask_pipedrive()
+    log.info(ask_pipedrive())
