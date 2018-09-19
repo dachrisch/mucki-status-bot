@@ -101,12 +101,12 @@ def remote(bot, update):
                                '\n'
                                'Zoom\n'
                                'https://zoom.us/j/6787719716\n'
-                               'Login: https://my.1password.com/vaults/jra7nmadubtdlor2kotz7wnj44/'
+                               'Login: https://my.1password.com/vaults/rllzgcg4nk5j3axeoedj3vvnku/'
                                'allitems/webrqidvxnegpiwuzjacfdrnheﬂ\n'
                                '\n'
                                'Talkyoo\n'
                                '+494095063183\n'
-                               'PIN: https://my.1password.com/vaults/jra7nmadubtdlor2kotz7wnj44/'
+                               'PIN: https://my.1password.com/vaults/rllzgcg4nk5j3axeoedj3vvnku/'
                                'allitems/m7s5meb5wzdxhkfsdcfs6bcoka\n'
                                '\n ')
 
