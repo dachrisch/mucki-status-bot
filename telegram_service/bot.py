@@ -8,6 +8,7 @@ from google_service.sheets import SheetConnector
 from google_service_api.welfare import WelfareStatus
 from my_logging import get_logger
 from pipedrive_service.pipedrive import ask_pipedrive
+from remote_service.remotes import remote_methods_string
 from telegram_service.gif import random_gif_url
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
 
@@ -94,19 +95,7 @@ def deals(bot, update):
 
 
 def remote(bot, update):
-    _send_and_log(bot, update, 'Google\n'
-                               'https://meet.google.com/upv-baht-nyt\n'
-                               '\n'
-                               'Zoom\n'
-                               'https://zoom.us/j/6787719716\n'
-                               'Login: https://my.1password.com/vaults/rllzgcg4nk5j3axeoedj3vvnku/'
-                               'allitems/webrqidvxnegpiwuzjacfdrnheﬂ\n'
-                               '\n'
-                               'Talkyoo\n'
-                               '+494095063183\n'
-                               'PIN: https://my.1password.com/vaults/rllzgcg4nk5j3axeoedj3vvnku/'
-                               'allitems/m7s5meb5wzdxhkfsdcfs6bcoka\n'
-                               '\n ')
+    _send_and_log(bot, update, remote_methods_string())
 
 
 def register_commands(updater):
