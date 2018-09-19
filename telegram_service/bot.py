@@ -30,14 +30,12 @@ class UpdateRetriever(object):
 
 
 def start(bot, update):
-    _send_and_log(bot, update,
-                  "I'm the bot of the *Südsterne* team.\n"
-                  'I listen for #highlight messages and otherwise offer the following commands:\n'
-                  '/howarewe - get status of team\n'
-                  '/show_highlights - displays the currently available highlights\n'
-                  '/send_highlights - sends highlights to yammer with current week tag\n'
-                  '/remote - shows links to (video-) chat rooms for Südsterne\n'
-                  , is_debug=True)
+    _send_and_log(bot, update, "I'm the bot of the *Südsterne* team.\n"
+                               'I listen for #highlight messages and otherwise offer the following commands:\n'
+                               '/howarewe - get status of team\n'
+                               '/show_highlights - displays the currently available highlights\n'
+                               '/send_highlights - sends highlights to yammer with current week tag\n'
+                               '/remote - shows links to (video-) chat rooms for Südsterne\n')
 
 
 def howarewe(bot, update):
@@ -130,27 +128,24 @@ def register_commands(updater):
     ))
 
 
-def _send_and_log(bot, update, message, is_debug=False, reply_markup=None):
+def _send_and_log(bot, update, message, reply_markup=None):
     global log
     log = get_logger(__name__)
     bot.send_message(UpdateRetriever(update).chat_id, message, reply_markup=reply_markup)
-    if is_debug:
-        log.debug(message)
-    else:
-        log.info(message)
+    log.info(message)
 
 
 def _send_status(bot, update):
     _send_and_log(bot, update, 'calculating welfare status of team...')
     _thinking(bot, update)
-    _send_and_log(bot, update, welfare_status.team_message,
-                  is_debug=True)
+    _send_and_log(bot, update, welfare_status.team_message)
 
 
 def _send_shoutout(bot, update):
     global log
+    log = get_logger(__name__)
     _thinking(bot, update)
-    _send_and_log(bot, update, '####### !%s! ########' % welfare_status.shoutout.upper(), is_debug=True)
+    _send_and_log(bot, update, '####### !%s! ########' % welfare_status.shoutout.upper())
     gif_url = random_gif_url(welfare_status.shoutout)
     log.debug(gif_url)
     bot.send_sticker(UpdateRetriever(update).chat_id, gif_url)
