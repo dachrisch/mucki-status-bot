@@ -9,7 +9,7 @@ from my_logging import get_logger, checked_load_logging_config
 
 log = get_logger(__name__)
 
-PIPEDRIVE_REQUEST_API_TOKEN = '&api_token=' + os.getenv(PIPEDRIVE_API_TOKEN)
+PIPEDRIVE_REQUEST_API_TOKEN = '&api_token=' + os.getenv(PIPEDRIVE_API_TOKEN, '')
 
 
 def ask_pipedrive():
