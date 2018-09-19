@@ -42,7 +42,7 @@ def key(sheet_id, sheet_range):
 
 class SheetConnector(TTLCache):
     def __init__(self, sheet_id):
-        super().__init__(maxsize=128, ttl=600)
+        TTLCache.__init__(self, maxsize=128, ttl=600)
         self.__sheet_id = sheet_id
 
     @classmethod

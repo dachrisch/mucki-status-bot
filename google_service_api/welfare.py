@@ -45,7 +45,8 @@ class WelfareStatus(object):
 
     def __calculate_team_rating(self):
         count = Counter(self.ratings)
-        team_rating = count['OK'] / len(self.team_name_status)
+        # float conversion (fix for python 2)
+        team_rating = (0.0 + count['OK']) / len(self.team_name_status)
         return team_rating
 
     @property
