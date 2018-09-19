@@ -120,7 +120,7 @@ def register_commands(updater):
 def _send_and_log(bot, update, message, reply_markup=None):
     global log
     log = get_logger(__name__)
-    bot.send_message(UpdateRetriever(update).chat_id, message, reply_markup=reply_markup)
+    bot.send_message(UpdateRetriever(update).chat_id, message, reply_markup=reply_markup, disable_web_page_preview=True)
     log.info(message)
 
 
