@@ -34,7 +34,7 @@ class Highlights(object):
         self.__highlights.clear()
 
     def message_string(self):
-        return '\n'.join('%s: %s' % (key, val) for (key, val) in self.__highlights.items())
+        return '\n\n'.join('%s: %s' % (key, val) for (key, val) in self.__highlights.items())
 
     def send_to_yammer(self):
         return self.__yc.post_meine_woche(
