@@ -5,12 +5,33 @@ from unittest.mock import PropertyMock
 from tests.telegram_test_bot import TelegramTestBot
 
 
-class TestHighlights(unittest.TestCase):
+class TestBot(unittest.TestCase):
     def test_can_execute_start(self):
         TelegramTestBot().assert_can_execute_command(self, 'start')
 
+    def test_start_messages_hello(self):
+        TelegramTestBot().assert_command_responses_with(self, 'start', "I'm the bot of the *Südsterne* team.")
+
+
+class TestDeals(unittest.TestCase):
+    def test_can_execute_deals(self):
+        TelegramTestBot().assert_can_execute_command(self, 'deals')
+
+    def test_deals_messages_all_right(self):
+        TelegramTestBot().assert_command_responses_with(self, 'deals', 'interpretation')
+
+
+class TestRemotes(unittest.TestCase):
+    def test_remote_chat_room(self):
+        TelegramTestBot().assert_command_responses_with(self, 'remote', 'https://zoom.us/j/6787719716')
+
+
+class TestHowareWe(unittest.TestCase):
     def test_can_execute_howarewe(self):
         TelegramTestBot().assert_can_execute_command(self, 'howarewe')
+
+
+class TestHighlights(unittest.TestCase):
 
     def test_can_execute_show_highlights(self):
         TelegramTestBot().assert_can_execute_command(self, 'show_highlights')
@@ -18,17 +39,8 @@ class TestHighlights(unittest.TestCase):
     def test_can_execute_send_highlights(self):
         TelegramTestBot().assert_can_execute_command(self, 'send_highlights')
 
-    def test_can_execute_deals(self):
-        TelegramTestBot().assert_can_execute_command(self, 'deals')
-
-    def test_start_messages_hello(self):
-        TelegramTestBot().assert_command_responses_with(self, 'start', "I'm the bot of the *Südsterne* team.")
-
     def test_no_highlights(self):
         TelegramTestBot().assert_command_responses_with(self, 'show_highlights', 'no highlights available')
-
-    def test_remote_chat_room(self):
-        TelegramTestBot().assert_command_responses_with(self, 'remote', 'https://zoom.us/j/6787719716')
 
     def test_one_highlight(self):
         from telegram_service.bot import highlights
@@ -50,6 +62,3 @@ class TestHighlights(unittest.TestCase):
                                              ('H', 'OK', None, None, None, None))
             TelegramTestBot().assert_command_responses_with(self, 'howarewe', '####### !UNICORN DANCE! ########')
             team_status_mock.assert_any_call()
-
-    def test_deals_messages_all_right(self):
-        TelegramTestBot().assert_command_responses_with(self, 'deals', 'interpretation')
