@@ -7,6 +7,7 @@ from config import MUCKI_TRACKER_SHEET_ID
 from google_service.sheets import SheetConnector
 from google_service_api.welfare import WelfareStatus
 from my_logging import get_logger
+from order_service.orders import order_options_string
 from pipedrive_service.pipedrive import ask_pipedrive
 from remote_service.remotes import remote_methods_string
 from telegram_service.gif import random_gif_url
@@ -98,6 +99,10 @@ def remote(bot, update):
     _send_and_log(bot, update, remote_methods_string())
 
 
+def orders(bot, update):
+    _send_and_log(bot, update, order_options_string())
+
+
 def register_commands(updater):
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
@@ -106,6 +111,7 @@ def register_commands(updater):
     dp.add_handler(CommandHandler('show_highlights', show_highlights))
     dp.add_handler(CommandHandler('deals', deals))
     dp.add_handler(CommandHandler('remote', remote))
+    dp.add_handler(CommandHandler('orders', orders))
     dp.add_error_handler(error)
     dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('send_highlights', ask_for_consent)],

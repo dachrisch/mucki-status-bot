@@ -5,6 +5,19 @@ from telegram.ext import Dispatcher, CommandHandler
 from telegram_service import bot
 
 
+class FailureThrowingCommandHandler(CommandHandler):
+    def __init__(self,
+                 *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.catched_error = None
+
+    def handle_update(self, update, dispatcher):
+        try:
+            super().handle_update(update, dispatcher)
+        except Exception as e:
+            self.catched_error = e
+
+
 class TelegramTestBot(Bot):
 
     def __init__(self):
@@ -17,18 +30,32 @@ class TelegramTestBot(Bot):
     def assert_can_execute_command(self, this_unittest, command):
         self.send_message = self._assert_called
 
-        self.dispatcher.add_handler(CommandHandler(command, getattr(bot, command)))
+        handler = self._add_handler(command)
 
         self.dispatcher.process_update(self._create_update_with_text('/' + command))
+
+        self._check_handler(handler)
+
         this_unittest.assertTrue(self.__test_value)
 
     def assert_command_responses_with(self, this_unittest, command, expected_text):
         self.send_message = self._assert_message_test
 
-        self.dispatcher.add_handler(CommandHandler(command, getattr(bot, command)))
+        handler = self._add_handler(command)
 
         self.dispatcher.process_update(self._create_update_with_text('/' + command))
+
+        self._check_handler(handler)
         this_unittest.assertIn(expected_text, self.__test_value)
+
+    def _check_handler(self, handler):
+        if handler.catched_error:
+            raise handler.catched_error
+
+    def _add_handler(self, command):
+        handler = FailureThrowingCommandHandler(command, getattr(bot, command))
+        self.dispatcher.add_handler(handler)
+        return handler
 
     def _create_update_with_text(self, text):
         return Update(1, Message(1, None, None, Chat(1, None), text=text, bot=self))
