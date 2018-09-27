@@ -1,3 +1,4 @@
+# coding=utf-8
 class RemoteMethod(object):
     def __init__(self, name, remote, login=None):
         self.name = name
