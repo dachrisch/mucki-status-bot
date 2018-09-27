@@ -16,8 +16,9 @@ class OrderOption(object):
 
 CONTAINER = 'https://my.1password.com/vaults/rllzgcg4nk5j3axeoedj3vvnku/allitems/'
 
-options = (OrderOption('GoodKarmaCoffee', 'https://shop.strato.de/epages/64249863.sf/de_DE/?'
-                                          'ObjectPath=/Shops/64249863/Products/057CoMan/SubProducts/057E-0001'),
+options = (OrderOption('GoodKarmaCoffee', 'https://http://www.goodkarmacoffee.de/epages/64249863.sf/de_DE/?'
+                                          'ObjectPath=/Shops/64249863/Products/057CoMan/SubProducts/057E-0001',
+                       CONTAINER + 'ekommw2x4ringiqa2rv5djczd4'),
            )
 
 
