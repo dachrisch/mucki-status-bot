@@ -54,14 +54,14 @@ class TestHighlights(unittest.TestCase):
         from unittest import mock
         with mock.patch('google_service_api.welfare.WelfareStatus.team_name_status',
                         new_callable=PropertyMock) as team_status_mock:
-            team_status_mock.return_value = (('A', 'OK', None, None, None, None),
-                                             ('B', 'OK', None, None, None, None),
-                                             ('C', 'OK', None, None, None, None),
-                                             ('D', 'OK', None, None, None, None),
-                                             ('E', 'OK', None, None, None, None),
-                                             ('F', 'OK', None, None, None, None),
-                                             ('G', 'OK', None, None, None, None),
-                                             ('H', 'OK', None, None, None, None))
+            team_status_mock.return_value = (('A', 'OK', None, None),
+                                             ('B', 'OK', None, None),
+                                             ('C', 'OK', None, None),
+                                             ('D', 'OK', None, None),
+                                             ('E', 'OK', None, None),
+                                             ('F', 'OK', None, None),
+                                             ('G', 'OK', None, None),
+                                             ('H', 'OK', None, None))
             TelegramTestBot().assert_command_responses_with(self, 'howarewe', '####### !UNICORN DANCE! ########')
             team_status_mock.assert_any_call()
 

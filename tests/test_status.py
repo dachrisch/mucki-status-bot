@@ -15,102 +15,102 @@ class DummySheetConnector:
 
 class TestShout(unittest.TestCase):
     def test_all_OK(self):
-        welfare_status = WelfareStatus(DummySheetConnector((('A', 'OK', None, None, None, None),
-                                                            ('B', 'OK', None, None, None, None),
-                                                            ('C', 'OK', None, None, None, None),
-                                                            ('D', 'OK', None, None, None, None),
-                                                            ('E', 'OK', None, None, None, None),
-                                                            ('F', 'OK', None, None, None, None),
-                                                            ('G', 'OK', None, None, None, None),
-                                                            ('H', 'OK', None, None, None, None))))
+        welfare_status = WelfareStatus(DummySheetConnector((('A', 'OK', None, None),
+                                                            ('B', 'OK', None, None),
+                                                            ('C', 'OK', None, None),
+                                                            ('D', 'OK', None, None),
+                                                            ('E', 'OK', None, None),
+                                                            ('F', 'OK', None, None),
+                                                            ('G', 'OK', None, None),
+                                                            ('H', 'OK', None, None))))
         self.assertEqual('unicorn dance', welfare_status.shoutout)
 
     def test_7_8_OK(self):
-        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None, None, None),
-                                                            ('B', 'OK', None, None, None, None),
-                                                            ('C', 'OK', None, None, None, None),
-                                                            ('D', 'OK', None, None, None, None),
-                                                            ('E', 'OK', None, None, None, None),
-                                                            ('F', 'OK', None, None, None, None),
-                                                            ('G', 'OK', None, None, None, None),
-                                                            ('H', 'OK', None, None, None, None))))
+        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None),
+                                                            ('B', 'OK', None, None),
+                                                            ('C', 'OK', None, None),
+                                                            ('D', 'OK', None, None),
+                                                            ('E', 'OK', None, None),
+                                                            ('F', 'OK', None, None),
+                                                            ('G', 'OK', None, None),
+                                                            ('H', 'OK', None, None))))
         self.assertEqual('well', welfare_status.shoutout)
 
     def test_6_8_OK(self):
-        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None, None, None),
-                                                            ('B', 'Überlast', None, None, None, None),
-                                                            ('C', 'OK', None, None, None, None),
-                                                            ('D', 'OK', None, None, None, None),
-                                                            ('E', 'OK', None, None, None, None),
-                                                            ('F', 'OK', None, None, None, None),
-                                                            ('G', 'OK', None, None, None, None),
-                                                            ('H', 'OK', None, None, None, None))))
+        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None),
+                                                            ('B', 'Überlast', None, None),
+                                                            ('C', 'OK', None, None),
+                                                            ('D', 'OK', None, None),
+                                                            ('E', 'OK', None, None),
+                                                            ('F', 'OK', None, None),
+                                                            ('G', 'OK', None, None),
+                                                            ('H', 'OK', None, None))))
         self.assertEqual('well', welfare_status.shoutout)
 
     def test_5_8_OK(self):
-        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None, None, None),
-                                                            ('B', 'Überlast', None, None, None, None),
-                                                            ('C', 'Überlast', None, None, None, None),
-                                                            ('D', 'OK', None, None, None, None),
-                                                            ('E', 'OK', None, None, None, None),
-                                                            ('F', 'OK', None, None, None, None),
-                                                            ('G', 'OK', None, None, None, None),
-                                                            ('H', 'OK', None, None, None, None))))
+        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None),
+                                                            ('B', 'Überlast', None, None),
+                                                            ('C', 'Überlast', None, None),
+                                                            ('D', 'OK', None, None),
+                                                            ('E', 'OK', None, None),
+                                                            ('F', 'OK', None, None),
+                                                            ('G', 'OK', None, None),
+                                                            ('H', 'OK', None, None))))
         self.assertEqual('well', welfare_status.shoutout)
 
     def test_4_8_OK(self):
-        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None, None, None),
-                                                            ('B', 'Überlast', None, None, None, None),
-                                                            ('C', 'Überlast', None, None, None, None),
-                                                            ('D', 'Überlast', None, None, None, None),
-                                                            ('E', 'OK', None, None, None, None),
-                                                            ('F', 'OK', None, None, None, None),
-                                                            ('G', 'OK', None, None, None, None),
-                                                            ('H', 'OK', None, None, None, None))))
+        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None),
+                                                            ('B', 'Überlast', None, None),
+                                                            ('C', 'Überlast', None, None),
+                                                            ('D', 'Überlast', None, None),
+                                                            ('E', 'OK', None, None),
+                                                            ('F', 'OK', None, None),
+                                                            ('G', 'OK', None, None),
+                                                            ('H', 'OK', None, None))))
         self.assertEqual('crying', welfare_status.shoutout)
 
     def test_3_8_OK(self):
-        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None, None, None),
-                                                            ('B', 'Überlast', None, None, None, None),
-                                                            ('C', 'Überlast', None, None, None, None),
-                                                            ('D', 'Überlast', None, None, None, None),
-                                                            ('E', 'Überlast', None, None, None, None),
-                                                            ('F', 'OK', None, None, None, None),
-                                                            ('G', 'OK', None, None, None, None),
-                                                            ('H', 'OK', None, None, None, None))))
+        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None),
+                                                            ('B', 'Überlast', None, None),
+                                                            ('C', 'Überlast', None, None),
+                                                            ('D', 'Überlast', None, None),
+                                                            ('E', 'Überlast', None, None),
+                                                            ('F', 'OK', None, None),
+                                                            ('G', 'OK', None, None),
+                                                            ('H', 'OK', None, None))))
         self.assertEqual('crying', welfare_status.shoutout)
 
     def test_2_8_OK(self):
-        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None, None, None),
-                                                            ('B', 'Überlast', None, None, None, None),
-                                                            ('C', 'Überlast', None, None, None, None),
-                                                            ('D', 'Überlast', None, None, None, None),
-                                                            ('E', 'Überlast', None, None, None, None),
-                                                            ('F', 'Überlast', None, None, None, None),
-                                                            ('G', 'OK', None, None, None, None),
-                                                            ('H', 'OK', None, None, None, None))))
+        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None),
+                                                            ('B', 'Überlast', None, None),
+                                                            ('C', 'Überlast', None, None),
+                                                            ('D', 'Überlast', None, None),
+                                                            ('E', 'Überlast', None, None),
+                                                            ('F', 'Überlast', None, None),
+                                                            ('G', 'OK', None, None),
+                                                            ('H', 'OK', None, None))))
         self.assertEqual('crying', welfare_status.shoutout)
 
     def test_1_8_OK(self):
-        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None, None, None),
-                                                            ('B', 'Überlast', None, None, None, None),
-                                                            ('C', 'Überlast', None, None, None, None),
-                                                            ('D', 'Überlast', None, None, None, None),
-                                                            ('E', 'Überlast', None, None, None, None),
-                                                            ('F', 'Überlast', None, None, None, None),
-                                                            ('G', 'Überlast', None, None, None, None),
-                                                            ('H', 'OK', None, None, None, None))))
+        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None),
+                                                            ('B', 'Überlast', None, None),
+                                                            ('C', 'Überlast', None, None),
+                                                            ('D', 'Überlast', None, None),
+                                                            ('E', 'Überlast', None, None),
+                                                            ('F', 'Überlast', None, None),
+                                                            ('G', 'Überlast', None, None),
+                                                            ('H', 'OK', None, None))))
         self.assertEqual('crying', welfare_status.shoutout)
 
     def test_0_8_OK(self):
-        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None, None, None),
-                                                            ('B', 'Überlast', None, None, None, None),
-                                                            ('C', 'Überlast', None, None, None, None),
-                                                            ('D', 'Überlast', None, None, None, None),
-                                                            ('E', 'Überlast', None, None, None, None),
-                                                            ('F', 'Überlast', None, None, None, None),
-                                                            ('G', 'Überlast', None, None, None, None),
-                                                            ('H', 'Überlast', None, None, None, None))))
+        welfare_status = WelfareStatus(DummySheetConnector((('A', 'Überlast', None, None),
+                                                            ('B', 'Überlast', None, None),
+                                                            ('C', 'Überlast', None, None),
+                                                            ('D', 'Überlast', None, None),
+                                                            ('E', 'Überlast', None, None),
+                                                            ('F', 'Überlast', None, None),
+                                                            ('G', 'Überlast', None, None),
+                                                            ('H', 'Überlast', None, None))))
         self.assertEqual('panic scared', welfare_status.shoutout)
 
 
