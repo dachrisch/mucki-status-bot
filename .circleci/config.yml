@@ -48,8 +48,8 @@ jobs:
         name: run tests
         command: |
           . venv/bin/activate
-          pytest --junit-xml=test-reports/pytest.xml
+          pytest --junit-xml=test-reports/results.xml
 
-    - store_artifacts:
+    - store_test_results:
         path: test-reports
         destination: test-reports
