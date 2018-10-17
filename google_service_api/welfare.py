@@ -35,12 +35,12 @@ class WelfareStatus(object):
 
     @property
     def team_members(self):
-        for user, status, actual, median, trend, rating in self.team_name_status:
-            yield MemberStatus(user, '%s (%s%s, %s)' % (status, actual, rating, median))
+        for user, status, actual, median in self.team_name_status:
+            yield MemberStatus(user, '%s (%s, %s)' % (status, actual, median))
 
     @property
     def ratings(self):
-        for user, status, actual, median, trend, rating in self.team_name_status:
+        for user, status, actual, median in self.team_name_status:
             yield status
 
     def __calculate_team_rating(self):
