@@ -8,7 +8,7 @@ WITH_WEB = 'WITH_WEB'
 BOT_TOKEN = 'BOT_TOKEN'
 APPLICATION_NAME = 'Muckibot'
 CLIENT_SECRET_FILE = 'client_secret.json'
-SCOPES = ('https://www.googleapis.com/auth/spreadsheets.readonly',)
+SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
 CONFIG_PATH = "~/.python/logging.conf"
 ACCESS_TOKEN = 'YAMMER_TOKEN'
 TEAM_MATES_COUNT = 8
@@ -20,5 +20,3 @@ PIPEDRIVE_VALUE_STAGES_FILTER = ['Warten auf Durchführung', 'Durchführung']
 PIPEDRIVE_COUNT_STAGES_FILTER = ['PEGGY (Angebot ausmachen)', 'Warten auf Angebotsannahme', 'Warten auf Durchführung']
 PIPEDRIVE_MIN_EUROS_PER_MATE = 10000
 PIPEDRIVE_MIN_DEALS_PER_MATE = 4
-
-AUTH_FILE = 'suedsterne-1328.json'
