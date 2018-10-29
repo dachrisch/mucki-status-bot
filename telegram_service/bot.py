@@ -6,6 +6,7 @@ from telegram.ext import (CommandHandler, RegexHandler,
 from config import MUCKI_TRACKER_SHEET_ID
 from google_service.sheets import SheetConnector
 from google_service_api.welfare import WelfareStatus
+from help_service.help import HelpCommandAction, StartCommandAction
 from my_logging import get_logger
 from order_service.orders import order_options_string
 from pipedrive_service.pipedrive import ask_pipedrive
@@ -32,14 +33,7 @@ class UpdateRetriever(object):
         return self._update.message.from_user.first_name
 
 
-def start(bot, update):
-    _send_and_log(bot, update, "I'm the bot of the *Südsterne* team.\n"
-                               'I listen for #highlight messages and otherwise offer the following commands:\n'
-                               '/howarewe - get status of team\n'
-                               '/show_highlights - displays the currently available highlights\n'
-                               '/send_highlights - sends highlights to yammer with current week tag\n'
-                               '/remote - shows links to (video-) chat rooms for Südsterne\n'
-                               '/orders - view order options\n')
+
 
 
 def howarewe(bot, update):
@@ -104,7 +98,9 @@ def orders(bot, update):
 def register_commands(updater):
     registry = BotRegistry(updater)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler('start', start))
+    registry.register_command_action(HelpCommandAction())
+    registry.register_command_action(StartCommandAction())
+
     dp.add_handler(CommandHandler('howarewe', howarewe))
     dp.add_handler(RegexHandler(HIGHLIGHTS_PATTERN, collect_highlight))
     dp.add_handler(CommandHandler('show_highlights', show_highlights))

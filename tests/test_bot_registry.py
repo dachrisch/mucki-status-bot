@@ -61,3 +61,4 @@ class TestBotRegistry(unittest.TestCase):
 
     def log_call(self, *args, **kwargs):
         self.called = True
+
