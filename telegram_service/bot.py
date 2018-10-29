@@ -154,3 +154,21 @@ def _thinking(bot, update):
 def error(bot, update, _error):
     """Log Errors caused by Updates."""
     log.warning('Update "%s" caused error "%s"', update, _error)
+
+
+class BotRegistry(object):
+    def __init__(self, updater):
+        self.__updater = updater
+
+    def register_command_action(self, action):
+        self.__updater.dispatcher.add_handler(CommandActionHandler(action, None))
+
+
+class CommandActionHandler(CommandHandler):
+    def __init__(self, action, writer_factory, *args, **kwargs):
+        super(CommandActionHandler, self).__init__(action.name, action.command(), *args, **kwargs)
+        self.__action = action
+        self.__writer_factory = writer_factory
+
+    def handle_update(self, update, dispatcher):
+        return self.callback(self.__writer_factory.create(UpdateRetriever(update).chat_id))
