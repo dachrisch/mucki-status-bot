@@ -10,12 +10,12 @@ class WriterFactory(object):
 
 class TelegramWriter(Writer):
     def __init__(self, bot, chat_id):
-        self.__bot = bot
+        self.bot = bot
         self.__chat_id = chat_id
 
     def out(self, message):
-        self.__bot.send_message(self.__chat_id, message,
-                                disable_web_page_preview=True)
+        self.bot.send_message(self.__chat_id, message,
+                              disable_web_page_preview=True)
 
 
 class TelegramWriterFactory(WriterFactory):

@@ -23,9 +23,6 @@ class TestDeals(unittest.TestCase):
         TelegramTestBot().assert_command_responses_with(self, 'deals', 'interpretation')
 
 
-class TestRemotes(unittest.TestCase):
-    def test_remote_chat_room(self):
-        TelegramTestBot().assert_command_responses_with(self, 'remote', 'https://zoom.us/j/6787719716')
 
 
 class TestHowareWe(unittest.TestCase):

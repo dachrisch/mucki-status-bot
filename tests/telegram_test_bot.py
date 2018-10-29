@@ -1,8 +1,10 @@
 # coding=utf-8
 from telegram import Bot, Update, Message, Chat
-from telegram.ext import Dispatcher, CommandHandler
+from telegram.ext import Dispatcher, CommandHandler, Updater
 
 from telegram_service import bot
+from telegram_service.bot import BotRegistry
+from telegram_service.writer import Writer, WriterFactory
 
 
 class FailureThrowingCommandHandler(CommandHandler):
@@ -48,6 +50,17 @@ class TelegramTestBot(Bot):
         self._check_handler(handler)
         this_unittest.assertIn(expected_text, self.__test_value)
 
+    def assert_command_action_responses_with(self, this_unittest, action, expected_containing_message):
+        updater = Updater(bot=self)
+        registry = BotRegistry(updater)
+        registry.writer_factory = LoggingWriterFactory()
+
+        registry.register_command_action(action)
+
+        updater.dispatcher.process_update(self._create_update_with_text('/' + action.name))
+
+        this_unittest.assertIn(expected_containing_message, registry.writer_factory.writer.message)
+
     def _check_handler(self, handler):
         if handler.catched_error:
             raise handler.catched_error
@@ -79,6 +92,22 @@ class TelegramTestBot(Bot):
                      **kwargs):
         # self.__test_value = 'sticker'
         pass
+
+
+class LoggingWriter(Writer):
+    def __init__(self):
+        self.message = None
+
+    def out(self, message):
+        self.message = message
+
+
+class LoggingWriterFactory(WriterFactory):
+    def __init__(self):
+        self.writer = LoggingWriter()
+
+    def create(self, *args, **kwargs):
+        return self.writer
 
 
 class _EncapsulatedTelegramTestBot(object):

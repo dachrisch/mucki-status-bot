@@ -9,8 +9,9 @@ from google_service_api.welfare import WelfareStatus
 from my_logging import get_logger
 from order_service.orders import order_options_string
 from pipedrive_service.pipedrive import ask_pipedrive
-from remote_service.remotes import remote_methods_string
+from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.gif import random_gif_url
+from telegram_service.writer import TelegramWriterFactory
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
 
 log = None
@@ -96,22 +97,19 @@ def deals(bot, update):
     _send_and_log(bot, update, ask_pipedrive())
 
 
-def remote(bot, update):
-    _send_and_log(bot, update, remote_methods_string())
-
-
 def orders(bot, update):
     _send_and_log(bot, update, order_options_string())
 
 
 def register_commands(updater):
+    registry = BotRegistry(update)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('howarewe', howarewe))
     dp.add_handler(RegexHandler(HIGHLIGHTS_PATTERN, collect_highlight))
     dp.add_handler(CommandHandler('show_highlights', show_highlights))
     dp.add_handler(CommandHandler('deals', deals))
-    dp.add_handler(CommandHandler('remote', remote))
+    registry.register_command_action(RemoteMethodCommandAction())
     dp.add_handler(CommandHandler('orders', orders))
     dp.add_error_handler(error)
     dp.add_handler(ConversationHandler(
@@ -159,16 +157,20 @@ def error(bot, update, _error):
 class BotRegistry(object):
     def __init__(self, updater):
         self.__updater = updater
+        self.writer_factory = TelegramWriterFactory(updater.bot)
 
     def register_command_action(self, action):
-        self.__updater.dispatcher.add_handler(CommandActionHandler(action, None))
+        self.__updater.dispatcher.add_handler(CommandActionHandler(action, self.writer_factory))
 
 
 class CommandActionHandler(CommandHandler):
     def __init__(self, action, writer_factory, *args, **kwargs):
         super(CommandActionHandler, self).__init__(action.name, action.command(), *args, **kwargs)
         self.__action = action
-        self.__writer_factory = writer_factory
+        self.writer_factory = writer_factory
 
     def handle_update(self, update, dispatcher):
-        return self.callback(self.__writer_factory.create(UpdateRetriever(update).chat_id))
+        try:
+            return self.callback(self.writer_factory.create(UpdateRetriever(update).chat_id))
+        except Exception as e:
+            get_logger(__name__).exception(e)
