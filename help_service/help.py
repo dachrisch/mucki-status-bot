@@ -13,15 +13,16 @@ class HelpCommandAction(CommandActionMixin):
 
     @property
     def help_text(self):
-        return "The following commands are available:"
+        return "Prints the help message"
 
     @property
     def name(self):
         return 'help'
 
     def callback_command(self, writer):
-        text = self.help_text + '\n'
-        text += '\n'.join([action.help_text for action in self.registry.registered_actions])
+        text = 'The following commands are available:'
+        text += '\n'.join(
+            ['%s - %s' % (action.name, action.help_text) for action in self.registry.registered_actions])
         writer.out(text)
 
 
@@ -35,4 +36,4 @@ class StartCommandAction(CommandActionMixin):
 
     @property
     def help_text(self):
-        return "I'm the bot of the *Südsterne* team"
+        return 'Starts the bot'

@@ -20,6 +20,10 @@ class RemoteMethod(object):
 class RemoteMethodCommandAction(CommandActionMixin):
 
     @property
+    def help_text(self):
+        return 'displays all options for remote meetings'
+
+    @property
     def name(self):
         return 'remote'
 

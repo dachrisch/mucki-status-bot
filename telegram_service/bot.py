@@ -113,7 +113,7 @@ def register_commands(updater):
         fallbacks=[Handler(cancel)]
 
     ))
-
+    return registry
 
 def _send_and_log(bot, update, message, reply_markup=None):
     global log
