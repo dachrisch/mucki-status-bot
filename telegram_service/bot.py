@@ -152,20 +152,34 @@ def error(bot, update, _error):
 
 class BotRegistry(object):
     def __init__(self, updater):
+        """
+        :type updater: telegram.ext.updater.Updater
+        """
         self.__updater = updater
         self.writer_factory = TelegramWriterFactory(updater.bot)
 
     def register_command_action(self, action):
+        """
+        :type action: service.action.CommandActionMixin
+        """
         self.__updater.dispatcher.add_handler(CommandActionHandler(action, self.writer_factory))
 
 
 class CommandActionHandler(CommandHandler):
     def __init__(self, action, writer_factory, *args, **kwargs):
+        """
+        :type action: service.action.CommandActionMixin
+        :type writer_factory: telegram_service.writer.WriterFactory
+        """
         super(CommandActionHandler, self).__init__(action.name, action.command(), *args, **kwargs)
         self.__action = action
         self.writer_factory = writer_factory
 
     def handle_update(self, update, dispatcher):
+        """
+        :type update: telegram.Update
+        :type dispatcher telegram.ext.Dispatcher
+        """
         try:
             return self.callback(self.writer_factory.create(UpdateRetriever(update).chat_id))
         except Exception as e:
