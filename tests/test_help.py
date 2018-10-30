@@ -30,4 +30,7 @@ class TestHelp(unittest.TestCase):
                                                  'The following commands are available:\n'
                                                  '/help - Prints the help message\n'
                                                  '/start - Starts the bot\n'
-                                                 '/remote - Displays all options for remote meetings')
+                                                 '/remote - Displays all options for remote meetings\n'
+                                                 '/orders - Displays all order options\n'
+                                                 '/howarewe - Displays the welfare status of the team\n'
+                                                 '/show_highlights')

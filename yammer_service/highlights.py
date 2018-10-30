@@ -2,6 +2,7 @@
 import re
 from datetime import datetime
 
+from service.action import CommandActionMixin
 from yammer_service.yammer import YammerConnector
 
 HIGHLIGHTS = '#highlights'
@@ -33,6 +34,7 @@ class Highlights(object):
     def clear(self):
         self.__highlights.clear()
 
+    @property
     def message_string(self):
         return '\n\n'.join('%s: %s' % (key, val) for (key, val) in self.__highlights.items())
 
@@ -40,6 +42,29 @@ class Highlights(object):
         return self.__yc.post_meine_woche(
             u'Die Südsterne in %s:\n%s' % (current_calendar_week(), self.message_string()),
             ('südsterne', current_calendar_week()))
+
+
+class HighlightsCommandAction(CommandActionMixin):
+
+    def __init__(self, highlights):
+        """
+        :type highlights: Highlights
+        """
+        self.highlights = highlights
+
+    def callback_command(self, writer):
+        if self.highlights.is_not_empty():
+            writer.out('the following highlights are available:\n%s' % self.highlights.message_string)
+        else:
+            writer.out('no highlights available')
+
+    @property
+    def name(self):
+        return 'show_highlights'
+
+    @property
+    def help_text(self):
+        return 'Displays currently available highlights'
 
 
 def current_calendar_week():

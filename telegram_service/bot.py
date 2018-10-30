@@ -11,7 +11,7 @@ from my_logging import get_logger
 from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.writer import TelegramWriterFactory
-from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
+from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, HighlightsCommandAction
 
 log = None
 highlights = Highlights()
@@ -81,10 +81,10 @@ def register_commands(updater):
     registry.register_command_action(RemoteMethodCommandAction())
     registry.register_command_action(OrdersCommandAction())
     registry.register_command_action(WelfareCommandAction())
+    registry.register_command_action(HighlightsCommandAction(highlights))
 
     dp = updater.dispatcher
     dp.add_handler(RegexHandler(HIGHLIGHTS_PATTERN, collect_highlight))
-    dp.add_handler(CommandHandler('show_highlights', show_highlights))
     dp.add_error_handler(error)
     dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('send_highlights', ask_for_consent)],

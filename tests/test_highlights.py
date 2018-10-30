@@ -5,7 +5,8 @@ import unittest
 from telegram import Update
 from telegram.ext import RegexHandler
 
-from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
+from tests.telegram_test_bot import TelegramTestBot
+from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, HighlightsCommandAction
 
 HASH_AND_COLON = '#highlights: test'
 
@@ -73,6 +74,13 @@ class TestHighlights(unittest.TestCase):
         message.text = 'test #highlights'
         self.assertTrue(rh.check_update(Update(1234, message=message)))
 
+    def test_can_execute_show_highlights(self):
+        highlights = Highlights()
+        highlights.add('A', '#highlights test')
+        TelegramTestBot().assert_command_action_responses_with(self, HighlightsCommandAction(highlights),
+                                                               'the following')
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_show_highlights_is_empty(self):
+        highlights = Highlights()
+        TelegramTestBot().assert_command_action_responses_with(self, HighlightsCommandAction(highlights),
+                                                               'no highlights')
