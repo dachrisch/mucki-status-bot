@@ -95,7 +95,7 @@ def orders(bot, update):
 def register_commands(updater):
     registry = BotRegistry(updater)
     dp = updater.dispatcher
-    registry.register_command_action(HelpCommandAction())
+    registry.register_command_action(HelpCommandAction(registry))
     registry.register_command_action(StartCommandAction())
 
     dp.add_handler(CommandHandler('howarewe', howarewe))
