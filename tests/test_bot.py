@@ -28,6 +28,7 @@ class TestBot(unittest.TestCase):
     def test_show_highlights_available(self):
         self.assertIn('show_highlights', self.available_commands)
 
+    @unittest.skip('not available currently')
     def test_deals_available(self):
         self.assertIn('deals', self.available_commands)
 
@@ -81,4 +82,3 @@ class TestHighlights(unittest.TestCase):
                                              ('H', 'OK', None, None))
             TelegramTestBot().assert_command_responses_with(self, 'howarewe', '####### !UNICORN DANCE! ########')
             team_status_mock.assert_any_call()
-
