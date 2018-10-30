@@ -82,10 +82,3 @@ class TestHighlights(unittest.TestCase):
             TelegramTestBot().assert_command_responses_with(self, 'howarewe', '####### !UNICORN DANCE! ########')
             team_status_mock.assert_any_call()
 
-
-class TestOrders(unittest.TestCase):
-    def test_can_execute_orders(self):
-        TelegramTestBot().assert_can_execute_command(self, 'orders')
-
-    def test_orders_shows_options(self):
-        TelegramTestBot().assert_command_responses_with(self, 'orders', "The following order options are available")

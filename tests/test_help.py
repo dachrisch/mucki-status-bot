@@ -3,17 +3,13 @@ import unittest
 
 from telegram.ext import Updater
 
-from help_service.help import HelpCommandAction, StartCommandAction
+from help_service.help import HelpCommandAction
 from telegram_service.bot import BotRegistry, register_commands
 from tests.telegram_test_bot import TelegramTestBot
 from tests.test_bot_registry import CommandTestAction
 
 
 class TestHelp(unittest.TestCase):
-    def test_help(self):
-        action = StartCommandAction()
-        TelegramTestBot().assert_command_action_responses_with(self, action, "I'm the bot of the Südsterne.")
-
     def test_help_text(self):
         bot = TelegramTestBot()
         updater = Updater(bot=bot)

@@ -8,7 +8,7 @@ from google_service.sheets import SheetConnector
 from google_service_api.welfare import WelfareStatus
 from help_service.help import HelpCommandAction, StartCommandAction
 from my_logging import get_logger
-from order_service.orders import order_options_string
+from order_service.orders import OrdersCommandAction
 from pipedrive_service.pipedrive import ask_pipedrive
 from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.gif import random_gif_url
@@ -88,10 +88,6 @@ def deals(bot, update):
     _send_and_log(bot, update, ask_pipedrive())
 
 
-def orders(bot, update):
-    _send_and_log(bot, update, order_options_string())
-
-
 def register_commands(updater):
     registry = BotRegistry(updater)
     dp = updater.dispatcher
@@ -103,7 +99,7 @@ def register_commands(updater):
     dp.add_handler(CommandHandler('show_highlights', show_highlights))
     dp.add_handler(CommandHandler('deals', deals))
     registry.register_command_action(RemoteMethodCommandAction())
-    dp.add_handler(CommandHandler('orders', orders))
+    registry.register_command_action(OrdersCommandAction())
     dp.add_error_handler(error)
     dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('send_highlights', ask_for_consent)],
