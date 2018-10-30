@@ -4,20 +4,13 @@ import sys
 
 from telegram.ext import Updater
 
-from config import WITH_WEB, BOT_TOKEN, CONFIG_PATH
+from config import BOT_TOKEN, CONFIG_PATH
 from my_logging import checked_load_logging_config, get_logger
 from telegram_service.bot import register_commands
-from web import start_server, kill_server
 
 
 def main():
-    try:
-        if os.getenv(WITH_WEB):
-            start_server()
-        _startup_bot(os.getenv(BOT_TOKEN))
-    finally:
-        if os.getenv(WITH_WEB):
-            kill_server()
+    _startup_bot(os.getenv(BOT_TOKEN))
 
 
 def _startup_bot(token):

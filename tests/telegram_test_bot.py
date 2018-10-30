@@ -130,6 +130,9 @@ class LoggingWriter(Writer):
     def out(self, message):
         self.message += message
 
+    def out_gif(self, url):
+        self.message += url
+
 
 class LoggingWriterFactory(WriterFactory):
     def __init__(self):

@@ -5,12 +5,11 @@ from telegram.ext import (CommandHandler, RegexHandler,
 
 from config import MUCKI_TRACKER_SHEET_ID
 from google_service.sheets import SheetConnector
-from google_service_api.welfare import WelfareStatus
+from google_service_api.welfare import WelfareStatus, WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
 from my_logging import get_logger
 from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
-from telegram_service.gif import random_gif_url
 from telegram_service.writer import TelegramWriterFactory
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN
 
@@ -30,14 +29,6 @@ class UpdateRetriever(object):
     @property
     def user(self):
         return self._update.message.from_user.first_name
-
-
-def howarewe(bot, update):
-    try:
-        _send_status(bot, update)
-        _send_shoutout(bot, update)
-    except Exception as e:
-        _send_and_log(bot, update, 'failed to obtain status: [%s]' % e)
 
 
 def collect_highlight(bot, update):
@@ -89,9 +80,9 @@ def register_commands(updater):
     registry.register_command_action(StartCommandAction())
     registry.register_command_action(RemoteMethodCommandAction())
     registry.register_command_action(OrdersCommandAction())
+    registry.register_command_action(WelfareCommandAction())
 
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler('howarewe', howarewe))
     dp.add_handler(RegexHandler(HIGHLIGHTS_PATTERN, collect_highlight))
     dp.add_handler(CommandHandler('show_highlights', show_highlights))
     dp.add_error_handler(error)
@@ -111,26 +102,6 @@ def _send_and_log(bot, update, message, reply_markup=None):
     log = get_logger(__name__)
     bot.send_message(UpdateRetriever(update).chat_id, message, reply_markup=reply_markup, disable_web_page_preview=True)
     log.info(message)
-
-
-def _send_status(bot, update):
-    _send_and_log(bot, update, 'calculating welfare status of team...')
-    _thinking(bot, update)
-    _send_and_log(bot, update, welfare_status.team_message)
-
-
-def _send_shoutout(bot, update):
-    global log
-    log = get_logger(__name__)
-    _thinking(bot, update)
-    _send_and_log(bot, update, '####### !%s! ########' % welfare_status.shoutout.upper())
-    gif_url = random_gif_url(welfare_status.shoutout)
-    log.debug(gif_url)
-    bot.send_sticker(UpdateRetriever(update).chat_id, gif_url)
-
-
-def _thinking(bot, update):
-    bot.send_chat_action(UpdateRetriever(update).chat_id, 'typing')
 
 
 def error(bot, update, _error):

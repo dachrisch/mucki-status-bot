@@ -3,8 +3,11 @@ import os
 from collections import Counter
 from json import loads
 
-from config import MUCKI_TRACKER_TEAM_STATUS_RANGE
+from config import MUCKI_TRACKER_TEAM_STATUS_RANGE, MUCKI_TRACKER_SHEET_ID
+from google_service.sheets import SheetConnector
 from my_logging import get_logger
+from service.action import CommandActionMixin
+from telegram_service.gif import GifRetriever
 
 
 class MemberStatus(object):
@@ -64,3 +67,24 @@ class WelfareStatus(object):
         else:
             shout = 'freakout'
         return shout
+
+
+class WelfareCommandAction(CommandActionMixin):
+    def __init__(self):
+        self.welfare_status = WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID))
+        self.gif_retriever = GifRetriever()
+
+    def callback_command(self, writer):
+        writer.out('calculating welfare status of team...\n')
+        writer.out_thinking()
+        writer.out(self.welfare_status.team_message + '\n')
+        writer.out('####### !%s! ########\n' % self.welfare_status.shoutout.upper())
+        writer.out_gif(self.gif_retriever.random_gif_url(self.welfare_status.shoutout))
+
+    @property
+    def name(self):
+        return 'howarewe'
+
+    @property
+    def help_text(self):
+        return 'Displays the welfare status of the team'

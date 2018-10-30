@@ -5,6 +5,15 @@ class Writer(object):
         """
         pass
 
+    def out_thinking(self):
+        pass
+
+    def out_gif(self, url):
+        """
+        :type url: str
+        """
+        pass
+
 
 class WriterFactory(object):
     def create(self, *args, **kwargs):
@@ -21,11 +30,14 @@ class TelegramWriter(Writer):
         self.__chat_id = chat_id
 
     def out(self, message):
-        """
-        :type message: str
-        """
         self.bot.send_message(self.__chat_id, message,
                               disable_web_page_preview=True)
+
+    def out_thinking(self):
+        self.bot.send_chat_action(self.__chat_id, 'typing')
+
+    def out_gif(self, url):
+        self.bot.send_sticker(self.__chat_id, url)
 
 
 class TelegramWriterFactory(WriterFactory):
