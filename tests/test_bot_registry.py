@@ -10,7 +10,14 @@ from tests.telegram_test_bot import TelegramTestBot
 
 
 class CommandTestAction(CommandActionMixin):
-    def __init__(self):
+    @property
+    def help_text(self):
+        return self._help_text
+
+    def __init__(self, name, help_text):
+        self._help_text = help_text
+        self._name = name
+
         self.__called = False
 
     def callback_command(self, writer):
@@ -22,20 +29,20 @@ class CommandTestAction(CommandActionMixin):
 
     @property
     def name(self):
-        return 'test'
+        return self._name
 
 
 class TestBotRegistry(unittest.TestCase):
     def test_add_action_listener(self):
         updater = Updater(bot=TelegramTestBot())
 
-        BotRegistry(updater).register_command_action(CommandTestAction())
+        BotRegistry(updater).register_command_action(CommandTestAction('test', 'help text'))
 
         self.assertEqual(1, len(updater.dispatcher.handlers.keys()))
 
     def test_command_callable(self):
         updater = Updater(bot=TelegramTestBot())
-        action = CommandTestAction()
+        action = CommandTestAction('test', 'help text')
         handler = CommandActionHandler(action, WriterFactory())
 
         handler.handle_update(Update(1, Message(1, None, None, Chat(1, None), text='test', bot=self)),
@@ -46,7 +53,7 @@ class TestBotRegistry(unittest.TestCase):
     def test_action_writes_to_bot(self):
         bot = TelegramTestBot()
         updater = Updater(bot=bot)
-        action = CommandTestAction()
+        action = CommandTestAction('test', 'help text')
         writer_factory = TelegramWriterFactory(bot)
 
         self.called = False
@@ -61,4 +68,3 @@ class TestBotRegistry(unittest.TestCase):
 
     def log_call(self, *args, **kwargs):
         self.called = True
-

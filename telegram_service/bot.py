@@ -33,9 +33,6 @@ class UpdateRetriever(object):
         return self._update.message.from_user.first_name
 
 
-
-
-
 def howarewe(bot, update):
     try:
         _send_status(bot, update)
@@ -150,21 +147,6 @@ def error(bot, update, _error):
     log.warning('Update "%s" caused error "%s"', update, _error)
 
 
-class BotRegistry(object):
-    def __init__(self, updater):
-        """
-        :type updater: telegram.ext.updater.Updater
-        """
-        self.__updater = updater
-        self.writer_factory = TelegramWriterFactory(updater.bot)
-
-    def register_command_action(self, action):
-        """
-        :type action: service.action.CommandActionMixin
-        """
-        self.__updater.dispatcher.add_handler(CommandActionHandler(action, self.writer_factory))
-
-
 class CommandActionHandler(CommandHandler):
     def __init__(self, action, writer_factory, *args, **kwargs):
         """
@@ -184,3 +166,31 @@ class CommandActionHandler(CommandHandler):
             return self.callback(self.writer_factory.create(UpdateRetriever(update).chat_id))
         except Exception as e:
             get_logger(__name__).exception(e)
+            raise e
+
+
+class BotRegistry(object):
+    def __init__(self, updater):
+        """
+        :type updater: telegram.ext.updater.Updater
+        """
+        self.__updater = updater
+        self.writer_factory = TelegramWriterFactory(updater.bot)
+        self.__registered_actions = []
+
+    def register_command_action(self, action, action_handler_class=CommandActionHandler):
+        """
+        :type action_handler_class: telegram.ext.CommandHandler.__class__
+        :type action: service.action.CommandActionMixin
+        """
+        handler = action_handler_class(action, self.writer_factory)
+        self.__updater.dispatcher.add_handler(handler)
+        self.__registered_actions.append(action)
+        return handler
+
+    @property
+    def registered_actions(self):
+        """
+        :rtype: list[service.action.CommandActionMixin]
+        """
+        return self.__registered_actions
