@@ -20,15 +20,15 @@ class HelpCommandAction(CommandActionMixin):
         return 'help'
 
     def callback_command(self, writer):
-        text = 'The following commands are available:'
+        text = 'The following commands are available:\n'
         text += '\n'.join(
-            ['%s - %s' % (action.name, action.help_text) for action in self.registry.registered_actions])
+            ['/%s - %s' % (action.name, action.help_text) for action in self.registry.registered_actions])
         writer.out(text)
 
 
 class StartCommandAction(CommandActionMixin):
     def callback_command(self, writer):
-        writer.out(self.help_text)
+        writer.out("I'm the bot of the Südsterne.\nHow can I help you?")
 
     @property
     def name(self):
