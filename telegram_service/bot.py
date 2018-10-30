@@ -9,7 +9,6 @@ from google_service_api.welfare import WelfareStatus
 from help_service.help import HelpCommandAction, StartCommandAction
 from my_logging import get_logger
 from order_service.orders import OrdersCommandAction
-from pipedrive_service.pipedrive import ask_pipedrive
 from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.gif import random_gif_url
 from telegram_service.writer import TelegramWriterFactory
@@ -84,22 +83,17 @@ def cancel(bot, update):
     _send_and_log(bot, update, 'ok, not sending highlights.', reply_markup=ReplyKeyboardRemove())
 
 
-def deals(bot, update):
-    _send_and_log(bot, update, ask_pipedrive())
-
-
 def register_commands(updater):
     registry = BotRegistry(updater)
-    dp = updater.dispatcher
     registry.register_command_action(HelpCommandAction(registry))
     registry.register_command_action(StartCommandAction())
+    registry.register_command_action(RemoteMethodCommandAction())
+    registry.register_command_action(OrdersCommandAction())
 
+    dp = updater.dispatcher
     dp.add_handler(CommandHandler('howarewe', howarewe))
     dp.add_handler(RegexHandler(HIGHLIGHTS_PATTERN, collect_highlight))
     dp.add_handler(CommandHandler('show_highlights', show_highlights))
-    dp.add_handler(CommandHandler('deals', deals))
-    registry.register_command_action(RemoteMethodCommandAction())
-    registry.register_command_action(OrdersCommandAction())
     dp.add_error_handler(error)
     dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('send_highlights', ask_for_consent)],
@@ -110,6 +104,7 @@ def register_commands(updater):
 
     ))
     return registry
+
 
 def _send_and_log(bot, update, message, reply_markup=None):
     global log
