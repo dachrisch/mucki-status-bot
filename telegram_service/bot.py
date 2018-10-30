@@ -124,10 +124,11 @@ class CommandActionHandler(CommandHandler):
         :type update: telegram.Update
         :type dispatcher telegram.ext.Dispatcher
         """
+        writer = self.writer_factory.create(UpdateRetriever(update).chat_id)
         try:
-            return self.callback(self.writer_factory.create(UpdateRetriever(update).chat_id))
+            return self.callback(writer)
         except Exception as e:
-            get_logger(__name__).exception(e)
+            writer.out_error(e)
             raise e
 
 
