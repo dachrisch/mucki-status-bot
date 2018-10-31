@@ -9,7 +9,7 @@ class DummyGifRetriever(GifRetriever):
         return 'http://test.url'
 
 
-class TestHowareWe(TelegramBotTest):
+class TestHowAreWe(TelegramBotTest):
     def test_can_execute_howarewe(self):
         command_action = WelfareCommandAction()
         command_action.welfare_status = WelfareStatus(DummySheetConnector((('A', 'OK', 1, 2),)))
