@@ -13,7 +13,7 @@ from my_logging import get_logger
 from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.writer import TelegramWriterFactory
-from yammer_service.highlights import Highlights, HighlightsCommandAction, \
+from yammer_service.highlights import Highlights, ShowHighlightsCommandAction, \
     HighlightsCollectorRegexAction
 
 log = None
@@ -86,7 +86,7 @@ def register_commands(updater):
     registry.register_command_action(RemoteMethodCommandAction())
     registry.register_command_action(OrdersCommandAction())
     registry.register_command_action(WelfareCommandAction())
-    registry.register_command_action(HighlightsCommandAction(highlights))
+    registry.register_command_action(ShowHighlightsCommandAction(highlights))
     registry.register_regex_action(HighlightsCollectorRegexAction(highlights))
 
     dp = updater.dispatcher

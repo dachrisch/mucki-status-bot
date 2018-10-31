@@ -83,7 +83,7 @@ class TelegramTestBot(Bot):
     def assert_responses_with(self, this_unittest, action, action_handler_class, update, expected_containing_message):
         """
         :type this_unittest: unittest.TestCase
-        :type action: service.action.CommandActionMixin
+        :type action: service.action.ActionMixin
         :type action_handler_class: type[telegram_service.bot.ActionHandler]
         :type update: telegram.Update
         :type expected_containing_message: str

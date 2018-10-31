@@ -48,7 +48,7 @@ class Highlights(object):
             ('südsterne', current_calendar_week()))
 
 
-class HighlightsCommandAction(CommandActionMixin):
+class ShowHighlightsCommandAction(CommandActionMixin):
 
     def __init__(self, highlights):
         """

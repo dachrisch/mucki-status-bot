@@ -1,13 +1,15 @@
 # coding=UTF-8
 import re
 import unittest
+from abc import ABC
 
 from telegram import Update
 from telegram.ext import RegexHandler, Updater
 
+from service.action import ActionMixin
 from telegram_service.bot import BotRegistry
 from tests.telegram_test_bot import TelegramTestBot, FailureThrowingRegexActionHandler, LoggingWriterFactory
-from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, HighlightsCommandAction, \
+from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, ShowHighlightsCommandAction, \
     HighlightsCollectorRegexAction
 
 HASH_AND_COLON = '#highlights: test'
@@ -77,16 +79,37 @@ class TestHighlightsMathcing(unittest.TestCase):
         self.assertTrue(rh.check_update(Update(1234, message=message)))
 
 
+class ConversationActionMixin(ActionMixin, ABC):
+    pass
+
+
+class SendHighlightsCommandAction(ConversationActionMixin):
+    @property
+    def callback_function(self):
+        pass
+
+    def _writer_callback(self, writer):
+        pass
+
+    @property
+    def name(self):
+        'send_highlights'
+
+    @property
+    def help_text(self):
+        pass
+
+
 class TestHighlightsCommand(unittest.TestCase):
     def test_can_execute_show_highlights(self):
         highlights = Highlights()
         highlights.add('A', '#highlights test')
-        TelegramTestBot().assert_command_action_responses_with(self, HighlightsCommandAction(highlights),
+        TelegramTestBot().assert_command_action_responses_with(self, ShowHighlightsCommandAction(highlights),
                                                                'the following')
 
     def test_show_highlights_is_empty(self):
         highlights = Highlights()
-        TelegramTestBot().assert_command_action_responses_with(self, HighlightsCommandAction(highlights),
+        TelegramTestBot().assert_command_action_responses_with(self, ShowHighlightsCommandAction(highlights),
                                                                'no highlights')
 
     def test_collect_highlights(self):
