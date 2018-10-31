@@ -39,6 +39,9 @@ class TelegramBotTest(unittest.TestCase):
         self.bot = TelegramTestBot()
         self.updater = Updater(bot=self.bot)
         self.registry = BotRegistry(self.updater)
+        self.add_logging_writer()
+
+    def add_logging_writer(self):
         self.registry.writer_factory = LoggingWriterFactory()
 
     def assert_can_execute_command(self, command):

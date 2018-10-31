@@ -6,26 +6,21 @@ from google_service_api.welfare import WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
 from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
-from telegram_service.bot import BotRegistry, register_commands
-from tests.telegram_test_bot import TelegramTestBot, TelegramBotTest
+from telegram_service.bot import register_commands
+from tests.telegram_test_bot import TelegramBotTest
 from tests.test_bot_registry import CommandTestAction
 from yammer_service.highlights import ShowHighlightsCommandAction, HighlightsCollectorRegexAction
 
 
 class TestHelp(TelegramBotTest):
     def test_help_text(self):
-        bot = TelegramTestBot()
-        updater = Updater(bot=bot)
-
-        registry = BotRegistry(updater)
-        registry.register_command_action(CommandTestAction('test', 'help text'))
-        help_command_action = HelpCommandAction(registry)
+        self.registry.register_command_action(CommandTestAction('test', 'help text'))
+        help_command_action = HelpCommandAction(self.registry)
         self.assert_command_action_responses_with(help_command_action,
                                                   'test - help text')
 
     def test_full_help_text(self):
-        bot = TelegramTestBot()
-        updater = Updater(bot=bot)
+        updater = Updater(bot=self.bot)
 
         registry = register_commands(updater)
         help_command_action = HelpCommandAction(registry)
