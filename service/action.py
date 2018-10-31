@@ -18,6 +18,10 @@ class ActionMixin(object):
     def help_text(self):
         raise NotImplementedError
 
+    @property
+    def help_entry(self):
+        return '/%s - %s' % (self.name, self.help_text)
+
 
 class CommandActionMixin(ActionMixin, ABC):
     @property
@@ -52,3 +56,7 @@ class RegexActionMixin(ActionMixin):
     @property
     def callback_function(self):
         return self._writer_callback_with_update
+
+    @property
+    def help_entry(self):
+        return '%s - %s' % (self.name, self.help_text)

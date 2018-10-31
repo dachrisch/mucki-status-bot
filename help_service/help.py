@@ -22,13 +22,13 @@ class HelpCommandAction(CommandActionMixin):
     def _writer_callback(self, writer):
         text = 'The following commands are available:\n'
         text += '\n'.join(
-            ['/%s - %s' % (action.name, action.help_text) for action in self.registry.registered_actions])
+            [action.help_entry for action in self.registry.registered_actions])
         writer.out(text)
 
 
 class StartCommandAction(CommandActionMixin):
     def _writer_callback(self, writer):
-        writer.out("I'm the bot of the Südsterne.\nHow can I help you?")
+        writer.out("I'm the bot of the Südsterne.\nHow can I /help you?")
 
     @property
     def name(self):

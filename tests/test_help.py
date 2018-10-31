@@ -13,14 +13,6 @@ from tests.test_bot_registry import CommandTestAction
 from yammer_service.highlights import HighlightsCommandAction, HighlightsCollectorRegexAction
 
 
-def to_help_string(action):
-    """
-
-    :type action: service.action.ActionMixin
-    """
-    return '\n/%s - %s' % (action.name, action.help_text)
-
-
 class TestHelp(unittest.TestCase):
     def test_help_text(self):
         bot = TelegramTestBot()
@@ -40,11 +32,11 @@ class TestHelp(unittest.TestCase):
         help_command_action = HelpCommandAction(registry)
         bot.assert_command_action_responses_with(self, help_command_action,
                                                  'The following commands are available:'
-                                                 + to_help_string(HelpCommandAction(None))
-                                                 + to_help_string(StartCommandAction())
-                                                 + to_help_string(RemoteMethodCommandAction())
-                                                 + to_help_string(OrdersCommandAction())
-                                                 + to_help_string(WelfareCommandAction())
-                                                 + to_help_string(HighlightsCommandAction(None))
-                                                 + to_help_string(HighlightsCollectorRegexAction(None))
+                                                 + '\n' + HelpCommandAction(None).help_entry
+                                                 + '\n' + StartCommandAction().help_entry
+                                                 + '\n' + RemoteMethodCommandAction().help_entry
+                                                 + '\n' + OrdersCommandAction().help_entry
+                                                 + '\n' + WelfareCommandAction().help_entry
+                                                 + '\n' + HighlightsCommandAction(None).help_entry
+                                                 + '\n' + HighlightsCollectorRegexAction(None).help_entry
                                                  )
