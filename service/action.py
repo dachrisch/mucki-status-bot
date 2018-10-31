@@ -10,7 +10,7 @@ class CommandActionMixin(object):
         """
         raise NotImplementedError
 
-    def command(self):
+    def callback(self):
         return self.callback_command
 
     @property

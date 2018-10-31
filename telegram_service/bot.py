@@ -1,4 +1,6 @@
 # coding=UTF-8
+from abc import ABC
+
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from telegram.ext import (CommandHandler, RegexHandler,
                           ConversationHandler, Handler)
@@ -109,14 +111,14 @@ def error(bot, update, _error):
     log.warning('Update "%s" caused error "%s"', update, _error)
 
 
-class CommandActionHandler(CommandHandler):
+class ActionHandler(Handler, ABC):
     def __init__(self, action, writer_factory, *args, **kwargs):
         """
         :type action: service.action.CommandActionMixin
         :type writer_factory: telegram_service.writer.WriterFactory
         """
-        super(CommandActionHandler, self).__init__(action.name, action.command(), *args, **kwargs)
-        self.__action = action
+        Handler.__init__(self, action.callback, *args, **kwargs)
+        self.action = action
         self.writer_factory = writer_factory
 
     def handle_update(self, update, dispatcher):
@@ -130,6 +132,26 @@ class CommandActionHandler(CommandHandler):
         except Exception as e:
             writer.out_error(e)
             raise e
+
+
+class CommandActionHandler(ActionHandler, CommandHandler):
+    def __init__(self, action, writer_factory, *args, **kwargs):
+        """
+        :type action: service.action.CommandActionMixin
+        :type writer_factory: telegram_service.writer.WriterFactory
+        """
+        ActionHandler.__init__(self, action, writer_factory, *args, **kwargs)
+        CommandHandler.__init__(self, action.name, action.callback(), *args, **kwargs)
+
+
+class RegexActionHandler(ActionHandler, RegexHandler):
+    def __init__(self, action, writer_factory, *args, **kwargs):
+        """
+        :type action: service.action.CommandActionMixin
+        :type writer_factory: telegram_service.writer.WriterFactory
+        """
+        ActionHandler.__init__(self, action, writer_factory, *args, **kwargs)
+        RegexHandler.__init__(self, action.name, action.callback(), *args, **kwargs)
 
 
 class BotRegistry(object):
