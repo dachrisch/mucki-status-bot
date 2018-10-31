@@ -25,7 +25,7 @@ class _Any(object):
     pass
 
 
-class TestHighlightsMathcing(unittest.TestCase):
+class TestHighlightsMatching(unittest.TestCase):
     def test_regex_both(self):
         match = re.match(HIGHLIGHTS_PATTERN, BOTH_HASH)
         self.assertTrue(bool(match))
@@ -83,24 +83,7 @@ class ConversationActionMixin(ActionMixin, ABC):
     pass
 
 
-class SendHighlightsCommandAction(ConversationActionMixin):
-    @property
-    def callback_function(self):
-        pass
-
-    def _writer_callback(self, writer):
-        pass
-
-    @property
-    def name(self):
-        'send_highlights'
-
-    @property
-    def help_text(self):
-        pass
-
-
-class TestHighlightsCommand(unittest.TestCase):
+class TestShowHighlightsCommand(unittest.TestCase):
     def test_can_execute_show_highlights(self):
         highlights = Highlights()
         highlights.add('A', '#highlights test')
