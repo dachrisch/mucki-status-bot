@@ -2,7 +2,7 @@
 import re
 from datetime import datetime
 
-from service.action import CommandActionMixin
+from service.action import CommandActionMixin, RegexActionMixin
 from yammer_service.yammer import YammerConnector
 
 HIGHLIGHTS = '#highlights'
@@ -73,3 +73,28 @@ class HighlightsCommandAction(CommandActionMixin):
 
 def current_calendar_week():
     return 'KW_%s' % datetime.today().strftime('%U')
+
+
+class HighlightsCollectorRegexAction(RegexActionMixin):
+
+    def _writer_callback_with_update(self, update_retriever, writer):
+        """
+
+        :type update_retriever: telegram_service.bot.UpdateRetriever
+        """
+        self.highlights.add(update_retriever.user, update_retriever.message)
+
+    @property
+    def pattern(self):
+        return HIGHLIGHTS_PATTERN
+
+    @property
+    def name(self):
+        return '#highlights'
+
+    @property
+    def help_text(self):
+        return 'collects messages with this tag from the current user'
+
+    def __init__(self, highlights):
+        self.highlights = highlights

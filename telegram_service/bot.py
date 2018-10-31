@@ -13,7 +13,8 @@ from my_logging import get_logger
 from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.writer import TelegramWriterFactory
-from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, HighlightsCommandAction
+from yammer_service.highlights import Highlights, HighlightsCommandAction, \
+    HighlightsCollectorRegexAction
 
 log = None
 highlights = Highlights()
@@ -39,12 +40,6 @@ class UpdateRetriever(object):
     @property
     def message(self):
         return self._update.message.text
-
-
-def collect_highlight(bot, update):
-    user = UpdateRetriever(update).user
-    if highlights.add(user, str(update.message.text)):
-        _send_and_log(bot, update, 'collecting highlight for %s: [%s]' % (user, highlights.get(user)))
 
 
 def show_highlights(bot, update):
@@ -92,9 +87,9 @@ def register_commands(updater):
     registry.register_command_action(OrdersCommandAction())
     registry.register_command_action(WelfareCommandAction())
     registry.register_command_action(HighlightsCommandAction(highlights))
+    registry.register_command_action(HighlightsCollectorRegexAction(highlights), RegexActionHandler)
 
     dp = updater.dispatcher
-    dp.add_handler(RegexHandler(HIGHLIGHTS_PATTERN, collect_highlight))
     dp.add_error_handler(error)
     dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('send_highlights', ask_for_consent)],

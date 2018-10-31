@@ -5,10 +5,10 @@ import unittest
 from telegram import Update
 from telegram.ext import RegexHandler, Updater
 
-from service.action import RegexActionMixin
 from telegram_service.bot import BotRegistry
 from tests.telegram_test_bot import TelegramTestBot, FailureThrowingRegexActionHandler
-from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, HighlightsCommandAction
+from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, HighlightsCommandAction, \
+    HighlightsCollectorRegexAction
 
 HASH_AND_COLON = '#highlights: test'
 
@@ -77,31 +77,6 @@ class TestHighlightsMathcing(unittest.TestCase):
         self.assertTrue(rh.check_update(Update(1234, message=message)))
 
 
-class HighlightsCollectorAction(RegexActionMixin):
-
-    def _writer_callback_with_update(self, update_retriever, writer):
-        """
-
-        :type update_retriever: telegram_service.bot.UpdateRetriever
-        """
-        self.highlights.add(update_retriever.user, update_retriever.message)
-
-    @property
-    def pattern(self):
-        return HIGHLIGHTS_PATTERN
-
-    @property
-    def name(self):
-        return '#highlights'
-
-    @property
-    def help_text(self):
-        pass
-
-    def __init__(self, highlights):
-        self.highlights = highlights
-
-
 class TestHighlightsCommand(unittest.TestCase):
     def test_can_execute_show_highlights(self):
         highlights = Highlights()
@@ -119,7 +94,7 @@ class TestHighlightsCommand(unittest.TestCase):
         bot = TelegramTestBot()
         updater = Updater(bot=bot)
 
-        handler = BotRegistry(updater).register_command_action(HighlightsCollectorAction(highlights),
+        handler = BotRegistry(updater).register_command_action(HighlightsCollectorRegexAction(highlights),
                                                                FailureThrowingRegexActionHandler)
 
         updater.dispatcher.process_update(bot._create_update_with_text('#highlights test', 'A'))

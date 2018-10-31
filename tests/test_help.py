@@ -3,10 +3,22 @@ import unittest
 
 from telegram.ext import Updater
 
-from help_service.help import HelpCommandAction
+from google_service_api.welfare import WelfareCommandAction
+from help_service.help import HelpCommandAction, StartCommandAction
+from order_service.orders import OrdersCommandAction
+from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.bot import BotRegistry, register_commands
 from tests.telegram_test_bot import TelegramTestBot
 from tests.test_bot_registry import CommandTestAction
+from yammer_service.highlights import HighlightsCommandAction, HighlightsCollectorRegexAction
+
+
+def to_help_string(action):
+    """
+
+    :type action: service.action.ActionMixin
+    """
+    return '\n/%s - %s' % (action.name, action.help_text)
 
 
 class TestHelp(unittest.TestCase):
@@ -27,10 +39,12 @@ class TestHelp(unittest.TestCase):
         registry = register_commands(updater)
         help_command_action = HelpCommandAction(registry)
         bot.assert_command_action_responses_with(self, help_command_action,
-                                                 'The following commands are available:\n'
-                                                 '/help - Prints the help message\n'
-                                                 '/start - Starts the bot\n'
-                                                 '/remote - Displays all options for remote meetings\n'
-                                                 '/orders - Displays all order options\n'
-                                                 '/howarewe - Displays the welfare status of the team\n'
-                                                 '/show_highlights')
+                                                 'The following commands are available:'
+                                                 + to_help_string(HelpCommandAction(None))
+                                                 + to_help_string(StartCommandAction())
+                                                 + to_help_string(RemoteMethodCommandAction())
+                                                 + to_help_string(OrdersCommandAction())
+                                                 + to_help_string(WelfareCommandAction())
+                                                 + to_help_string(HighlightsCommandAction(None))
+                                                 + to_help_string(HighlightsCollectorRegexAction(None))
+                                                 )
