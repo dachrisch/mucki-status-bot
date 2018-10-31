@@ -97,8 +97,8 @@ class TestHighlightsCommand(unittest.TestCase):
         registry = BotRegistry(updater)
         registry.writer_factory = LoggingWriterFactory()
 
-        handler = registry.register_command_action(HighlightsCollectorRegexAction(highlights),
-                                                   FailureThrowingRegexActionHandler)
+        handler = registry.register_action(HighlightsCollectorRegexAction(highlights),
+                                           FailureThrowingRegexActionHandler)
 
         updater.dispatcher.process_update(bot._create_update_with_text('#highlights test', 'A'))
 

@@ -87,10 +87,9 @@ def register_commands(updater):
     registry.register_command_action(OrdersCommandAction())
     registry.register_command_action(WelfareCommandAction())
     registry.register_command_action(HighlightsCommandAction(highlights))
-    registry.register_command_action(HighlightsCollectorRegexAction(highlights), RegexActionHandler)
+    registry.register_regex_action(HighlightsCollectorRegexAction(highlights))
 
     dp = updater.dispatcher
-    dp.add_error_handler(error)
     dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('send_highlights', ask_for_consent)],
         states={
@@ -107,11 +106,6 @@ def _send_and_log(bot, update, message, reply_markup=None):
     log = get_logger(__name__)
     bot.send_message(UpdateRetriever(update).chat_id, message, reply_markup=reply_markup, disable_web_page_preview=True)
     log.info(message)
-
-
-def error(bot, update, _error):
-    """Log Errors caused by Updates."""
-    log.warning('Update "%s" caused error "%s"', update, _error)
 
 
 class ActionHandler(Handler, ABC):
@@ -179,7 +173,13 @@ class BotRegistry(object):
         self.writer_factory = TelegramWriterFactory(updater.bot)
         self.__registered_actions = []
 
-    def register_command_action(self, action, action_handler_class=CommandActionHandler):
+    def register_command_action(self, action):
+        return self.register_action(action, CommandActionHandler)
+
+    def register_regex_action(self, action):
+        return self.register_action(action, RegexActionHandler)
+
+    def register_action(self, action, action_handler_class):
         """
         :type action: service.action.ActionMixin
         :type action_handler_class: type[telegram_service.bot.ActionHandler]

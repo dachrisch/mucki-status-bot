@@ -103,7 +103,7 @@ class TelegramTestBot(Bot):
         registry = BotRegistry(updater)
         registry.writer_factory = LoggingWriterFactory()
 
-        handler = registry.register_command_action(action, action_handler_class=action_handler_class)
+        handler = registry.register_action(action, action_handler_class=action_handler_class)
 
         updater.dispatcher.process_update(update)
 
