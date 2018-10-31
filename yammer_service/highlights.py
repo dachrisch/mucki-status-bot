@@ -79,10 +79,12 @@ class HighlightsCollectorRegexAction(RegexActionMixin):
 
     def _writer_callback_with_update(self, update_retriever, writer):
         """
-
         :type update_retriever: telegram_service.bot.UpdateRetriever
+        :type writer: telegram_service.writer.Writer
         """
         self.highlights.add(update_retriever.user, update_retriever.message)
+        writer.out(
+            'collecting highlight for %s: [%s]' % (update_retriever.user, self.highlights.get(update_retriever.user)))
 
     @property
     def pattern(self):

@@ -84,18 +84,28 @@ class TelegramTestBot(Bot):
         this_unittest.assertIn(expected_text, self.__test_value)
 
     def assert_command_action_responses_with(self, this_unittest, action, expected_containing_message):
+        self.assert_responses_with(this_unittest, action, FailureThrowingCommandActionHandler,
+                                   self._create_update_with_text('/' + action.name), expected_containing_message)
+
+    def assert_regex_action_responses_with(self, this_unittest, action, expected_containing_message):
+        self.assert_responses_with(this_unittest, action, FailureThrowingRegexActionHandler,
+                                   self._create_update_with_text(action.name + 'test'), expected_containing_message)
+
+    def assert_responses_with(self, this_unittest, action, action_handler_class, update, expected_containing_message):
         """
         :type this_unittest: unittest.TestCase
         :type action: service.action.CommandActionMixin
+        :type action_handler_class: type[telegram_service.bot.ActionHandler]
+        :type update: telegram.Update
         :type expected_containing_message: str
         """
         updater = Updater(bot=self)
         registry = BotRegistry(updater)
         registry.writer_factory = LoggingWriterFactory()
 
-        handler = registry.register_command_action(action, action_handler_class=FailureThrowingCommandActionHandler)
+        handler = registry.register_command_action(action, action_handler_class=action_handler_class)
 
-        updater.dispatcher.process_update(self._create_update_with_text('/' + action.name))
+        updater.dispatcher.process_update(update)
 
         self._check_handler(handler)
 

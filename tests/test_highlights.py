@@ -6,7 +6,7 @@ from telegram import Update
 from telegram.ext import RegexHandler, Updater
 
 from telegram_service.bot import BotRegistry
-from tests.telegram_test_bot import TelegramTestBot, FailureThrowingRegexActionHandler
+from tests.telegram_test_bot import TelegramTestBot, FailureThrowingRegexActionHandler, LoggingWriterFactory
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, HighlightsCommandAction, \
     HighlightsCollectorRegexAction
 
@@ -94,11 +94,19 @@ class TestHighlightsCommand(unittest.TestCase):
         bot = TelegramTestBot()
         updater = Updater(bot=bot)
 
-        handler = BotRegistry(updater).register_command_action(HighlightsCollectorRegexAction(highlights),
-                                                               FailureThrowingRegexActionHandler)
+        registry = BotRegistry(updater)
+        registry.writer_factory = LoggingWriterFactory()
+
+        handler = registry.register_command_action(HighlightsCollectorRegexAction(highlights),
+                                                   FailureThrowingRegexActionHandler)
 
         updater.dispatcher.process_update(bot._create_update_with_text('#highlights test', 'A'))
 
         bot._check_handler(handler)
 
         self.assertIn('A: test', highlights.message_string)
+
+    def test_collect_highlights_responds(self):
+        highlights = Highlights()
+        TelegramTestBot().assert_regex_action_responses_with(self, HighlightsCollectorRegexAction(highlights),
+                                                             'collecting highlight for test')
