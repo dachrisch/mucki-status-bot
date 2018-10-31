@@ -53,3 +53,9 @@ jobs:
     - store_test_results:
         path: test-reports
         destination: test-reports
+
+    - run:
+        name: deploy
+        when: on_success
+        command: |
+          curl -X POST $WEBHOOK
