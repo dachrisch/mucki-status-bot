@@ -4,7 +4,7 @@ import unittest
 
 from telegram.ext import CommandHandler, RegexHandler
 
-from tests.telegram_test_bot import TelegramTestBot, TelegramBotTest
+from tests.telegram_test_bot import TelegramBotTest
 from yammer_service.highlights import HIGHLIGHTS_PATTERN
 
 
@@ -51,9 +51,6 @@ class TestBot(TelegramBotTest):
 class TestDeals(TelegramBotTest):
     def test_can_execute_deals(self):
         self.assert_can_execute_command('deals')
-
-    def test_deals_messages_all_right(self):
-        TelegramTestBot().assert_command_responses_with(self, 'deals', 'interpretation')
 
 
 class TestHighlights(TelegramBotTest):

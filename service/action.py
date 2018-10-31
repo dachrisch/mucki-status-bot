@@ -49,6 +49,7 @@ class RegexActionMixin(ActionMixin):
     @abstractmethod
     def _writer_callback_with_update(self, update_retriever, writer):
         """
+        :type update_retriever: telegram_service.bot.UpdateRetriever
         :type writer: telegram_service.writer.Writer
         """
         raise NotImplementedError

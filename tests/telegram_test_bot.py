@@ -48,7 +48,7 @@ class TelegramBotTest(unittest.TestCase):
         """
         :type command: str
         """
-        self.bot.send_message = self.bot._assert_called
+        self.bot.send_message = self._log_call
 
         handler = self._add_handler(command)
 
@@ -57,21 +57,6 @@ class TelegramBotTest(unittest.TestCase):
         self._check_handler(handler)
 
         self.assertTrue(self.bot.test_value)
-
-    def assert_command_responses_with(self, this_unittest, command, expected_text):
-        """
-        :type this_unittest: unittest.TestCase
-        :type command: str
-        :type expected_text: str
-        """
-        self.bot.send_message = self.bot._assert_message_test
-
-        handler = self._add_handler(command)
-
-        self.bot.dispatcher.process_update(self._create_update_with_text('/' + command))
-
-        self._check_handler(handler)
-        this_unittest.assertIn(expected_text, self.bot.test_value)
 
     def assert_command_action_responses_with(self, action, expected_containing_message):
         self.assert_responses_with(action, FailureThrowingCommandActionHandler,
@@ -109,6 +94,9 @@ class TelegramBotTest(unittest.TestCase):
     def _create_update_with_text(self, text, username='test'):
         return Update(1, Message(1, User(1, username, False), None, Chat(1, None), text=text, bot=self.bot))
 
+    def _log_call(self, *args, **kwargs):
+        self.bot.test_value = True
+
 
 class TelegramTestBot(Bot):
 
@@ -118,26 +106,6 @@ class TelegramTestBot(Bot):
         self.dispatcher = Dispatcher(self, None)
         self.test_value = False
         self.send_message = None
-
-    def _assert_called(self, *args, **kwargs):
-        self.test_value = True
-
-    def _assert_message_test(self, *args, **kwargs):
-        self.test_value = args[1]
-
-    def send_chat_action(self, chat_id, action, timeout=None, **kwargs):
-        self.test_value = 'chat_action'
-
-    def send_sticker(self,
-                     chat_id,
-                     sticker,
-                     disable_notification=False,
-                     reply_to_message_id=None,
-                     reply_markup=None,
-                     timeout=20,
-                     **kwargs):
-        # self.test_value = 'sticker'
-        pass
 
 
 class LoggingWriter(Writer):
