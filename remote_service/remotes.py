@@ -27,7 +27,7 @@ class RemoteMethodCommandAction(CommandActionMixin):
     def name(self):
         return 'remote'
 
-    def callback_command(self, writer):
+    def _writer_callback(self, writer):
         _string = '---------------------\n'
         _string += '\n'.join(['%s\n---------------------' % method for method in methods])
         writer.out(_string)

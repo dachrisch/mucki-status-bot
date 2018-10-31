@@ -1,15 +1,15 @@
 # coding=utf-8
-from telegram import Bot, Update, Message, Chat
+
+from telegram import Bot, Update, Message, Chat, User
 from telegram.ext import Dispatcher, CommandHandler, Updater
 
 from telegram_service import bot
-from telegram_service.bot import BotRegistry, CommandActionHandler
+from telegram_service.bot import BotRegistry, CommandActionHandler, RegexActionHandler
 from telegram_service.writer import Writer, WriterFactory
 
 
 class FailureThrowingCommandHandler(CommandHandler):
-    def __init__(self,
-                 *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.catched_error = None
 
@@ -21,15 +21,26 @@ class FailureThrowingCommandHandler(CommandHandler):
 
 
 class FailureThrowingCommandActionHandler(CommandActionHandler):
-    def __init__(self,
-                 *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.catched_error = None
 
     def handle_update(self, update, dispatcher):
         try:
             super().handle_update(update, dispatcher)
-        except BaseException as e:
+        except Exception as e:
+            self.catched_error = e
+
+
+class FailureThrowingRegexActionHandler(RegexActionHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.catched_error = None
+
+    def handle_update(self, update, dispatcher):
+        try:
+            super().handle_update(update, dispatcher)
+        except Exception as e:
             self.catched_error = e
 
 
@@ -99,8 +110,8 @@ class TelegramTestBot(Bot):
         self.dispatcher.add_handler(handler)
         return handler
 
-    def _create_update_with_text(self, text):
-        return Update(1, Message(1, None, None, Chat(1, None), text=text, bot=self))
+    def _create_update_with_text(self, text, username='test'):
+        return Update(1, Message(1, User(1, username, False), None, Chat(1, None), text=text, bot=self))
 
     def _assert_called(self, *args, **kwargs):
         self.__test_value = True

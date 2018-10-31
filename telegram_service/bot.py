@@ -22,6 +22,10 @@ welfare_status = WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID))
 
 class UpdateRetriever(object):
     def __init__(self, update):
+        """
+
+        :type update: telegram.Update
+        """
         self._update = update
 
     @property
@@ -31,6 +35,10 @@ class UpdateRetriever(object):
     @property
     def user(self):
         return self._update.message.from_user.first_name
+
+    @property
+    def message(self):
+        return self._update.message.text
 
 
 def collect_highlight(bot, update):
@@ -114,24 +122,12 @@ def error(bot, update, _error):
 class ActionHandler(Handler, ABC):
     def __init__(self, action, writer_factory, *args, **kwargs):
         """
-        :type action: service.action.CommandActionMixin
+        :type action: service.action.ActionMixin
         :type writer_factory: telegram_service.writer.WriterFactory
         """
-        Handler.__init__(self, action.callback, *args, **kwargs)
+        Handler.__init__(self, action.callback_function, *args, **kwargs)
         self.action = action
         self.writer_factory = writer_factory
-
-    def handle_update(self, update, dispatcher):
-        """
-        :type update: telegram.Update
-        :type dispatcher telegram.ext.Dispatcher
-        """
-        writer = self.writer_factory.create(UpdateRetriever(update).chat_id)
-        try:
-            return self.callback(writer)
-        except Exception as e:
-            writer.out_error(e)
-            raise e
 
 
 class CommandActionHandler(ActionHandler, CommandHandler):
@@ -141,17 +137,42 @@ class CommandActionHandler(ActionHandler, CommandHandler):
         :type writer_factory: telegram_service.writer.WriterFactory
         """
         ActionHandler.__init__(self, action, writer_factory, *args, **kwargs)
-        CommandHandler.__init__(self, action.name, action.callback(), *args, **kwargs)
+        CommandHandler.__init__(self, action.command, action.callback_function, *args, **kwargs)
+
+    def handle_update(self, update, dispatcher):
+        """
+        :type update: telegram.Update
+        :type dispatcher telegram.ext.Dispatcher
+        """
+        writer = self.writer_factory.create(UpdateRetriever(update).chat_id)
+        try:
+            self.callback(writer)
+        except Exception as e:
+            writer.out_error(e)
+            raise e
 
 
 class RegexActionHandler(ActionHandler, RegexHandler):
     def __init__(self, action, writer_factory, *args, **kwargs):
         """
-        :type action: service.action.CommandActionMixin
+        :type action: service.action.RegexActionMixin
         :type writer_factory: telegram_service.writer.WriterFactory
         """
         ActionHandler.__init__(self, action, writer_factory, *args, **kwargs)
-        RegexHandler.__init__(self, action.name, action.callback(), *args, **kwargs)
+        RegexHandler.__init__(self, action.pattern, action.callback_function, *args, **kwargs)
+
+    def handle_update(self, update, dispatcher):
+        """
+        :type update: telegram.Update
+        :type dispatcher telegram.ext.Dispatcher
+        """
+        update_retriever = UpdateRetriever(update)
+        writer = self.writer_factory.create(update_retriever.chat_id)
+        try:
+            self.callback(update_retriever, writer)
+        except Exception as e:
+            writer.out_error(e)
+            raise e
 
 
 class BotRegistry(object):
@@ -165,8 +186,8 @@ class BotRegistry(object):
 
     def register_command_action(self, action, action_handler_class=CommandActionHandler):
         """
-        :type action_handler_class: telegram.ext.CommandHandler.__class__
-        :type action: service.action.CommandActionMixin
+        :type action: service.action.ActionMixin
+        :type action_handler_class: type[telegram_service.bot.ActionHandler]
         """
         handler = action_handler_class(action, self.writer_factory)
         self.__updater.dispatcher.add_handler(handler)

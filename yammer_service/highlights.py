@@ -56,7 +56,7 @@ class HighlightsCommandAction(CommandActionMixin):
         """
         self.highlights = highlights
 
-    def callback_command(self, writer):
+    def _writer_callback(self, writer):
         if self.highlights.is_not_empty():
             writer.out('the following highlights are available:\n%s' % self.highlights.message_string)
         else:

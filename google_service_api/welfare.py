@@ -74,7 +74,7 @@ class WelfareCommandAction(CommandActionMixin):
         self.welfare_status = WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID))
         self.gif_retriever = GifRetriever()
 
-    def callback_command(self, writer):
+    def _writer_callback(self, writer):
         writer.out('calculating welfare status of team...\n')
         writer.out_thinking()
         writer.out(self.welfare_status.team_message + '\n')

@@ -26,7 +26,7 @@ class OrdersCommandAction(CommandActionMixin):
     def name(self):
         return 'orders'
 
-    def callback_command(self, writer):
+    def _writer_callback(self, writer):
         _string = 'The following order options are available:\n'
         _string += '\n'.join(['- %s\n' % option for option in options])
         writer.out(_string)

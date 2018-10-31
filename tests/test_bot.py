@@ -46,6 +46,5 @@ class TestDeals(unittest.TestCase):
 
 
 class TestHighlights(unittest.TestCase):
-
     def test_can_execute_send_highlights(self):
         TelegramTestBot().assert_can_execute_command(self, 'send_highlights')

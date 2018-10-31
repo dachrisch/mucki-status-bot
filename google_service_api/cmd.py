@@ -8,6 +8,6 @@ checked_load_logging_config("~/.python/logging_debug.conf")
 log = get_logger(__name__)
 action = WelfareCommandAction()
 writer = LoggingWriter()
-action.callback_command(writer)
+action._writer_callback(writer)
 
 print(writer.message)
