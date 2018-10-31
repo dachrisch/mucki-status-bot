@@ -4,12 +4,10 @@ import unittest
 from abc import ABC
 
 from telegram import Update
-from telegram.ext import RegexHandler, Updater
+from telegram.ext import RegexHandler
 
 from service.action import ActionMixin
-from telegram_service.bot import BotRegistry
-from tests.telegram_test_bot import TelegramTestBot, FailureThrowingRegexActionHandler, LoggingWriterFactory, \
-    TelegramBotTest
+from tests.telegram_test_bot import FailureThrowingRegexActionHandler, TelegramBotTest
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, ShowHighlightsCommandAction, \
     HighlightsCollectorRegexAction
 
@@ -98,22 +96,16 @@ class TestShowHighlightsCommand(TelegramBotTest):
 
     def test_collect_highlights(self):
         highlights = Highlights()
-        bot = TelegramTestBot()
-        updater = Updater(bot=bot)
 
-        registry = BotRegistry(updater)
-        registry.writer_factory = LoggingWriterFactory()
+        handler = self.registry.register_action(HighlightsCollectorRegexAction(highlights),
+                                                FailureThrowingRegexActionHandler)
 
-        handler = registry.register_action(HighlightsCollectorRegexAction(highlights),
-                                           FailureThrowingRegexActionHandler)
-
-        updater.dispatcher.process_update(self._create_update_with_text('#highlights test', 'A'))
+        self.updater.dispatcher.process_update(self._create_update_with_text('#highlights test', 'A'))
 
         self._check_handler(handler)
 
         self.assertIn('A: test', highlights.message_string)
 
     def test_collect_highlights_responds(self):
-        highlights = Highlights()
-        self.assert_regex_action_responses_with(HighlightsCollectorRegexAction(highlights),
+        self.assert_regex_action_responses_with(HighlightsCollectorRegexAction(Highlights()),
                                                 'collecting highlight for test')

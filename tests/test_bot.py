@@ -2,20 +2,20 @@
 import re
 import unittest
 
-from telegram.ext import Updater, CommandHandler, RegexHandler
+from telegram.ext import CommandHandler, RegexHandler
 
 from tests.telegram_test_bot import TelegramTestBot, TelegramBotTest
 from yammer_service.highlights import HIGHLIGHTS_PATTERN
 
 
-class TestBot(unittest.TestCase):
+class TestBot(TelegramBotTest):
     def setUp(self):
+        super().setUp()
         from telegram_service.bot import register_commands
-        updater = Updater(bot=TelegramTestBot())
-        register_commands(updater)
+        register_commands(self.updater)
         self.available_commands = list(map(lambda x: x.command[0],
                                            list(filter(lambda x: isinstance(x, CommandHandler),
-                                                       updater.dispatcher.handlers[0]))))
+                                                       self.updater.dispatcher.handlers[0]))))
 
     def test_start_available(self):
         self.assertIn('start', self.available_commands)
@@ -38,11 +38,10 @@ class TestBot(unittest.TestCase):
 
     def test_highlights_available(self):
         from telegram_service.bot import register_commands
-        updater = Updater(bot=TelegramTestBot())
-        register_commands(updater)
+        register_commands(self.updater)
         self.available_commands = list(map(lambda x: x.pattern,
                                            list(filter(lambda x: isinstance(x, RegexHandler),
-                                                       updater.dispatcher.handlers[0]))))
+                                                       self.updater.dispatcher.handlers[0]))))
 
         self.assertIn(re.compile(HIGHLIGHTS_PATTERN), self.available_commands)
 

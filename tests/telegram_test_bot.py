@@ -37,6 +37,9 @@ class FailureThrowingRegexActionHandler(FailureThrowingMixin, RegexActionHandler
 class TelegramBotTest(unittest.TestCase):
     def setUp(self):
         self.bot = TelegramTestBot()
+        self.updater = Updater(bot=self.bot)
+        self.registry = BotRegistry(self.updater)
+        self.registry.writer_factory = LoggingWriterFactory()
 
     def assert_can_execute_command(self, command):
         """
@@ -82,17 +85,14 @@ class TelegramBotTest(unittest.TestCase):
         :type update: telegram.Update
         :type expected_containing_message: str
         """
-        updater = Updater(bot=self.bot)
-        registry = BotRegistry(updater)
-        registry.writer_factory = LoggingWriterFactory()
 
-        handler = registry.register_action(action, action_handler_class=action_handler_class)
+        handler = self.registry.register_action(action, action_handler_class=action_handler_class)
 
-        updater.dispatcher.process_update(update)
+        self.updater.dispatcher.process_update(update)
 
         self._check_handler(handler)
 
-        self.assertIn(expected_containing_message, registry.writer_factory.writer.message)
+        self.assertIn(expected_containing_message, self.registry.writer_factory.writer.message)
 
     def _check_handler(self, handler):
         if handler.catched_error:
