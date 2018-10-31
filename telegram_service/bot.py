@@ -39,7 +39,7 @@ def collect_highlight(bot, update):
 
 def show_highlights(bot, update):
     if highlights.is_not_empty():
-        _send_and_log(bot, update, 'the following highlights are available:\n%s' % highlights.message_string())
+        _send_and_log(bot, update, 'the following highlights are available:\n%s' % highlights.message_string)
     else:
         _send_and_log(bot, update, 'no highlights available')
 
