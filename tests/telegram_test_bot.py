@@ -1,4 +1,5 @@
 # coding=utf-8
+import unittest
 from abc import ABC
 
 from telegram import Bot, Update, Message, Chat, User
@@ -33,29 +34,23 @@ class FailureThrowingRegexActionHandler(FailureThrowingMixin, RegexActionHandler
     pass
 
 
-class TelegramTestBot(Bot):
+class TelegramBotTest(unittest.TestCase):
+    def setUp(self):
+        self.bot = TelegramTestBot()
 
-    def __init__(self):
-        Bot.__init__(self, '1234:abcd1234')
-        self.bot = _EncapsulatedTelegramTestBot()
-        self.dispatcher = Dispatcher(self, None)
-        self.__test_value = False
-        self.send_message = None
-
-    def assert_can_execute_command(self, this_unittest, command):
+    def assert_can_execute_command(self, command):
         """
-        :type this_unittest: unittest.TestCase
         :type command: str
         """
-        self.send_message = self._assert_called
+        self.bot.send_message = self.bot._assert_called
 
         handler = self._add_handler(command)
 
-        self.dispatcher.process_update(self._create_update_with_text('/' + command))
+        self.bot.dispatcher.process_update(self._create_update_with_text('/' + command))
 
         self._check_handler(handler)
 
-        this_unittest.assertTrue(self.__test_value)
+        self.assertTrue(self.bot.test_value)
 
     def assert_command_responses_with(self, this_unittest, command, expected_text):
         """
@@ -63,32 +58,31 @@ class TelegramTestBot(Bot):
         :type command: str
         :type expected_text: str
         """
-        self.send_message = self._assert_message_test
+        self.bot.send_message = self.bot._assert_message_test
 
         handler = self._add_handler(command)
 
-        self.dispatcher.process_update(self._create_update_with_text('/' + command))
+        self.bot.dispatcher.process_update(self._create_update_with_text('/' + command))
 
         self._check_handler(handler)
-        this_unittest.assertIn(expected_text, self.__test_value)
+        this_unittest.assertIn(expected_text, self.bot.test_value)
 
-    def assert_command_action_responses_with(self, this_unittest, action, expected_containing_message):
-        self.assert_responses_with(this_unittest, action, FailureThrowingCommandActionHandler,
+    def assert_command_action_responses_with(self, action, expected_containing_message):
+        self.assert_responses_with(action, FailureThrowingCommandActionHandler,
                                    self._create_update_with_text('/' + action.name), expected_containing_message)
 
-    def assert_regex_action_responses_with(self, this_unittest, action, expected_containing_message):
-        self.assert_responses_with(this_unittest, action, FailureThrowingRegexActionHandler,
+    def assert_regex_action_responses_with(self, action, expected_containing_message):
+        self.assert_responses_with(action, FailureThrowingRegexActionHandler,
                                    self._create_update_with_text(action.name + 'test'), expected_containing_message)
 
-    def assert_responses_with(self, this_unittest, action, action_handler_class, update, expected_containing_message):
+    def assert_responses_with(self, action, action_handler_class, update, expected_containing_message):
         """
-        :type this_unittest: unittest.TestCase
         :type action: service.action.ActionMixin
         :type action_handler_class: type[telegram_service.bot.ActionHandler]
         :type update: telegram.Update
         :type expected_containing_message: str
         """
-        updater = Updater(bot=self)
+        updater = Updater(bot=self.bot)
         registry = BotRegistry(updater)
         registry.writer_factory = LoggingWriterFactory()
 
@@ -98,7 +92,7 @@ class TelegramTestBot(Bot):
 
         self._check_handler(handler)
 
-        this_unittest.assertIn(expected_containing_message, registry.writer_factory.writer.message)
+        self.assertIn(expected_containing_message, registry.writer_factory.writer.message)
 
     def _check_handler(self, handler):
         if handler.catched_error:
@@ -106,20 +100,30 @@ class TelegramTestBot(Bot):
 
     def _add_handler(self, command):
         handler = FailureThrowingCommandHandler(command, getattr(bot, command))
-        self.dispatcher.add_handler(handler)
+        self.bot.dispatcher.add_handler(handler)
         return handler
 
     def _create_update_with_text(self, text, username='test'):
-        return Update(1, Message(1, User(1, username, False), None, Chat(1, None), text=text, bot=self))
+        return Update(1, Message(1, User(1, username, False), None, Chat(1, None), text=text, bot=self.bot))
+
+
+class TelegramTestBot(Bot):
+
+    def __init__(self):
+        Bot.__init__(self, '1234:abcd1234')
+        self.bot = _EncapsulatedTelegramTestBot()
+        self.dispatcher = Dispatcher(self, None)
+        self.test_value = False
+        self.send_message = None
 
     def _assert_called(self, *args, **kwargs):
-        self.__test_value = True
+        self.test_value = True
 
     def _assert_message_test(self, *args, **kwargs):
-        self.__test_value = args[1]
+        self.test_value = args[1]
 
     def send_chat_action(self, chat_id, action, timeout=None, **kwargs):
-        self.__test_value = 'chat_action'
+        self.test_value = 'chat_action'
 
     def send_sticker(self,
                      chat_id,
@@ -129,7 +133,7 @@ class TelegramTestBot(Bot):
                      reply_markup=None,
                      timeout=20,
                      **kwargs):
-        # self.__test_value = 'sticker'
+        # self.test_value = 'sticker'
         pass
 
 

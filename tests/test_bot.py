@@ -4,7 +4,7 @@ import unittest
 
 from telegram.ext import Updater, CommandHandler, RegexHandler
 
-from tests.telegram_test_bot import TelegramTestBot
+from tests.telegram_test_bot import TelegramTestBot, TelegramBotTest
 from yammer_service.highlights import HIGHLIGHTS_PATTERN
 
 
@@ -49,14 +49,14 @@ class TestBot(unittest.TestCase):
 
 @unittest.skip("Request faild: https://api.pipedrive.com/v1/stages?pipeline_id=5&api_"
                "token={'success': False, 'error': 'unauthorized access', 'errorCode': 401}")
-class TestDeals(unittest.TestCase):
+class TestDeals(TelegramBotTest):
     def test_can_execute_deals(self):
-        TelegramTestBot().assert_can_execute_command(self, 'deals')
+        self.assert_can_execute_command('deals')
 
     def test_deals_messages_all_right(self):
         TelegramTestBot().assert_command_responses_with(self, 'deals', 'interpretation')
 
 
-class TestHighlights(unittest.TestCase):
+class TestHighlights(TelegramBotTest):
     def test_can_execute_send_highlights(self):
-        TelegramTestBot().assert_can_execute_command(self, 'send_highlights')
+        self.assert_can_execute_command('send_highlights')
