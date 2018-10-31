@@ -1,14 +1,15 @@
 # coding=utf-8
+from abc import ABC
 
 from telegram import Bot, Update, Message, Chat, User
-from telegram.ext import Dispatcher, CommandHandler, Updater
+from telegram.ext import Dispatcher, CommandHandler, Updater, Handler
 
 from telegram_service import bot
 from telegram_service.bot import BotRegistry, CommandActionHandler, RegexActionHandler
 from telegram_service.writer import Writer, WriterFactory
 
 
-class FailureThrowingCommandHandler(CommandHandler):
+class FailureThrowingMixin(Handler, ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.catched_error = None
@@ -20,28 +21,16 @@ class FailureThrowingCommandHandler(CommandHandler):
             self.catched_error = e
 
 
-class FailureThrowingCommandActionHandler(CommandActionHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.catched_error = None
-
-    def handle_update(self, update, dispatcher):
-        try:
-            super().handle_update(update, dispatcher)
-        except Exception as e:
-            self.catched_error = e
+class FailureThrowingCommandHandler(FailureThrowingMixin, CommandHandler):
+    pass
 
 
-class FailureThrowingRegexActionHandler(RegexActionHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.catched_error = None
+class FailureThrowingCommandActionHandler(FailureThrowingMixin, CommandActionHandler):
+    pass
 
-    def handle_update(self, update, dispatcher):
-        try:
-            super().handle_update(update, dispatcher)
-        except Exception as e:
-            self.catched_error = e
+
+class FailureThrowingRegexActionHandler(FailureThrowingMixin, RegexActionHandler):
+    pass
 
 
 class TelegramTestBot(Bot):
