@@ -2,7 +2,10 @@
 import re
 from datetime import datetime
 
-from service.action import CommandActionMixin, RegexActionMixin
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import ConversationHandler
+
+from service.action import CommandActionMixin, RegexActionMixin, ConversationActionMixin
 from yammer_service.yammer import YammerConnector
 
 HIGHLIGHTS = '#highlights'
@@ -12,7 +15,7 @@ HIGHLIGHTS_PATTERN = '(?:([^#]*) )?' + HIGHLIGHTS + '(?:[ :]*([^#]*))?'
 class Highlights(object):
     def __init__(self):
         self.highlights = {}
-        self.__yc = YammerConnector()
+        self.yc = YammerConnector()
 
     def add(self, username, highlight):
         m = re.match(HIGHLIGHTS_PATTERN, highlight)
@@ -43,7 +46,7 @@ class Highlights(object):
         return '\n\n'.join('%s: %s' % (key, val) for (key, val) in self.highlights.items())
 
     def send_to_yammer(self):
-        return self.__yc.post_meine_woche(
+        return self.yc.post_meine_woche(
             u'Die Südsterne in %s:\n%s' % (current_calendar_week(), self.message_string),
             ('südsterne', current_calendar_week()))
 
@@ -58,7 +61,7 @@ class ShowHighlightsCommandAction(CommandActionMixin):
 
     def _writer_callback(self, writer):
         if self.highlights.is_not_empty():
-            writer.out('the following highlights are available:\n%s' % self.highlights.message_string)
+            writer.out('the following highlights are available:\n%s\n' % self.highlights.message_string)
         else:
             writer.out('no highlights available')
 
@@ -100,3 +103,90 @@ class HighlightsCollectorRegexAction(RegexActionMixin):
 
     def __init__(self, highlights):
         self.highlights = highlights
+
+
+class AskForHighlightsConsentCommandAction(CommandActionMixin):
+
+    def __init__(self, highlights):
+        """
+        :type highlights: Highlights
+        """
+        self.highlights = highlights
+
+    def _writer_callback(self, writer):
+        ShowHighlightsCommandAction(self.highlights).callback_function(writer)
+        reply_keyboard = [['yes', 'no']]
+        if self.highlights.is_not_empty():
+            writer.out('really send?\n',
+                       reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
+            return 1
+        else:
+            return ConversationHandler.END
+
+    @property
+    def name(self):
+        return 'send_highlights'
+
+    @property
+    def help_text(self):
+        return 'Displays currently available highlights'
+
+
+class SendHighlightsCommandAction(RegexActionMixin):
+
+    def __init__(self, highlights):
+        self.highlights = highlights
+
+    @property
+    def pattern(self):
+        return '^(yes|no)$'
+
+    def _writer_callback_with_update(self, update_retriever, writer):
+        if update_retriever.message == 'yes':
+            try:
+                message_url = self.highlights.send_to_yammer()
+                writer.out('highlights posted to yammer: [%s]' % message_url,
+                           reply_markup=ReplyKeyboardRemove())
+            except Exception as e:
+                writer.out('failed to post to yammer: [%s]' % e, reply_markup=ReplyKeyboardRemove())
+
+            self.highlights.clear()
+        else:
+            self.cancel(writer)
+        return ConversationHandler.END
+
+    @property
+    def name(self):
+        return 'send_highlights'
+
+    @property
+    def help_text(self):
+        pass
+
+    def cancel(self, writer):
+        writer.out('ok, not sending highlights.', reply_markup=ReplyKeyboardRemove())
+
+
+class SendHighlightsConversationAction(ConversationActionMixin):
+    @property
+    def name(self):
+        return 'send_highlights'
+
+    @property
+    def help_text(self):
+        pass
+
+    def __init__(self, highlights):
+        self.highlights = highlights
+
+    @property
+    def yes_callback(self):
+        return SendHighlightsCommandAction(self.highlights)
+
+    @property
+    def entry_action(self):
+        return AskForHighlightsConsentCommandAction(self.highlights)
+
+    @property
+    def no_callback(self):
+        pass

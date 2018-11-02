@@ -1,7 +1,6 @@
 # coding=UTF-8
 from abc import ABC
 
-from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from telegram.ext import (CommandHandler, RegexHandler,
                           ConversationHandler, Handler)
 
@@ -14,7 +13,7 @@ from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.writer import TelegramWriterFactory
 from yammer_service.highlights import Highlights, ShowHighlightsCommandAction, \
-    HighlightsCollectorRegexAction
+    HighlightsCollectorRegexAction, SendHighlightsConversationAction
 
 log = None
 highlights = Highlights()
@@ -42,43 +41,6 @@ class UpdateRetriever(object):
         return self._update.message.text
 
 
-def show_highlights(bot, update):
-    if highlights.is_not_empty():
-        _send_and_log(bot, update, 'the following highlights are available:\n%s' % highlights.message_string)
-    else:
-        _send_and_log(bot, update, 'no highlights available')
-
-
-def ask_for_consent(bot, update):
-    show_highlights(bot, update)
-    reply_keyboard = [['yes', 'no']]
-    if highlights.is_not_empty():
-        _send_and_log(bot, update, 'really send?',
-                      reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
-        return 1
-    else:
-        return ConversationHandler.END
-
-
-def send_highlights(bot, update):
-    if update.message.text == 'yes':
-        try:
-            message_url = highlights.send_to_yammer()
-            _send_and_log(bot, update, 'highlights posted to yammer: [%s]' % message_url,
-                          reply_markup=ReplyKeyboardRemove())
-        except Exception as e:
-            _send_and_log(bot, update, 'failed to post to yammer: [%s]' % e, reply_markup=ReplyKeyboardRemove())
-
-        highlights.clear()
-    else:
-        cancel(bot, update)
-    return ConversationHandler.END
-
-
-def cancel(bot, update):
-    _send_and_log(bot, update, 'ok, not sending highlights.', reply_markup=ReplyKeyboardRemove())
-
-
 def register_commands(updater):
     registry = BotRegistry(updater)
     registry.register_command_action(HelpCommandAction(registry))
@@ -88,16 +50,7 @@ def register_commands(updater):
     registry.register_command_action(WelfareCommandAction())
     registry.register_command_action(ShowHighlightsCommandAction(highlights))
     registry.register_regex_action(HighlightsCollectorRegexAction(highlights))
-
-    dp = updater.dispatcher
-    dp.add_handler(ConversationHandler(
-        entry_points=[CommandHandler('send_highlights', ask_for_consent)],
-        states={
-            1: [RegexHandler('^(yes|no)$', send_highlights)],
-        },
-        fallbacks=[Handler(cancel)]
-
-    ))
+    registry.register_conversation_action(SendHighlightsConversationAction(highlights))
     return registry
 
 
@@ -135,7 +88,7 @@ class CommandActionHandler(ActionHandler, CommandHandler):
         """
         writer = self.writer_factory.create(UpdateRetriever(update).chat_id)
         try:
-            self.callback(writer)
+            return self.callback(writer)
         except Exception as e:
             writer.out_error(e)
             raise e
@@ -164,6 +117,24 @@ class RegexActionHandler(ActionHandler, RegexHandler):
             raise e
 
 
+class ConversationActionHandler(ActionHandler, ConversationHandler):
+    def __init__(self, conversation_action, writer_factory, *args, **kwargs):
+        """
+
+        :type conversation_action: ConversationActionMixin
+        :type writer_factory: telegram_service.writer.WriterFactory
+        """
+        ActionHandler.__init__(self, conversation_action, writer_factory, *args, **kwargs)
+        ConversationHandler.__init__(self,
+                                     entry_points=[
+                                         CommandActionHandler(conversation_action.entry_action, writer_factory)],
+                                     states={
+                                         1: [RegexActionHandler(conversation_action.yes_callback, writer_factory)],
+                                     },
+                                     fallbacks=[Handler(conversation_action.no_callback)]
+                                     )
+
+
 class BotRegistry(object):
     def __init__(self, updater):
         """
@@ -178,6 +149,9 @@ class BotRegistry(object):
 
     def register_regex_action(self, action):
         return self.register_action(action, RegexActionHandler)
+
+    def register_conversation_action(self, action):
+        return self.register_action(action, ConversationActionHandler)
 
     def register_action(self, action, action_handler_class):
         """

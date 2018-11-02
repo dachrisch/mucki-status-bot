@@ -2,7 +2,7 @@ from my_logging import get_logger
 
 
 class Writer(object):
-    def out(self, message):
+    def out(self, message, *args, **kwargs):
         """
         :type message: str
         """
@@ -39,10 +39,10 @@ class TelegramWriter(Writer):
         self.__chat_id = chat_id
         self.__log = get_logger(self.__class__.__name__)
 
-    def out(self, message):
+    def out(self, message, *args, **kwargs):
         self.__log.debug(message)
         self.bot.send_message(self.__chat_id, message,
-                              disable_web_page_preview=True)
+                              disable_web_page_preview=True, *args, **kwargs)
 
     def out_thinking(self):
         self.bot.send_chat_action(self.__chat_id, 'typing')

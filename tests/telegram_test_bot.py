@@ -6,7 +6,7 @@ from telegram import Bot, Update, Message, Chat, User
 from telegram.ext import Dispatcher, CommandHandler, Updater, Handler
 
 from telegram_service import bot
-from telegram_service.bot import BotRegistry, CommandActionHandler, RegexActionHandler
+from telegram_service.bot import BotRegistry, CommandActionHandler, RegexActionHandler, ConversationActionHandler
 from telegram_service.writer import Writer, WriterFactory
 
 
@@ -31,6 +31,10 @@ class FailureThrowingCommandActionHandler(FailureThrowingMixin, CommandActionHan
 
 
 class FailureThrowingRegexActionHandler(FailureThrowingMixin, RegexActionHandler):
+    pass
+
+
+class FailureThrowingConversationActionHandler(FailureThrowingMixin, ConversationActionHandler):
     pass
 
 
@@ -112,7 +116,7 @@ class LoggingWriter(Writer):
     def __init__(self):
         self.message = ''
 
-    def out(self, message):
+    def out(self, message, *args, **kwargs):
         self.message += message
 
     def out_gif(self, url):

@@ -61,3 +61,24 @@ class RegexActionMixin(ActionMixin):
     @property
     def help_entry(self):
         return '%s - %s' % (self.name, self.help_text)
+
+
+class ConversationActionMixin(ActionMixin):
+
+    def callback_function(self):
+        pass
+
+    @property
+    @abstractmethod
+    def entry_action(self):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def yes_callback(self):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def no_callback(self):
+        raise NotImplementedError

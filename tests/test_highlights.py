@@ -1,15 +1,15 @@
 # coding=UTF-8
 import re
 import unittest
-from abc import ABC
 
 from telegram import Update
 from telegram.ext import RegexHandler
 
-from service.action import ActionMixin
-from tests.telegram_test_bot import FailureThrowingRegexActionHandler, TelegramBotTest
+from tests.telegram_test_bot import FailureThrowingRegexActionHandler, TelegramBotTest, \
+    FailureThrowingConversationActionHandler
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, ShowHighlightsCommandAction, \
-    HighlightsCollectorRegexAction
+    HighlightsCollectorRegexAction, SendHighlightsConversationAction
+from yammer_service.yammer import YammerConnector
 
 HASH_AND_COLON = '#highlights: test'
 
@@ -78,10 +78,6 @@ class TestHighlightsMatching(unittest.TestCase):
         self.assertTrue(rh.check_update(Update(1234, message=message)))
 
 
-class ConversationActionMixin(ActionMixin, ABC):
-    pass
-
-
 class TestShowHighlightsCommand(TelegramBotTest):
     def test_can_execute_show_highlights(self):
         highlights = Highlights()
@@ -109,3 +105,87 @@ class TestShowHighlightsCommand(TelegramBotTest):
     def test_collect_highlights_responds(self):
         self.assert_regex_action_responses_with(HighlightsCollectorRegexAction(Highlights()),
                                                 'collecting highlight for test')
+
+
+class YammerTestConnector(YammerConnector):
+    def __init__(self):
+        self.called = False
+
+    def post_meine_woche(self, message, tags=()):
+        self.called = True
+        return message
+
+
+class TestSendHighlights(TelegramBotTest):
+    def test_empty_highlights_no_send(self):
+        highlights = Highlights()
+
+        self.registry.register_action(SendHighlightsConversationAction(highlights),
+                                      FailureThrowingConversationActionHandler)
+
+        self.updater.dispatcher.process_update(self._create_update_with_text('/send_highlights'))
+
+        self.assertEqual('no highlights available', self.registry.writer_factory.writer.message)
+
+    def test_ask_for_consent_before_sending(self):
+        highlights = Highlights()
+        highlights.add('A', '#highlights 1')
+
+        assert len(highlights.highlights) == 1, highlights.highlights
+        self.registry.register_action(SendHighlightsConversationAction(highlights),
+                                      FailureThrowingConversationActionHandler)
+
+        self.updater.dispatcher.process_update(self._create_update_with_text('/send_highlights'))
+
+        self.assertEqual('the following highlights are available:\n'
+                         'A: 1\n'
+                         'really send?\n', self.registry.writer_factory.writer.message)
+
+    def test_send_highlights_with_yes(self):
+        highlights = Highlights()
+        highlights.yc = YammerTestConnector()
+        highlights.add('A', '#highlights 1')
+
+        assert len(highlights.highlights) == 1, highlights.highlights
+        self.registry.register_action(SendHighlightsConversationAction(highlights),
+                                      FailureThrowingConversationActionHandler)
+
+        ask_consent_update = self._create_update_with_text('/send_highlights')
+
+        self.updater.dispatcher.process_update(ask_consent_update)
+
+        yes_update = self._create_update_with_text('yes')
+        yes_update.message.reply_to_message = ask_consent_update.message.message_id
+
+        self.updater.dispatcher.process_update(yes_update)
+
+        self.assertTrue(highlights.yc.called)
+        self.assertEqual('the following highlights are available:\n'
+                         'A: 1\n'
+                         'really send?\n'
+                         'highlights posted to yammer: [Die Südsterne in KW_43:\n'
+                         'A: 1]', self.registry.writer_factory.writer.message)
+
+    def test_not_sending_highlights_with_no(self):
+        highlights = Highlights()
+        highlights.yc = YammerTestConnector()
+        highlights.add('A', '#highlights 1')
+
+        assert len(highlights.highlights) == 1, highlights.highlights
+        self.registry.register_action(SendHighlightsConversationAction(highlights),
+                                      FailureThrowingConversationActionHandler)
+
+        ask_consent_update = self._create_update_with_text('/send_highlights')
+
+        self.updater.dispatcher.process_update(ask_consent_update)
+
+        yes_update = self._create_update_with_text('no')
+        yes_update.message.reply_to_message = ask_consent_update.message.message_id
+
+        self.updater.dispatcher.process_update(yes_update)
+
+        self.assertFalse(highlights.yc.called)
+        self.assertEqual('the following highlights are available:\n'
+                         'A: 1\n'
+                         'really send?\n'
+                         'ok, not sending highlights.', self.registry.writer_factory.writer.message)
