@@ -111,7 +111,7 @@ class RegexActionHandler(ActionHandler, RegexHandler):
         update_retriever = UpdateRetriever(update)
         writer = self.writer_factory.create(update_retriever.chat_id)
         try:
-            self.callback(update_retriever, writer)
+            return self.callback(update_retriever, writer)
         except Exception as e:
             writer.out_error(e)
             raise e

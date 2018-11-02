@@ -172,17 +172,19 @@ class TestSendHighlights(TelegramBotTest):
         highlights.add('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
-        self.registry.register_action(SendHighlightsConversationAction(highlights),
-                                      FailureThrowingConversationActionHandler)
+        handler = self.registry.register_action(SendHighlightsConversationAction(highlights),
+                                                FailureThrowingConversationActionHandler)
 
         ask_consent_update = self._create_update_with_text('/send_highlights')
 
         self.updater.dispatcher.process_update(ask_consent_update)
+        assert handler.conversations[(1, 1)] == 1
 
         yes_update = self._create_update_with_text('no')
         yes_update.message.reply_to_message = ask_consent_update.message.message_id
 
         self.updater.dispatcher.process_update(yes_update)
+        assert handler.conversations == {}
 
         self.assertFalse(highlights.yc.called)
         self.assertEqual('the following highlights are available:\n'
