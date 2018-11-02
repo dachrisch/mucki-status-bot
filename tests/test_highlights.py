@@ -8,7 +8,7 @@ from telegram.ext import RegexHandler
 from tests.telegram_test_bot import FailureThrowingRegexActionHandler, TelegramBotTest, \
     FailureThrowingConversationActionHandler
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, ShowHighlightsCommandAction, \
-    HighlightsCollectorRegexAction, SendHighlightsConversationAction
+    HighlightsCollectorRegexAction, SendHighlightsConversationAction, current_calendar_week
 from yammer_service.yammer import YammerConnector
 
 HASH_AND_COLON = '#highlights: test'
@@ -163,7 +163,7 @@ class TestSendHighlights(TelegramBotTest):
         self.assertEqual('the following highlights are available:\n'
                          'A: 1\n'
                          'really send?\n'
-                         'highlights posted to yammer: [Die Südsterne in KW_43:\n'
+                         'highlights posted to yammer: [Die Südsterne in %s:\n' % current_calendar_week() +
                          'A: 1]', self.registry.writer_factory.writer.message)
 
     def test_not_sending_highlights_with_no(self):

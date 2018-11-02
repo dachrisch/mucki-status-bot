@@ -75,7 +75,7 @@ class ShowHighlightsCommandAction(CommandActionMixin):
 
 
 def current_calendar_week():
-    return 'KW_%s' % datetime.today().strftime('%U')
+    return 'KW_%s' % datetime.today().strftime('%V')
 
 
 class HighlightsCollectorRegexAction(RegexActionMixin):
