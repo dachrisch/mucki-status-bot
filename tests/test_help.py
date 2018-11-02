@@ -9,7 +9,8 @@ from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.bot import register_commands
 from tests.telegram_test_bot import TelegramBotTest
 from tests.test_bot_registry import CommandTestAction
-from yammer_service.highlights import ShowHighlightsCommandAction, HighlightsCollectorRegexAction
+from yammer_service.highlights import ShowHighlightsCommandAction, HighlightsCollectorRegexAction, \
+    SendHighlightsConversationAction
 
 
 class TestHelp(TelegramBotTest):
@@ -33,4 +34,5 @@ class TestHelp(TelegramBotTest):
                                                   + '\n' + WelfareCommandAction().help_entry
                                                   + '\n' + ShowHighlightsCommandAction(None).help_entry
                                                   + '\n' + HighlightsCollectorRegexAction(None).help_entry
+                                                  + '\n' + SendHighlightsConversationAction(None).help_entry
                                                   )

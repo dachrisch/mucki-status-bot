@@ -174,7 +174,8 @@ class SendHighlightsConversationAction(ConversationActionMixin):
 
     @property
     def help_text(self):
-        pass
+        return 'Posts current #highlights to Yammer' + \
+               '@ https://www.yammer.com/it-agile.de/#/threads/inGroup?type=in_group&feedId=207628'
 
     def __init__(self, highlights):
         self.highlights = highlights
