@@ -214,7 +214,7 @@ class CheckHighlightsCommandAction(CommandActionMixin):
     def _writer_callback(self, writer):
         diff = list(filter(lambda user: not self.highlights.get(user), self.expected_member))
         if diff:
-            writer.out('No highlights available for: [%s]\n' % ', '.join(['@%s' % member for member in diff]))
+            writer.out('No highlights available for: [%s]\n' % ', '.join(['%s' % member for member in diff]))
         else:
             writer.out('All members have highlights \o/\n')
 

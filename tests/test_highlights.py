@@ -127,7 +127,7 @@ class TestSendHighlights(TelegramBotTest):
 
         self.updater.dispatcher.process_update(self._create_update_with_text('/send_highlights'))
 
-        self.assertEqual('No highlights available for: [@A]\n', self.registry.writer_factory.writer.message)
+        self.assertEqual('No highlights available for: [A]\n', self.registry.writer_factory.writer.message)
 
     def test_ask_for_consent_before_sending(self):
         highlights = Highlights()
@@ -210,14 +210,14 @@ class TestCheckHighlights(TelegramBotTest):
         expected_member = ('First', 'Second')
         highlights.add_pattern('A', '#highlights test')
         self.assert_command_action_responses_with(CheckHighlightsCommandAction(highlights, expected_member),
-                                                  'No highlights available for: [@First, @Second]')
+                                                  'No highlights available for: [First, Second]')
 
     def test_check_highlights_some(self):
         highlights = Highlights()
         expected_member = ('First', 'Second')
         highlights.add_pattern('Second', '#highlights test')
         self.assert_command_action_responses_with(CheckHighlightsCommandAction(highlights, expected_member),
-                                                  'No highlights available for: [@First]')
+                                                  'No highlights available for: [First]')
 
     def test_check_highlights_all(self):
         highlights = Highlights()

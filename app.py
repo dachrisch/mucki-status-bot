@@ -6,7 +6,7 @@ from telegram.ext import Updater
 
 from config import BOT_TOKEN, CONFIG_PATH
 from my_logging import checked_load_logging_config, get_logger
-from telegram_service.bot import register_commands
+from telegram_service.bot import BotRegistry
 
 
 def main():
@@ -23,7 +23,7 @@ def _startup_bot(token):
         sys.exit(255)
     log.info('starting %s' % __name__)
     updater = Updater(token)
-    register_commands(updater)
+    BotRegistry(updater).register_commands()
     updater.start_polling()
     updater.idle()
     log.info('finished polling')
