@@ -191,3 +191,25 @@ class SendHighlightsConversationAction(ConversationActionMixin):
     @property
     def no_callback(self):
         pass
+
+
+class CheckHighlightsCommandAction(CommandActionMixin):
+
+    def __init__(self, highlights, expected_member):
+        self.highlights = highlights
+        self.expected_member = expected_member
+
+    def _writer_callback(self, writer):
+        diff = list(filter(lambda user: not self.highlights.get(user), self.expected_member))
+        if diff:
+            writer.out('No highlights available for: [%s]' % ', '.join(['@%s' % member for member in diff]))
+        else:
+            writer.out('All members have highlights \o/')
+
+    @property
+    def name(self):
+        return 'check_highlights'
+
+    @property
+    def help_text(self):
+        return 'Checks all members have highlights'

@@ -8,7 +8,8 @@ from telegram.ext import RegexHandler
 from tests.telegram_test_bot import FailureThrowingRegexActionHandler, TelegramBotTest, \
     FailureThrowingConversationActionHandler
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, ShowHighlightsCommandAction, \
-    HighlightsCollectorRegexAction, SendHighlightsConversationAction, current_calendar_week
+    HighlightsCollectorRegexAction, SendHighlightsConversationAction, current_calendar_week, \
+    CheckHighlightsCommandAction
 from yammer_service.yammer import YammerConnector
 
 HASH_AND_COLON = '#highlights: test'
@@ -209,3 +210,25 @@ class TestCheckHighlights(TelegramBotTest):
         remaining_user = list(filter(lambda user: not highlights.get(user), member_list))
         self.assertEqual(1, len(remaining_user))
         self.assertEqual('Second', remaining_user[0])
+
+    def test_can_execute_check_highlights(self):
+        highlights = Highlights()
+        expected_member = ('First', 'Second')
+        highlights.add_pattern('A', '#highlights test')
+        self.assert_command_action_responses_with(CheckHighlightsCommandAction(highlights, expected_member),
+                                                  'No highlights available for: [@First, @Second]')
+
+    def test_check_highlights_some(self):
+        highlights = Highlights()
+        expected_member = ('First', 'Second')
+        highlights.add_pattern('Second', '#highlights test')
+        self.assert_command_action_responses_with(CheckHighlightsCommandAction(highlights, expected_member),
+                                                  'No highlights available for: [@First]')
+
+    def test_check_highlights_all(self):
+        highlights = Highlights()
+        expected_member = ('First', 'Second')
+        highlights.add_pattern('First', '#highlights test')
+        highlights.add_pattern('Second', '#highlights test')
+        self.assert_command_action_responses_with(CheckHighlightsCommandAction(highlights, expected_member),
+                                                  'All members have highlights \o/')
