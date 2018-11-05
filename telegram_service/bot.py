@@ -4,7 +4,7 @@ from abc import ABC
 from telegram.ext import (CommandHandler, RegexHandler,
                           ConversationHandler, Handler)
 
-from config import MUCKI_TRACKER_SHEET_ID
+from config import MUCKI_TRACKER_SHEET_ID, MUC_TELEGRAM_GROUP_ID
 from google_service.sheets import SheetConnector
 from google_service_api.welfare import WelfareStatus, WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
@@ -139,7 +139,7 @@ class BotRegistry(object):
         self.register_regex_action(HighlightsCollectorRegexAction(highlights))
         self.register_conversation_action(
             SendHighlightsConversationAction(highlights,
-                                             AdminRetriever(self.__updater, MUCKI_TRACKER_SHEET_ID).admin_member))
+                                             AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID).admin_member))
         self.register_command_action(
             CheckHighlightsCommandAction(highlights,
-                                         AdminRetriever(self.__updater, MUCKI_TRACKER_SHEET_ID).admin_member))
+                                         AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID).admin_member))
