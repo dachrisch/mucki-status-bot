@@ -1,10 +1,4 @@
 google-api-python-client
 python-telegram-bot
-cachetools
-schedule
 yampy3
-oauth2client
-flask
 safygiphy
-requests
-pytest
