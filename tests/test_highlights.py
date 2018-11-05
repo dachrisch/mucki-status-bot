@@ -5,6 +5,7 @@ import unittest
 from telegram import Update
 from telegram.ext import RegexHandler
 
+from telegram_service.retriever import AdminRetriever
 from tests.telegram_test_bot import FailureThrowingRegexActionHandler, TelegramBotTest, \
     FailureThrowingConversationActionHandler
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, ShowHighlightsCommandAction, \
@@ -196,18 +197,14 @@ class TestSendHighlights(TelegramBotTest):
 
 class TestCheckHighlights(TelegramBotTest):
     def test_collect_username(self):
-        member = self.updater.bot.get_chat_administrators(1)
-        member_list = list(map(lambda chat_member: chat_member.user.first_name, member))
-        self.assertEqual(2, len(member_list))
+        self.assertEqual(2, len(AdminRetriever(self.updater, 1).admin_member))
 
     def test_collect_highlights_diff(self):
-        member = self.updater.bot.get_chat_administrators(1)
-        member_list = list(map(lambda chat_member: chat_member.user.first_name, member))
-
         highlights = Highlights()
         highlights.add_pattern('First', '#highlights test')
 
-        remaining_user = list(filter(lambda user: not highlights.get(user), member_list))
+        remaining_user = list(
+            filter(lambda user: not highlights.get(user), AdminRetriever(self.updater, 1).admin_member))
         self.assertEqual(1, len(remaining_user))
         self.assertEqual('Second', remaining_user[0])
 

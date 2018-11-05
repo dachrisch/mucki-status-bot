@@ -10,34 +10,14 @@ from google_service_api.welfare import WelfareStatus, WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
 from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
+from telegram_service.retriever import UpdateRetriever, AdminRetriever
 from telegram_service.writer import TelegramWriterFactory
 from yammer_service.highlights import Highlights, ShowHighlightsCommandAction, \
-    HighlightsCollectorRegexAction, SendHighlightsConversationAction
+    HighlightsCollectorRegexAction, SendHighlightsConversationAction, CheckHighlightsCommandAction
 
 log = None
 highlights = Highlights()
 welfare_status = WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID))
-
-
-class UpdateRetriever(object):
-    def __init__(self, update):
-        """
-
-        :type update: telegram.Update
-        """
-        self._update = update
-
-    @property
-    def chat_id(self):
-        return self._update.message.chat_id
-
-    @property
-    def user(self):
-        return self._update.message.from_user.first_name
-
-    @property
-    def message(self):
-        return self._update.message.text
 
 
 class ActionHandler(Handler, ABC):
@@ -158,3 +138,5 @@ class BotRegistry(object):
         self.register_command_action(ShowHighlightsCommandAction(highlights))
         self.register_regex_action(HighlightsCollectorRegexAction(highlights))
         self.register_conversation_action(SendHighlightsConversationAction(highlights))
+        self.register_command_action(
+            CheckHighlightsCommandAction(highlights, AdminRetriever(self.__updater, MUCKI_TRACKER_SHEET_ID)))

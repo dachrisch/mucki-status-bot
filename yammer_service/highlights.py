@@ -82,7 +82,7 @@ class HighlightsCollectorRegexAction(RegexActionMixin):
 
     def _writer_callback_with_update(self, update_retriever, writer):
         """
-        :type update_retriever: telegram_service.bot.UpdateRetriever
+        :type update_retriever: telegram_service.retriever.UpdateRetriever
         :type writer: telegram_service.writer.Writer
         """
         self.highlights.add_pattern(update_retriever.user, update_retriever.message)
@@ -196,6 +196,11 @@ class SendHighlightsConversationAction(ConversationActionMixin):
 class CheckHighlightsCommandAction(CommandActionMixin):
 
     def __init__(self, highlights, expected_member):
+        """
+        :type highlights: yammer_service.highlights.Highlights
+        :type expected_member: [str]
+        
+        """
         self.highlights = highlights
         self.expected_member = expected_member
 
