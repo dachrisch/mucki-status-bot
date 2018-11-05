@@ -137,6 +137,9 @@ class BotRegistry(object):
         self.register_command_action(WelfareCommandAction())
         self.register_command_action(ShowHighlightsCommandAction(highlights))
         self.register_regex_action(HighlightsCollectorRegexAction(highlights))
-        self.register_conversation_action(SendHighlightsConversationAction(highlights))
+        self.register_conversation_action(
+            SendHighlightsConversationAction(highlights,
+                                             AdminRetriever(self.__updater, MUCKI_TRACKER_SHEET_ID).admin_member))
         self.register_command_action(
-            CheckHighlightsCommandAction(highlights, AdminRetriever(self.__updater, MUCKI_TRACKER_SHEET_ID)))
+            CheckHighlightsCommandAction(highlights,
+                                         AdminRetriever(self.__updater, MUCKI_TRACKER_SHEET_ID).admin_member))

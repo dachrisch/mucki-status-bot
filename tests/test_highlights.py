@@ -122,25 +122,24 @@ class TestSendHighlights(TelegramBotTest):
     def test_empty_highlights_no_send(self):
         highlights = Highlights()
 
-        self.registry.register_action(SendHighlightsConversationAction(highlights),
+        self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
                                       FailureThrowingConversationActionHandler)
 
         self.updater.dispatcher.process_update(self._create_update_with_text('/send_highlights'))
 
-        self.assertEqual('no highlights available', self.registry.writer_factory.writer.message)
+        self.assertEqual('No highlights available for: [@A]\n', self.registry.writer_factory.writer.message)
 
     def test_ask_for_consent_before_sending(self):
         highlights = Highlights()
         highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
-        self.registry.register_action(SendHighlightsConversationAction(highlights),
+        self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
                                       FailureThrowingConversationActionHandler)
 
         self.updater.dispatcher.process_update(self._create_update_with_text('/send_highlights'))
 
-        self.assertEqual('the following highlights are available:\n'
-                         'A: 1\n'
+        self.assertEqual('All members have highlights \o/\n'
                          'really send?\n', self.registry.writer_factory.writer.message)
 
     def test_send_highlights_with_yes(self):
@@ -149,7 +148,7 @@ class TestSendHighlights(TelegramBotTest):
         highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
-        self.registry.register_action(SendHighlightsConversationAction(highlights),
+        self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
                                       FailureThrowingConversationActionHandler)
 
         ask_consent_update = self._create_update_with_text('/send_highlights')
@@ -162,8 +161,7 @@ class TestSendHighlights(TelegramBotTest):
         self.updater.dispatcher.process_update(yes_update)
 
         self.assertTrue(highlights.yc.called)
-        self.assertEqual('the following highlights are available:\n'
-                         'A: 1\n'
+        self.assertEqual('All members have highlights \o/\n'
                          'really send?\n'
                          'highlights posted to yammer: [Die Südsterne in %s:\n' % current_calendar_week() +
                          'A: 1]', self.registry.writer_factory.writer.message)
@@ -174,7 +172,7 @@ class TestSendHighlights(TelegramBotTest):
         highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
-        handler = self.registry.register_action(SendHighlightsConversationAction(highlights),
+        handler = self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
                                                 FailureThrowingConversationActionHandler)
 
         ask_consent_update = self._create_update_with_text('/send_highlights')
@@ -189,8 +187,7 @@ class TestSendHighlights(TelegramBotTest):
         assert handler.conversations == {}
 
         self.assertFalse(highlights.yc.called)
-        self.assertEqual('the following highlights are available:\n'
-                         'A: 1\n'
+        self.assertEqual('All members have highlights \o/\n'
                          'really send?\n'
                          'ok, not sending highlights.', self.registry.writer_factory.writer.message)
 

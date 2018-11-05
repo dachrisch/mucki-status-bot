@@ -107,14 +107,16 @@ class HighlightsCollectorRegexAction(RegexActionMixin):
 
 class AskForHighlightsConsentCommandAction(CommandActionMixin):
 
-    def __init__(self, highlights):
+    def __init__(self, highlights, pre_command_action):
         """
         :type highlights: Highlights
+        :type pre_command_action: service.action.CommandActionMixin
         """
         self.highlights = highlights
+        self.pre_command_action = pre_command_action
 
     def _writer_callback(self, writer):
-        ShowHighlightsCommandAction(self.highlights).callback_function(writer)
+        self.pre_command_action.callback_function(writer)
         reply_keyboard = [['yes', 'no']]
         if self.highlights.is_not_empty():
             writer.out('really send?\n',
@@ -168,6 +170,14 @@ class SendHighlightsCommandAction(RegexActionMixin):
 
 
 class SendHighlightsConversationAction(ConversationActionMixin):
+    def __init__(self, highlights, expected_member):
+        """
+        :type highlights: yammer_service.highlights.Highlights
+        :type expected_member: [str]
+        """
+        self.highlights = highlights
+        self.expected_member = expected_member
+
     @property
     def name(self):
         return 'send_highlights'
@@ -177,16 +187,14 @@ class SendHighlightsConversationAction(ConversationActionMixin):
         return 'Posts current #highlights to Yammer' + \
                '@ https://www.yammer.com/it-agile.de/#/threads/inGroup?type=in_group&feedId=207628'
 
-    def __init__(self, highlights):
-        self.highlights = highlights
-
     @property
     def yes_callback(self):
         return SendHighlightsCommandAction(self.highlights)
 
     @property
     def entry_action(self):
-        return AskForHighlightsConsentCommandAction(self.highlights)
+        return AskForHighlightsConsentCommandAction(self.highlights,
+                                                    CheckHighlightsCommandAction(self.highlights, self.expected_member))
 
     @property
     def no_callback(self):
@@ -199,7 +207,6 @@ class CheckHighlightsCommandAction(CommandActionMixin):
         """
         :type highlights: yammer_service.highlights.Highlights
         :type expected_member: [str]
-        
         """
         self.highlights = highlights
         self.expected_member = expected_member
@@ -207,9 +214,9 @@ class CheckHighlightsCommandAction(CommandActionMixin):
     def _writer_callback(self, writer):
         diff = list(filter(lambda user: not self.highlights.get(user), self.expected_member))
         if diff:
-            writer.out('No highlights available for: [%s]' % ', '.join(['@%s' % member for member in diff]))
+            writer.out('No highlights available for: [%s]\n' % ', '.join(['@%s' % member for member in diff]))
         else:
-            writer.out('All members have highlights \o/')
+            writer.out('All members have highlights \o/\n')
 
     @property
     def name(self):

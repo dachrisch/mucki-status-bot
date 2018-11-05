@@ -35,5 +35,5 @@ class TestHelp(TelegramBotTest):
                                                   + '\n' + WelfareCommandAction().help_entry
                                                   + '\n' + ShowHighlightsCommandAction(None).help_entry
                                                   + '\n' + HighlightsCollectorRegexAction(None).help_entry
-                                                  + '\n' + SendHighlightsConversationAction(None).help_entry
+                                                  + '\n' + SendHighlightsConversationAction(None, None).help_entry
                                                   )
