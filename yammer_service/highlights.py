@@ -17,7 +17,7 @@ class Highlights(object):
         self.highlights = {}
         self.yc = YammerConnector()
 
-    def add(self, username, highlight):
+    def add_pattern(self, username, highlight):
         m = re.match(HIGHLIGHTS_PATTERN, highlight)
         if m:
             self.highlights[username] = (m.group(1) or m.group(2)).strip()
@@ -85,7 +85,7 @@ class HighlightsCollectorRegexAction(RegexActionMixin):
         :type update_retriever: telegram_service.bot.UpdateRetriever
         :type writer: telegram_service.writer.Writer
         """
-        self.highlights.add(update_retriever.user, update_retriever.message)
+        self.highlights.add_pattern(update_retriever.user, update_retriever.message)
         writer.out(
             'collecting highlight for %s: [%s]' % (update_retriever.user, self.highlights.get(update_retriever.user)))
 

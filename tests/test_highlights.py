@@ -43,26 +43,26 @@ class TestHighlightsMatching(unittest.TestCase):
 
     def test_simple_text(self):
         highlights = Highlights()
-        self.assertFalse(highlights.add('Chris', 'test'))
+        self.assertFalse(highlights.add_pattern('Chris', 'test'))
 
     def test_hash_front(self):
         highlights = Highlights()
-        self.assertTrue(highlights.add('Chris', FRONT_HASH))
+        self.assertTrue(highlights.add_pattern('Chris', FRONT_HASH))
         self.assertEqual('test', highlights.get('Chris'))
 
     def test_hash_back(self):
         highlights = Highlights()
-        self.assertTrue(highlights.add('Chris', BACK_HASH))
+        self.assertTrue(highlights.add_pattern('Chris', BACK_HASH))
         self.assertEqual('test', highlights.get('Chris'))
 
     def test_hash_multiple(self):
         highlights = Highlights()
-        self.assertTrue(highlights.add('Chris', BOTH_HASH))
+        self.assertTrue(highlights.add_pattern('Chris', BOTH_HASH))
         self.assertEqual('test', highlights.get('Chris'))
 
     def test_hash_and_colon(self):
         highlights = Highlights()
-        self.assertTrue(highlights.add('Chris', HASH_AND_COLON))
+        self.assertTrue(highlights.add_pattern('Chris', HASH_AND_COLON))
         self.assertEqual('test', highlights.get('Chris'))
 
     def test_handler_regex_front(self):
@@ -81,7 +81,7 @@ class TestHighlightsMatching(unittest.TestCase):
 class TestShowHighlightsCommand(TelegramBotTest):
     def test_can_execute_show_highlights(self):
         highlights = Highlights()
-        highlights.add('A', '#highlights test')
+        highlights.add_pattern('A', '#highlights test')
         self.assert_command_action_responses_with(ShowHighlightsCommandAction(highlights),
                                                   'the following')
 
@@ -129,7 +129,7 @@ class TestSendHighlights(TelegramBotTest):
 
     def test_ask_for_consent_before_sending(self):
         highlights = Highlights()
-        highlights.add('A', '#highlights 1')
+        highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
         self.registry.register_action(SendHighlightsConversationAction(highlights),
@@ -144,7 +144,7 @@ class TestSendHighlights(TelegramBotTest):
     def test_send_highlights_with_yes(self):
         highlights = Highlights()
         highlights.yc = YammerTestConnector()
-        highlights.add('A', '#highlights 1')
+        highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
         self.registry.register_action(SendHighlightsConversationAction(highlights),
@@ -169,7 +169,7 @@ class TestSendHighlights(TelegramBotTest):
     def test_not_sending_highlights_with_no(self):
         highlights = Highlights()
         highlights.yc = YammerTestConnector()
-        highlights.add('A', '#highlights 1')
+        highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
         handler = self.registry.register_action(SendHighlightsConversationAction(highlights),
@@ -191,3 +191,21 @@ class TestSendHighlights(TelegramBotTest):
                          'A: 1\n'
                          'really send?\n'
                          'ok, not sending highlights.', self.registry.writer_factory.writer.message)
+
+
+class TestCheckHighlights(TelegramBotTest):
+    def test_collect_username(self):
+        member = self.updater.bot.get_chat_administrators(1)
+        member_list = list(map(lambda chat_member: chat_member.user.first_name, member))
+        self.assertEqual(2, len(member_list))
+
+    def test_collect_highlights_diff(self):
+        member = self.updater.bot.get_chat_administrators(1)
+        member_list = list(map(lambda chat_member: chat_member.user.first_name, member))
+
+        highlights = Highlights()
+        highlights.add_pattern('First', '#highlights test')
+
+        remaining_user = list(filter(lambda user: not highlights.get(user), member_list))
+        self.assertEqual(1, len(remaining_user))
+        self.assertEqual('Second', remaining_user[0])

@@ -54,4 +54,3 @@ class TestBot(TelegramBotTest):
 class TestDeals(TelegramBotTest):
     def test_can_execute_deals(self):
         self.assert_can_execute_command('deals')
-

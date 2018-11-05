@@ -2,7 +2,7 @@
 import unittest
 from abc import ABC
 
-from telegram import Bot, Update, Message, Chat, User
+from telegram import Bot, Update, Message, Chat, User, ChatMember
 from telegram.ext import Dispatcher, CommandHandler, Updater, Handler
 
 from telegram_service import bot
@@ -110,6 +110,10 @@ class TelegramTestBot(Bot):
         self.dispatcher = Dispatcher(self, None)
         self.test_value = False
         self.send_message = None
+        self.admin_user = ('First', 'Second')
+
+    def get_chat_administrators(self, chat_id, timeout=None, **kwargs):
+        return list(map(lambda user: ChatMember(User(1, user, False), ChatMember.ADMINISTRATOR), self.admin_user))
 
 
 class LoggingWriter(Writer):
