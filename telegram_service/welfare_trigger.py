@@ -6,12 +6,16 @@ from telegram import Update, Message, Chat
 from telegram.ext import Updater
 
 from config import MUC_TELEGRAM_GROUP_ID, CONFIG_PATH
+from google_service_api.welfare import WelfareCommandAction
 from my_logging import checked_load_logging_config, get_logger
 from telegram_service.bot import howarewe
+from telegram_service.writer import TelegramWriterFactory
 
 
 def trigger_howarewe(bot_id):
     updater = Updater(bot_id)
+    welfare = WelfareCommandAction()
+    welfare.callback_function(TelegramWriterFactory(updater.bot))
     howarewe(updater.bot, Update(1, Message(1, None, None, Chat(MUC_TELEGRAM_GROUP_ID, 'group'))))
 
 

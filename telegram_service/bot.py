@@ -8,7 +8,6 @@ from config import MUCKI_TRACKER_SHEET_ID
 from google_service.sheets import SheetConnector
 from google_service_api.welfare import WelfareStatus, WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
-from my_logging import get_logger
 from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.writer import TelegramWriterFactory
@@ -39,26 +38,6 @@ class UpdateRetriever(object):
     @property
     def message(self):
         return self._update.message.text
-
-
-def register_commands(updater):
-    registry = BotRegistry(updater)
-    registry.register_command_action(HelpCommandAction(registry))
-    registry.register_command_action(StartCommandAction())
-    registry.register_command_action(RemoteMethodCommandAction())
-    registry.register_command_action(OrdersCommandAction())
-    registry.register_command_action(WelfareCommandAction())
-    registry.register_command_action(ShowHighlightsCommandAction(highlights))
-    registry.register_regex_action(HighlightsCollectorRegexAction(highlights))
-    registry.register_conversation_action(SendHighlightsConversationAction(highlights))
-    return registry
-
-
-def _send_and_log(bot, update, message, reply_markup=None):
-    global log
-    log = get_logger(__name__)
-    bot.send_message(UpdateRetriever(update).chat_id, message, reply_markup=reply_markup, disable_web_page_preview=True)
-    log.info(message)
 
 
 class ActionHandler(Handler, ABC):
@@ -169,3 +148,13 @@ class BotRegistry(object):
         :rtype: list[service.action.CommandActionMixin]
         """
         return self.__registered_actions
+
+    def register_commands(self):
+        self.register_command_action(HelpCommandAction(self))
+        self.register_command_action(StartCommandAction())
+        self.register_command_action(RemoteMethodCommandAction())
+        self.register_command_action(OrdersCommandAction())
+        self.register_command_action(WelfareCommandAction())
+        self.register_command_action(ShowHighlightsCommandAction(highlights))
+        self.register_regex_action(HighlightsCollectorRegexAction(highlights))
+        self.register_conversation_action(SendHighlightsConversationAction(highlights))

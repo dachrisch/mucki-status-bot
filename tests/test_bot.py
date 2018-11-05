@@ -11,8 +11,7 @@ from yammer_service.highlights import HIGHLIGHTS_PATTERN
 class TestBot(TelegramBotTest):
     def setUp(self):
         super().setUp()
-        from telegram_service.bot import register_commands
-        register_commands(self.updater)
+        self.registry.register_commands()
         self.available_commands = list(map(lambda x: x.command[0],
                                            list(filter(lambda x: isinstance(x, CommandHandler),
                                                        self.updater.dispatcher.handlers[0]))))
