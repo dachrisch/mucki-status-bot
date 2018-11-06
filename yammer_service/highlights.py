@@ -20,10 +20,13 @@ class Highlights(object):
     def add_pattern(self, username, highlight):
         m = re.match(HIGHLIGHTS_PATTERN, highlight)
         if m:
-            self.highlights[username] = (m.group(1) or m.group(2)).strip()
+            self.add(username, (m.group(1) or m.group(2)).strip())
             return True
         else:
             return False
+
+    def add(self, username, text):
+        self.highlights[username] = text
 
     def get(self, username):
         if username in self.highlights:
@@ -88,9 +91,8 @@ class HighlightsCollectorRegexAction(RegexActionMixin):
         :type update_retriever: telegram_service.retriever.UpdateRetriever
         :type writer: telegram_service.writer.Writer
         """
-        self.collect_highlight(update_retriever.user, update_retriever.message, writer)
-
-    def collect_highlight(self, user, message, writer):
+        user = update_retriever.user
+        message = update_retriever.message
         self.highlights.add_pattern(user, message)
         writer.out(
             'collecting highlight for %s: [%s]' % (user, self.highlights.get(user)))
@@ -236,9 +238,18 @@ class HighlightsForCommandAction(CommandActionMixin):
         self.collector_action = HighlightsCollectorRegexAction(self.highlights)
 
     def _writer_callback(self, writer, message=None):
-        user, *text = message.split(' ')[1:]
-        message = ' '.join(text)
-        self.collector_action.collect_highlight(user, message, writer)
+        if message and len(message.split(' ')) > 2:
+            user, *text = message.split(' ')[1:]
+            message = ' '.join(text)
+            self.highlights.add(user, message)
+            writer.out(
+                'collecting highlight for %s: [%s]' % (user, self.highlights.get(user)))
+        else:
+            writer.out(self.usage)
+
+    @property
+    def usage(self):
+        return 'Usage: /%s <user> <highlight>' % self.name
 
     @property
     def name(self):
@@ -246,4 +257,4 @@ class HighlightsForCommandAction(CommandActionMixin):
 
     @property
     def help_text(self):
-        return 'Collects highlights for a specific user'
+        return 'Collects highlights for a specific user (%s)' % self.usage

@@ -7,7 +7,7 @@ from telegram.ext import RegexHandler, CommandHandler
 
 from telegram_service.retriever import AdminRetriever
 from tests.telegram_test_bot import FailureThrowingRegexActionHandler, TelegramBotTest, \
-    FailureThrowingConversationActionHandler, FailureThrowingMessageAwareCommandActionHandler
+    FailureThrowingConversationActionHandler, FailureThrowingMessageAwareCommandActionHandler, LoggingWriter
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, ShowHighlightsCommandAction, \
     HighlightsCollectorRegexAction, SendHighlightsConversationAction, current_calendar_week, \
     CheckHighlightsCommandAction, HighlightsForCommandAction
@@ -246,9 +246,19 @@ class TestHighlightsFor(TelegramBotTest):
         self.assertEqual('A', self.username)
         self.assertEqual('test highlight', self.highlight_text)
 
+    def test_no_arguments_given(self):
+        writer = LoggingWriter()
+        HighlightsForCommandAction(Highlights())._writer_callback(writer)
+        self.assertEqual('Usage: /highlights_for <user> <highlight>', writer.message)
+
+    def test_only_user_given(self):
+        writer = LoggingWriter()
+        HighlightsForCommandAction(Highlights())._writer_callback(writer, '/highlights_for A')
+        self.assertEqual('Usage: /highlights_for <user> <highlight>', writer.message)
+
     def test_highlights_for_command_action(self):
         highlights = Highlights()
         action = HighlightsForCommandAction(highlights)
         self.assert_responses_with(action, FailureThrowingMessageAwareCommandActionHandler,
-                                   self._create_update_with_text('/highlights_for A test #highlights'),
+                                   self._create_update_with_text('/highlights_for A test'),
                                    'collecting highlight for A: [test]')
