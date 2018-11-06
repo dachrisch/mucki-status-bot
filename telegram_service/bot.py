@@ -1,8 +1,7 @@
 # coding=UTF-8
 
-from config import MUCKI_TRACKER_SHEET_ID, MUC_TELEGRAM_GROUP_ID
-from google_service.sheets import SheetConnector
-from google_service_api.welfare import WelfareStatus, WelfareCommandAction
+from config import MUC_TELEGRAM_GROUP_ID
+from google_service_api.welfare import WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
 from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
@@ -10,11 +9,10 @@ from telegram_service.handler import CommandActionHandler, RegexActionHandler, C
 from telegram_service.retriever import AdminRetriever
 from telegram_service.writer import TelegramWriterFactory
 from yammer_service.highlights import Highlights, ShowHighlightsCommandAction, \
-    HighlightsCollectorRegexAction, SendHighlightsConversationAction, CheckHighlightsCommandAction
+    HighlightsCollectorRegexAction, SendHighlightsConversationAction, CheckHighlightsCommandAction, \
+    HighlightsForCommandAction
 
 log = None
-highlights = Highlights()
-welfare_status = WelfareStatus(SheetConnector(MUCKI_TRACKER_SHEET_ID))
 
 
 class BotRegistry(object):
@@ -25,6 +23,7 @@ class BotRegistry(object):
         self.__updater = updater
         self.writer_factory = TelegramWriterFactory(updater.bot)
         self.__registered_actions = []
+        self.highlights = Highlights()
 
     def register_command_action(self, action):
         return self.register_action(action, CommandActionHandler)
@@ -58,11 +57,12 @@ class BotRegistry(object):
         self.register_command_action(RemoteMethodCommandAction())
         self.register_command_action(OrdersCommandAction())
         self.register_command_action(WelfareCommandAction())
-        self.register_command_action(ShowHighlightsCommandAction(highlights))
-        self.register_regex_action(HighlightsCollectorRegexAction(highlights))
+        self.register_command_action(ShowHighlightsCommandAction(self.highlights))
+        self.register_regex_action(HighlightsCollectorRegexAction(self.highlights))
         self.register_conversation_action(
-            SendHighlightsConversationAction(highlights,
+            SendHighlightsConversationAction(self.highlights,
                                              AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID).admin_member))
         self.register_command_action(
-            CheckHighlightsCommandAction(highlights,
+            CheckHighlightsCommandAction(self.highlights,
                                          AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID).admin_member))
+        self.register_command_action(HighlightsForCommandAction(self.highlights))

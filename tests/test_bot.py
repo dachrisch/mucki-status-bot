@@ -51,6 +51,9 @@ class TestBot(TelegramBotTest):
     def test_check_highlights_available(self):
         self.assertIn('check_highlights', self.available_commands)
 
+    def test_highlights_for_available(self):
+        self.assertIn('highlights_for', self.available_commands)
+
 
 @unittest.skip("Request faild: https://api.pipedrive.com/v1/stages?pipeline_id=5&api_"
                "token={'success': False, 'error': 'unauthorized access', 'errorCode': 401}")
