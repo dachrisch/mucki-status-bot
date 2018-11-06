@@ -1,9 +1,7 @@
 from telegram import Update, Message, Chat
 
-from telegram import Update, Message, Chat
-
 from service.action import CommandActionMixin
-from telegram_service.bot import CommandActionHandler
+from telegram_service.handler import CommandActionHandler
 from telegram_service.writer import WriterFactory
 from tests.telegram_test_bot import TelegramBotTest
 

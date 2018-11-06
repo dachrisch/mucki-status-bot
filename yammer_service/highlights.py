@@ -80,14 +80,20 @@ def current_calendar_week():
 
 class HighlightsCollectorRegexAction(RegexActionMixin):
 
+    def __init__(self, highlights):
+        self.highlights = highlights
+
     def _writer_callback_with_update(self, update_retriever, writer):
         """
         :type update_retriever: telegram_service.retriever.UpdateRetriever
         :type writer: telegram_service.writer.Writer
         """
-        self.highlights.add_pattern(update_retriever.user, update_retriever.message)
+        self.collect_highlight(update_retriever.user, update_retriever.message, writer)
+
+    def collect_highlight(self, user, message, writer):
+        self.highlights.add_pattern(user, message)
         writer.out(
-            'collecting highlight for %s: [%s]' % (update_retriever.user, self.highlights.get(update_retriever.user)))
+            'collecting highlight for %s: [%s]' % (user, self.highlights.get(user)))
 
     @property
     def pattern(self):
@@ -100,9 +106,6 @@ class HighlightsCollectorRegexAction(RegexActionMixin):
     @property
     def help_text(self):
         return 'collects messages with this tag from the current user'
-
-    def __init__(self, highlights):
-        self.highlights = highlights
 
 
 class AskForHighlightsConsentCommandAction(CommandActionMixin):
@@ -225,3 +228,22 @@ class CheckHighlightsCommandAction(CommandActionMixin):
     @property
     def help_text(self):
         return 'Checks all members have highlights'
+
+
+class HighlightsForCommandAction(CommandActionMixin):
+    def __init__(self, highlights):
+        self.highlights = highlights
+        self.collector_action = HighlightsCollectorRegexAction(self.highlights)
+
+    def _writer_callback(self, writer, message=None):
+        user, *text = message.split(' ')[1:]
+        message = ' '.join(text)
+        self.collector_action.collect_highlight(user, message, writer)
+
+    @property
+    def name(self):
+        return 'highlights_for'
+
+    @property
+    def help_text(self):
+        return 'Collects highlights for a specific user'

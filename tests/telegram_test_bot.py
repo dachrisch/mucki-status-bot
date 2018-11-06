@@ -6,7 +6,9 @@ from telegram import Bot, Update, Message, Chat, User, ChatMember
 from telegram.ext import Dispatcher, CommandHandler, Updater, Handler
 
 from telegram_service import bot
-from telegram_service.bot import BotRegistry, CommandActionHandler, RegexActionHandler, ConversationActionHandler
+from telegram_service.bot import BotRegistry
+from telegram_service.handler import CommandActionHandler, RegexActionHandler, ConversationActionHandler, \
+    MessageAwareCommandActionHandler
 from telegram_service.writer import Writer, WriterFactory
 
 
@@ -35,6 +37,10 @@ class FailureThrowingRegexActionHandler(FailureThrowingMixin, RegexActionHandler
 
 
 class FailureThrowingConversationActionHandler(FailureThrowingMixin, ConversationActionHandler):
+    pass
+
+
+class FailureThrowingMessageAwareCommandActionHandler(FailureThrowingMixin, MessageAwareCommandActionHandler):
     pass
 
 
@@ -73,7 +79,7 @@ class TelegramBotTest(unittest.TestCase):
     def assert_responses_with(self, action, action_handler_class, update, expected_containing_message):
         """
         :type action: service.action.ActionMixin
-        :type action_handler_class: type[telegram_service.bot.ActionHandler]
+        :type action_handler_class: type[telegram_service.handler.ActionHandler]
         :type update: telegram.Update
         :type expected_containing_message: str
         """

@@ -3,14 +3,14 @@ import re
 import unittest
 
 from telegram import Update
-from telegram.ext import RegexHandler
+from telegram.ext import RegexHandler, CommandHandler
 
 from telegram_service.retriever import AdminRetriever
 from tests.telegram_test_bot import FailureThrowingRegexActionHandler, TelegramBotTest, \
-    FailureThrowingConversationActionHandler
+    FailureThrowingConversationActionHandler, FailureThrowingMessageAwareCommandActionHandler
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, ShowHighlightsCommandAction, \
     HighlightsCollectorRegexAction, SendHighlightsConversationAction, current_calendar_week, \
-    CheckHighlightsCommandAction
+    CheckHighlightsCommandAction, HighlightsForCommandAction
 from yammer_service.yammer import YammerConnector
 
 HASH_AND_COLON = '#highlights: test'
@@ -24,6 +24,15 @@ FRONT_HASH = '#highlights test'
 
 class _Any(object):
     pass
+
+
+class YammerTestConnector(YammerConnector):
+    def __init__(self):
+        self.called = False
+
+    def post_meine_woche(self, message, tags=()):
+        self.called = True
+        return message
 
 
 class TestHighlightsMatching(unittest.TestCase):
@@ -107,15 +116,6 @@ class TestShowHighlightsCommand(TelegramBotTest):
     def test_collect_highlights_responds(self):
         self.assert_regex_action_responses_with(HighlightsCollectorRegexAction(Highlights()),
                                                 'collecting highlight for test')
-
-
-class YammerTestConnector(YammerConnector):
-    def __init__(self):
-        self.called = False
-
-    def post_meine_woche(self, message, tags=()):
-        self.called = True
-        return message
 
 
 class TestSendHighlights(TelegramBotTest):
@@ -226,3 +226,29 @@ class TestCheckHighlights(TelegramBotTest):
         highlights.add_pattern('Second', '#highlights test')
         self.assert_command_action_responses_with(CheckHighlightsCommandAction(highlights, expected_member),
                                                   'All members have highlights \o/')
+
+
+class TestHighlightsFor(TelegramBotTest):
+    def setUp(self):
+        super().setUp()
+        self.username = ''
+        self.highlight_text = ''
+
+    def highlights_for(self, bot, update, **args):
+        self.username = args['args'][0]
+        self.highlight_text = ' '.join(args['args'][1:])
+
+    def test_parameters_passed_to_callback(self):
+        self.updater.dispatcher.add_handler(CommandHandler('for', self.highlights_for, pass_args=True))
+
+        self.updater.dispatcher.process_update(self._create_update_with_text('/for A test highlight'))
+
+        self.assertEqual('A', self.username)
+        self.assertEqual('test highlight', self.highlight_text)
+
+    def test_highlights_for_command_action(self):
+        highlights = Highlights()
+        action = HighlightsForCommandAction(highlights)
+        self.assert_responses_with(action, FailureThrowingMessageAwareCommandActionHandler,
+                                   self._create_update_with_text('/highlights_for A test #highlights'),
+                                   'collecting highlight for A: [test]')
