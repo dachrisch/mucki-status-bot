@@ -5,7 +5,8 @@ from google_service_api.welfare import WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
 from order_service.orders import OrdersCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
-from telegram_service.handler import CommandActionHandler, RegexActionHandler, ConversationActionHandler
+from telegram_service.handler import CommandActionHandler, RegexActionHandler, ConversationActionHandler, \
+    MessageAwareCommandActionHandler
 from telegram_service.retriever import AdminRetriever
 from telegram_service.writer import TelegramWriterFactory
 from yammer_service.highlights import Highlights, ShowHighlightsCommandAction, \
@@ -24,6 +25,9 @@ class BotRegistry(object):
         self.writer_factory = TelegramWriterFactory(updater.bot)
         self.__registered_actions = []
         self.highlights = Highlights()
+
+    def register_command_action_with_message(self, action):
+        return self.register_action(action, MessageAwareCommandActionHandler)
 
     def register_command_action(self, action):
         return self.register_action(action, CommandActionHandler)
@@ -65,4 +69,4 @@ class BotRegistry(object):
         self.register_command_action(
             CheckHighlightsCommandAction(self.highlights,
                                          AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID).admin_member))
-        self.register_command_action(HighlightsForCommandAction(self.highlights))
+        self.register_command_action_with_message(HighlightsForCommandAction(self.highlights))
