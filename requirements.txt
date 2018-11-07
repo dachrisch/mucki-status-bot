@@ -4,3 +4,4 @@ python-telegram-bot
 yampy3
 safygiphy
 google-cloud-bigquery
+pytest
