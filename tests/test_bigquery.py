@@ -4,8 +4,7 @@ import unittest
 from google.cloud.bigquery import DEFAULT_RETRY, QueryJob
 from google.cloud.bigquery.table import RowIterator
 
-from google_service.bigquery import InboxZeroBigQueryConnector, BigQueryClientWrapper, SuedSterneBigQueryClientWrapper, \
-    NoValuesFoundException
+from google_service.bigquery import InboxZeroBigQueryConnector, BigQueryClientWrapper, NoValuesFoundException
 
 
 class ReturnTestObject(object):
@@ -65,5 +64,4 @@ class TestBigQuery(unittest.TestCase):
                                           ReturnTestObject('quartile', 25)
                                           )
                                          )
-        client = SuedSterneBigQueryClientWrapper()
         self.assertEqual(5, InboxZeroBigQueryConnector(test_client).quartile('Chris', 365, 3))

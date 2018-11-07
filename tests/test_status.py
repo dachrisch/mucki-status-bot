@@ -1,6 +1,5 @@
 # coding=UTF-8
 import unittest
-from json import dumps
 
 from google_service_api.welfare import WelfareStatus
 
@@ -10,7 +9,7 @@ class DummySheetConnector:
         self.__range = dummy_range
 
     def values_for_range(self, sheet_range):
-        return dumps(self.__range)
+        return self.__range
 
 
 class TestShout(unittest.TestCase):

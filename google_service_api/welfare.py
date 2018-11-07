@@ -1,7 +1,6 @@
 # coding=utf-8
 import os
 from collections import Counter
-from json import loads
 
 from config import MUCKI_TRACKER_TEAM_STATUS_RANGE, MUCKI_TRACKER_SHEET_ID
 from google_service.sheets import SheetConnector
@@ -28,7 +27,7 @@ class WelfareStatus(object):
     @property
     def team_name_status(self):
         self._log.info('loading team status')
-        team_status = loads(self.__connector.values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE))
+        team_status = self.__connector.values_for_range(MUCKI_TRACKER_TEAM_STATUS_RANGE)
         self._log.info('done loading welfare status.')
         return team_status
 

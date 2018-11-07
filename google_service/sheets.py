@@ -1,5 +1,4 @@
 # coding=utf-8
-from json import dumps
 from os import path
 
 from apiclient import discovery
@@ -38,4 +37,4 @@ class SheetConnector(TTLCache):
             values = service.spreadsheets().values().get(spreadsheetId=self.__sheet_id,
                                                          range=sheet_range).execute().get('values', [])
             self[key(self.__sheet_id, sheet_range)] = values
-        return dumps(values)
+        return values
