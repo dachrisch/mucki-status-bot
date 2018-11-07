@@ -31,6 +31,7 @@ class OrdersCommandAction(CommandActionMixin):
         _string += '\n'.join(['- %s\n' % option for option in options])
         writer.out(_string)
 
+
 CONTAINER = 'https://my.1password.com/vaults/rllzgcg4nk5j3axeoedj3vvnku/allitems/'
 
 options = (OrderOption('GoodKarmaCoffee', 'https://http://www.goodkarmacoffee.de/epages/64249863.sf/de_DE/?'

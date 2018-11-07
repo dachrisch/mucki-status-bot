@@ -1,3 +1,4 @@
+# coding=utf-8
 from telegram import Update, Message, Chat
 
 from service.action import CommandActionMixin

@@ -1,3 +1,4 @@
+# coding=utf-8
 from google_service_api.welfare import WelfareCommandAction, WelfareStatus
 from telegram_service.gif import GifRetriever
 from tests.telegram_test_bot import TelegramBotTest

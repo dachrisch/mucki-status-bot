@@ -28,6 +28,7 @@ class _Any(object):
 
 class YammerTestConnector(YammerConnector):
     def __init__(self):
+        super().__init__()
         self.called = False
 
     def post_meine_woche(self, message, tags=()):
