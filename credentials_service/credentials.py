@@ -19,40 +19,24 @@ class CredentialsProvider(object):
 
 
 class ServiceAccountCredentialsProvider(CredentialsProvider):
-    def __init__(self):
-        self.service_account_file_path = path.join(path.join(path.expanduser('~'), '.credentials'), AUTH_FILE)
-        self.delegate_user = 'cd@it-agile.de'
+    def __init__(self, auth_file=AUTH_FILE, scopes=SCOPES):
+        self.service_account_file_path = path.join(path.join(path.expanduser('~'), '.credentials'), auth_file)
+        self.scopes = scopes
 
-    def get_credentials(self):
-        return service_account.Credentials.from_service_account_file(self.service_account_file_path,
-                                                                     scopes=SCOPES).with_subject(self.delegate_user)
+    def get_credentials(self, delegate='cd@it-agile.de'):
+        credentials = service_account.Credentials.from_service_account_file(self.service_account_file_path,
+                                                                            scopes=self.scopes)
+        if delegate:
+            credentials = credentials.with_subject(delegate)
+
+        return credentials
 
 
 class OAuthCredentialsProvider(CredentialsProvider):
-    class _SymlinkAwareStorage(Storage):
-        def __init__(self, *args, **kwargs):
-            Storage.__init__(self, *args, **kwargs)
-            self.__credentials = self.__read_from_file()
-
-        def locked_get(self):
-            return self.__credentials
-
-        def __read_from_file(self):
-            f = open(self._filename, 'rb')
-            content = f.read()
-            f.close()
-            credentials = client.Credentials.new_from_json(content)
-            credentials.set_store(self)
-
-            return credentials
-
-        def locked_put(self, credentials):
-            get_logger(__name__).warning(
-                'ignoring credentials update for [%(user_agent)s] which expired %(token_expiry)s' % credentials.__dict__)
-
-    def __init__(self):
+    def __init__(self, scopes=SCOPES):
         home_dir = os.path.expanduser('~')
         self.credential_dir = os.path.join(home_dir, '.credentials')
+        self.scopes = scopes
 
     def get_credentials(self):
         """Gets valid user credentials from storage.
@@ -76,8 +60,8 @@ class OAuthCredentialsProvider(CredentialsProvider):
         if not os.path.exists(self.credential_dir):
             os.makedirs(self.credential_dir)
         credential_path = os.path.join(self.credential_dir, 'sheets.googleapis.com-python-quickstart.json')
-        store = OAuthCredentialsProvider._SymlinkAwareStorage(credential_path)
+        store = Storage(credential_path)
         return store
 
     def _flow_from_client_secret(self):
-        return client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        return client.flow_from_clientsecrets(CLIENT_SECRET_FILE, self.scopes)
