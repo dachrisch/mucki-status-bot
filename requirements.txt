@@ -7,3 +7,6 @@ google-cloud-bigquery
 pytest
 # for personal account credentials
 oauth2client
+# microservices
+flask
+jsonpickle

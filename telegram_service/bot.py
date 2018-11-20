@@ -4,6 +4,7 @@ from config import MUC_TELEGRAM_GROUP_ID
 from google_service_api.welfare import WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
 from order_service.orders import OrdersCommandAction
+from remote_service.client import NewRemoteMethodCommandAction
 from remote_service.remotes import RemoteMethodCommandAction
 from telegram_service.handler import CommandActionHandler, RegexActionHandler, ConversationActionHandler, \
     MessageAwareCommandActionHandler
@@ -59,6 +60,7 @@ class BotRegistry(object):
         self.register_command_action(HelpCommandAction(self))
         self.register_command_action(StartCommandAction())
         self.register_command_action(RemoteMethodCommandAction())
+        self.register_command_action(NewRemoteMethodCommandAction())
         self.register_command_action(OrdersCommandAction())
         self.register_command_action(WelfareCommandAction())
         self.register_command_action(ShowHighlightsCommandAction(self.highlights))
