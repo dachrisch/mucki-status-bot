@@ -15,7 +15,7 @@ class ApiRetriever(object):
 
     def __init__(self, api_entry, api_version, host='localhost', port=5000):
         self.host = host
-        self.port = port
+        self.port = int(port)
         self.api_entry = api_entry
         self.api_version = api_version
 
