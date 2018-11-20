@@ -5,3 +5,5 @@ yampy3
 safygiphy
 google-cloud-bigquery
 pytest
+# for personal account credentials
+oauth2client
