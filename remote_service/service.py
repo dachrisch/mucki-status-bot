@@ -11,6 +11,7 @@ class RemoteMethod(object):
         self.remote = remote
         self.login = login
 
+
 remote_app = Flask(__name__)
 
 

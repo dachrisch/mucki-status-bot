@@ -18,7 +18,7 @@ class NewRemoteMethodCommandAction(CommandActionMixin):
 
     @property
     def name(self):
-        return 'remote_new'
+        return 'remote'
 
     def _writer_callback(self, writer):
         _string = '---------------------\n'
