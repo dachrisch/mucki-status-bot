@@ -4,7 +4,7 @@ from unittest import TestCase
 
 import jsonpickle
 
-from remote_service.client import NewRemoteMethodCommandAction
+from remote_service.client import NewRemoteMethodCommandAction, RemoteMethodWrapper
 from remote_service.remotes import RemoteMethodCommandAction
 from remote_service.service import remote_app
 from tests.telegram_test_bot import TelegramBotTest
@@ -42,4 +42,6 @@ class TestRemotesApi(TestCase):
 
     def test_methods_as_json(self):
         response = self.app.get('/remotes/api/v1.0/methods').data
-        self.assertEqual(3, len(jsonpickle.decode(response)))
+        methods = RemoteMethodWrapper.from_json_list(jsonpickle.decode(response))
+        self.assertEqual(3, len(methods))
+        self.assertTrue(hasattr(methods[0], 'name'))
