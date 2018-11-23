@@ -5,7 +5,7 @@ from service.action import CommandActionMixin
 from service.api import ApiRetriever
 
 
-class NewRemoteMethodCommandAction(CommandActionMixin):
+class RemoteMethodCommandAction(CommandActionMixin):
 
     def __init__(self):
         self.api_invoker = ApiRetriever('remotes', 'v1.0',

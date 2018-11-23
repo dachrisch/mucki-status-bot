@@ -1,41 +1,30 @@
 # coding=utf-8
-from multiprocessing import Process
-from unittest import TestCase
 
-import jsonpickle
-
-from remote_service.client import NewRemoteMethodCommandAction, RemoteMethodWrapper
-from remote_service.service import remote_app
+from remote_service.client import RemoteMethodCommandAction
+from service.api import ApiRetriever
 from tests.telegram_test_bot import TelegramBotTest
 
 
-class TestRemotesNewServiceWithApi(TelegramBotTest):
-    def setUp(self):
-        super().setUp()
-        # creates a test client
-        self.server = Process(target=remote_app.run)
-        self.server.start()
+class ApiTestRetriever(ApiRetriever):
+    class _ApiTestInvoker(object):
+        def __init__(self, actual_return):
+            self.actual_return = actual_return
 
-    def tearDown(self):
-        self.server.terminate()
-        self.server.join()
+        @property
+        def get(self):
+            return self.actual_return
+
+    def __init__(self, actual_return):
+        self.actual_return = actual_return
+
+    def with_method(self, method):
+        return ApiTestRetriever._ApiTestInvoker(self.actual_return)
+
+
+class TestRemotesNewServiceWithApi(TelegramBotTest):
 
     def test_remote_chat_room(self):
-        self.assert_command_action_responses_with(NewRemoteMethodCommandAction(), 'https://zoom.us/j/6787719716')
-
-
-class TestRemotesApi(TestCase):
-    def setUp(self):
-        # creates a test client
-        self.app = remote_app.test_client()
-        # propagate the exceptions to the test client
-        self.app.testing = True
-
-    def test_get_remote_methods(self):
-        self.assertEqual(200, self.app.get('/remotes/api/v1.0/methods').status_code)
-
-    def test_methods_as_json(self):
-        response = self.app.get('/remotes/api/v1.0/methods').data
-        methods = RemoteMethodWrapper.from_json_list(jsonpickle.decode(response))
-        self.assertEqual(3, len(methods))
-        self.assertTrue(hasattr(methods[0], 'name'))
+        action = RemoteMethodCommandAction()
+        action.api_invoker = ApiTestRetriever(
+            ({'name': 'Test', 'login': 'test_login', 'remote': 'https://zoom.us/j/6787719716'},))
+        self.assert_command_action_responses_with(action, 'https://zoom.us/j/6787719716')
