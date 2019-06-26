@@ -154,10 +154,10 @@ class SendHighlightsCommandAction(RegexActionMixin):
                 message_url = self.highlights.send_to_yammer()
                 writer.out('highlights posted to yammer: [%s]' % message_url,
                            reply_markup=ReplyKeyboardRemove())
+                self.highlights.clear()
             except Exception as e:
                 writer.out('failed to post to yammer: [%s]' % e, reply_markup=ReplyKeyboardRemove())
 
-            self.highlights.clear()
         else:
             self.cancel(writer)
         return ConversationHandler.END

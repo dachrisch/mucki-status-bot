@@ -192,6 +192,30 @@ class TestSendHighlights(TelegramBotTest):
                          'really send?\n'
                          'ok, not sending highlights.', self.registry.writer_factory.writer.message)
 
+    def test_error_will_not_clear_highlights(self):
+        def fail():
+            raise Exception
+
+        highlights = Highlights()
+        highlights.yc = YammerTestConnector()
+        highlights.yc.post_meine_woche = fail
+        highlights.add_pattern('A', '#highlights 1')
+
+        assert len(highlights.highlights) == 1, highlights.highlights
+        self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
+                                      FailureThrowingConversationActionHandler)
+
+        ask_consent_update = self._create_update_with_text('/send_highlights')
+
+        self.updater.dispatcher.process_update(ask_consent_update)
+
+        yes_update = self._create_update_with_text('yes')
+        yes_update.message.reply_to_message = ask_consent_update.message.message_id
+
+        self.updater.dispatcher.process_update(yes_update)
+
+        self.assertTrue(highlights.is_not_empty())
+
 
 class TestCheckHighlights(TelegramBotTest):
     def test_collect_username(self):
