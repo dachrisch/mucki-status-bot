@@ -1,14 +1,14 @@
 # coding=utf-8
 import logging
-from logging import config
 import sys
+from logging import config
 from os import path
 
 
 def checked_load_logging_config(config_path):
     expanded_config_path = path.expanduser(config_path)
     if path.exists(expanded_config_path):
-        logging.config.fileConfig(expanded_config_path)
+        config.fileConfig(expanded_config_path)
         get_logger(__name__).info('loaded config from [%s]' % expanded_config_path)
     else:
         print(
