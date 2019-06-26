@@ -62,7 +62,7 @@ class ShowHighlightsCommandAction(CommandActionMixin):
         """
         self.highlights = highlights
 
-    def _writer_callback(self, writer):
+    def _writer_callback(self, writer, message=None):
         if self.highlights.is_not_empty():
             writer.out('the following highlights are available:\n%s\n' % self.highlights.message_string)
         else:
@@ -120,7 +120,7 @@ class AskForHighlightsConsentCommandAction(CommandActionMixin):
         self.highlights = highlights
         self.pre_command_action = pre_command_action
 
-    def _writer_callback(self, writer):
+    def _writer_callback(self, writer, message=None):
         self.pre_command_action.callback_function(writer)
         reply_keyboard = [['yes', 'no']]
         if self.highlights.is_not_empty():
@@ -216,7 +216,7 @@ class CheckHighlightsCommandAction(CommandActionMixin):
         self.highlights = highlights
         self.expected_member = expected_member
 
-    def _writer_callback(self, writer):
+    def _writer_callback(self, writer, message=None):
         diff = list(filter(lambda user: not self.highlights.get(user), self.expected_member))
         if diff:
             writer.out('No highlights available for: [%s]\n' % ', '.join(['%s' % member for member in diff]))

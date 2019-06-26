@@ -30,7 +30,7 @@ class CommandActionMixin(ActionMixin, ABC):
         return self.name
 
     @abstractmethod
-    def _writer_callback(self, writer):
+    def _writer_callback(self, writer, message=None):
         """
         :type writer: telegram_service.writer.Writer
         """

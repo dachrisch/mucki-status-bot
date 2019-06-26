@@ -19,7 +19,7 @@ class HelpCommandAction(CommandActionMixin):
     def name(self):
         return 'help'
 
-    def _writer_callback(self, writer):
+    def _writer_callback(self, writer, message=None):
         text = 'The following commands are available:\n'
         text += '\n'.join(
             [action.help_entry for action in self.registry.registered_actions])
@@ -27,7 +27,7 @@ class HelpCommandAction(CommandActionMixin):
 
 
 class StartCommandAction(CommandActionMixin):
-    def _writer_callback(self, writer):
+    def _writer_callback(self, writer, message=None):
         writer.out("I'm the bot of the Südsterne.\nHow can I /help you?")
 
     @property

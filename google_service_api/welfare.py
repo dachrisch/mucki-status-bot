@@ -13,7 +13,7 @@ class WelfareCommandAction(CommandActionMixin):
                                         port=os.getenv('WELFARE_SERVICE_PORT', 5000))
         self.gif_retriever = GifRetriever()
 
-    def _writer_callback(self, writer):
+    def _writer_callback(self, writer, message=None):
         writer.out('calculating welfare status of team...\n')
         writer.out_thinking()
         writer.out(self._team_message + '\n')

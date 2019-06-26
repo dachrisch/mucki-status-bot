@@ -18,7 +18,7 @@ class CommandTestAction(CommandActionMixin):
 
         self.__called = False
 
-    def _writer_callback(self, writer):
+    def _writer_callback(self, writer, message=None):
         self.__called = True
         writer.out('test call')
 
