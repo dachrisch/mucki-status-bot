@@ -64,9 +64,7 @@ class BotRegistry(object):
         self.register_command_action(ShowHighlightsCommandAction(self.highlights))
         self.register_regex_action(HighlightsCollectorRegexAction(self.highlights))
         self.register_conversation_action(
-            SendHighlightsConversationAction(self.highlights,
-                                             AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID).admin_member))
+            SendHighlightsConversationAction(self.highlights, AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID)))
         self.register_command_action(
-            CheckHighlightsCommandAction(self.highlights,
-                                         AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID).admin_member))
+            CheckHighlightsCommandAction(self.highlights, AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID)))
         self.register_command_action_with_message(HighlightsForCommandAction(self.highlights))

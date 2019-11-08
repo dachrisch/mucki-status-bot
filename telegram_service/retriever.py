@@ -1,5 +1,19 @@
 # coding=utf-8
-class AdminRetriever(object):
+from abc import abstractmethod
+
+
+class MemberRetriever(object):
+    @property
+    @abstractmethod
+    def member(self):
+        raise NotImplementedError
+
+
+class AdminRetriever(MemberRetriever):
+    @property
+    def member(self):
+        return self.admin_member
+
     def __init__(self, updater, chat_id):
         self.updater = updater
         self.chat_id = chat_id

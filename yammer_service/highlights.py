@@ -175,13 +175,13 @@ class SendHighlightsCommandAction(RegexActionMixin):
 
 
 class SendHighlightsConversationAction(ConversationActionMixin):
-    def __init__(self, highlights, expected_member):
+    def __init__(self, highlights, member_retriever):
         """
         :type highlights: yammer_service.highlights.Highlights
-        :type expected_member: [str]
+        :type member_retriever: telegram_service.retriever.MemberRetriever
         """
         self.highlights = highlights
-        self.expected_member = expected_member
+        self.member_retriever = member_retriever
 
     @property
     def name(self):
@@ -199,7 +199,8 @@ class SendHighlightsConversationAction(ConversationActionMixin):
     @property
     def entry_action(self):
         return AskForHighlightsConsentCommandAction(self.highlights,
-                                                    CheckHighlightsCommandAction(self.highlights, self.expected_member))
+                                                    CheckHighlightsCommandAction(self.highlights,
+                                                                                 self.member_retriever))
 
     @property
     def no_callback(self):
@@ -208,16 +209,16 @@ class SendHighlightsConversationAction(ConversationActionMixin):
 
 class CheckHighlightsCommandAction(CommandActionMixin):
 
-    def __init__(self, highlights, expected_member):
+    def __init__(self, highlights, member_retriever):
         """
         :type highlights: yammer_service.highlights.Highlights
-        :type expected_member: [str]
+        :type member_retriever: telegram_service.retriever.MemberRetriever
         """
         self.highlights = highlights
-        self.expected_member = expected_member
+        self.member_retriever = member_retriever
 
     def _writer_callback(self, writer, message=None):
-        diff = list(filter(lambda user: not self.highlights.get(user), self.expected_member))
+        diff = list(filter(lambda user: not self.highlights.get(user), self.member_retriever.member))
         if diff:
             writer.out('No highlights available for: [%s]\n' % ', '.join(['%s' % member for member in diff]))
         else:

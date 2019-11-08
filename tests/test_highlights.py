@@ -5,7 +5,7 @@ import unittest
 from telegram import Update
 from telegram.ext import RegexHandler, CommandHandler
 
-from telegram_service.retriever import AdminRetriever
+from telegram_service.retriever import AdminRetriever, MemberRetriever
 from tests.telegram_test_bot import FailureThrowingRegexActionHandler, TelegramBotTest, \
     FailureThrowingConversationActionHandler, FailureThrowingMessageAwareCommandActionHandler, LoggingWriter
 from yammer_service.highlights import Highlights, HIGHLIGHTS_PATTERN, ShowHighlightsCommandAction, \
@@ -34,6 +34,15 @@ class YammerTestConnector(YammerConnector):
     def post_meine_woche(self, message, tags=()):
         self.called = True
         return message
+
+
+class TestMemberRetriever(MemberRetriever):
+    def __init__(self, expected_member):
+        self.expected_member = expected_member
+
+    @property
+    def member(self):
+        return self.expected_member
 
 
 class TestHighlightsMatching(unittest.TestCase):
@@ -123,7 +132,7 @@ class TestSendHighlights(TelegramBotTest):
     def test_empty_highlights_no_send(self):
         highlights = Highlights()
 
-        self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
+        self.registry.register_action(SendHighlightsConversationAction(highlights, TestMemberRetriever(('A',))),
                                       FailureThrowingConversationActionHandler)
 
         self.updater.dispatcher.process_update(self._create_update_with_text('/send_highlights'))
@@ -135,7 +144,7 @@ class TestSendHighlights(TelegramBotTest):
         highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
-        self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
+        self.registry.register_action(SendHighlightsConversationAction(highlights, TestMemberRetriever(('A',))),
                                       FailureThrowingConversationActionHandler)
 
         self.updater.dispatcher.process_update(self._create_update_with_text('/send_highlights'))
@@ -149,7 +158,7 @@ class TestSendHighlights(TelegramBotTest):
         highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
-        self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
+        self.registry.register_action(SendHighlightsConversationAction(highlights, TestMemberRetriever(('A',))),
                                       FailureThrowingConversationActionHandler)
 
         ask_consent_update = self._create_update_with_text('/send_highlights')
@@ -173,8 +182,9 @@ class TestSendHighlights(TelegramBotTest):
         highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
-        handler = self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
-                                                FailureThrowingConversationActionHandler)
+        handler = self.registry.register_action(
+            SendHighlightsConversationAction(highlights, TestMemberRetriever(('A',))),
+            FailureThrowingConversationActionHandler)
 
         ask_consent_update = self._create_update_with_text('/send_highlights')
 
@@ -202,7 +212,7 @@ class TestSendHighlights(TelegramBotTest):
         highlights.add_pattern('A', '#highlights 1')
 
         assert len(highlights.highlights) == 1, highlights.highlights
-        self.registry.register_action(SendHighlightsConversationAction(highlights, ('A',)),
+        self.registry.register_action(SendHighlightsConversationAction(highlights, TestMemberRetriever(('A',))),
                                       FailureThrowingConversationActionHandler)
 
         ask_consent_update = self._create_update_with_text('/send_highlights')
@@ -234,14 +244,16 @@ class TestCheckHighlights(TelegramBotTest):
         highlights = Highlights()
         expected_member = ('First', 'Second')
         highlights.add_pattern('A', '#highlights test')
-        self.assert_command_action_responses_with(CheckHighlightsCommandAction(highlights, expected_member),
+        self.assert_command_action_responses_with(
+            CheckHighlightsCommandAction(highlights, TestMemberRetriever(expected_member)),
                                                   'No highlights available for: [First, Second]')
 
     def test_check_highlights_some(self):
         highlights = Highlights()
         expected_member = ('First', 'Second')
         highlights.add_pattern('Second', '#highlights test')
-        self.assert_command_action_responses_with(CheckHighlightsCommandAction(highlights, expected_member),
+        self.assert_command_action_responses_with(
+            CheckHighlightsCommandAction(highlights, TestMemberRetriever(expected_member)),
                                                   'No highlights available for: [First]')
 
     def test_check_highlights_all(self):
@@ -249,7 +261,8 @@ class TestCheckHighlights(TelegramBotTest):
         expected_member = ('First', 'Second')
         highlights.add_pattern('First', '#highlights test')
         highlights.add_pattern('Second', '#highlights test')
-        self.assert_command_action_responses_with(CheckHighlightsCommandAction(highlights, expected_member),
+        self.assert_command_action_responses_with(
+            CheckHighlightsCommandAction(highlights, TestMemberRetriever(expected_member)),
                                                   'All members have highlights \o/')
 
 
