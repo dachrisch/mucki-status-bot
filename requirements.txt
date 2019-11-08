@@ -3,7 +3,6 @@ google-api-python-client
 python-telegram-bot==11.1.0
 yampy2
 safygiphy
-google-cloud-bigquery
 pytest
 # for personal account credentials
 oauth2client
