@@ -3,6 +3,7 @@
 from config import MUC_TELEGRAM_GROUP_ID
 from google_service_api.welfare import WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
+from invoice_service.invoices import InvoiceCommandAction
 from order_service.orders import OrdersCommandAction
 from remote_service.client import RemoteMethodCommandAction
 from telegram_service.handler import CommandActionHandler, RegexActionHandler, ConversationActionHandler, \
@@ -68,3 +69,4 @@ class BotRegistry(object):
         self.register_command_action(
             CheckHighlightsCommandAction(self.highlights, AdminRetriever(self.__updater, MUC_TELEGRAM_GROUP_ID)))
         self.register_command_action_with_message(HighlightsForCommandAction(self.highlights))
+        self.register_command_action(InvoiceCommandAction())

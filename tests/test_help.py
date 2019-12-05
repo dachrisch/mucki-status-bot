@@ -4,13 +4,14 @@ from telegram.ext import Updater
 
 from google_service_api.welfare import WelfareCommandAction
 from help_service.help import HelpCommandAction, StartCommandAction
+from invoice_service.invoices import InvoiceCommandAction
 from order_service.orders import OrdersCommandAction
 from remote_service.client import RemoteMethodCommandAction
 from telegram_service.bot import BotRegistry
 from tests.telegram_test_bot import TelegramBotTest
 from tests.test_bot_registry import CommandTestAction
 from yammer_service.highlights import ShowHighlightsCommandAction, HighlightsCollectorRegexAction, \
-    SendHighlightsConversationAction
+    SendHighlightsConversationAction, CheckHighlightsCommandAction, HighlightsForCommandAction
 
 
 class TestHelp(TelegramBotTest):
@@ -36,4 +37,7 @@ class TestHelp(TelegramBotTest):
                                                   + '\n' + ShowHighlightsCommandAction(None).help_entry
                                                   + '\n' + HighlightsCollectorRegexAction(None).help_entry
                                                   + '\n' + SendHighlightsConversationAction(None, None).help_entry
+                                                  + '\n' + CheckHighlightsCommandAction(None, None).help_entry
+                                                  + '\n' + HighlightsForCommandAction(None).help_entry
+                                                  + '\n' + InvoiceCommandAction().help_entry
                                                   )
